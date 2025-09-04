@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 
 import { Layout, Link, Locator, Publication } from "@readium/shared";
 
@@ -31,7 +31,17 @@ export interface UnstableTimeline {
   currentItem?: TimelineItem | null;
   previousItem?: TimelineItem | null;
   nextItem?: TimelineItem | null;
+  progression?: {
+    totalPositions: number;
+    currentPositions: number[];
+    relativeProgression?: number;
+    totalProgression?: number;
+    currentChapter?: string;
+    positionsLeft: number;
+  };
 }
+
+export let timelineInstance: UnstableTimeline | undefined;
 
 export const useTimeline = ({
   publication, 
@@ -48,7 +58,6 @@ export const useTimeline = ({
 }): UnstableTimeline => {
   const layout = publication?.metadata.effectiveLayout || Layout.reflowable;
 
-  // Convert all refs to state
   const [timelineItems, setTimelineItems] = useState<{ [href: string]: TimelineItem }>({});
   const [tocTree, setTocTree] = useState<TocItem[]>([]);
   const [currentTocEntry, setCurrentTocEntry] = useState<string | null>(null);
@@ -56,8 +65,39 @@ export const useTimeline = ({
   const [previousItem, setPreviousItem] = useState<TimelineItem | null>(null);
   const [nextItem, setNextItem] = useState<TimelineItem | null>(null);
 
-  // Keep idCounter as ref since it's just a counter
   const idCounterRef = useRef(0);
+
+  // Create the timeline object
+  const timeline = useMemo(() => ({
+    items: timelineItems,
+    toc: {
+      tree: tocTree,
+      currentEntry: currentTocEntry
+    },
+    currentItem,
+    previousItem,
+    nextItem,
+    progression: {
+      totalPositions: positionsList.length,
+      currentPositions: currentPositions || [],
+      relativeProgression: currentLocation?.locations?.progression ?? currentItem?.progressionRange?.[0],
+      totalProgression: currentLocation?.locations?.totalProgression ?? currentItem?.totalProgressionRange?.[0],
+      currentChapter: currentItem?.title,
+      positionsLeft: currentItem?.positionRange?.[1] && currentPositions[0] !== undefined
+        ? Math.max(0, currentItem.positionRange[1] - currentPositions[0])
+        : 0
+    }
+  }), [
+    timelineItems,
+    tocTree,
+    currentTocEntry,
+    currentItem,
+    previousItem,
+    nextItem,
+    positionsList,
+    currentPositions,
+    currentLocation
+  ]);
 
   const buildTocTree = useCallback((
     links: Link[],
@@ -150,19 +190,44 @@ export const useTimeline = ({
   const buildTimelineItems = useCallback(() => {
     const timelineItems: { [href: string]: TimelineItem } = {};
     const readingOrder = publication?.readingOrder?.items || [];
+    const toc = publication?.toc?.items || [];
+    const flatToc = toc.flatMap(t => [t, ...(t.children?.items || [])]);
   
     // Helper function to get URL base (without params and fragment)
     const getBaseUrl = (url: string): string => {
-      const [base] = url.split('#');
-      const [path] = base.split('?');
+      const [base] = url.split("#");
+      const [path] = base.split("?");
       return path;
     };
 
+    // Function to find the first non-empty title by searching backward 
+    // in flatToc from the current item"s position
+    // This is not used currently because it is failing with progressionOfResource
+    // Effectively, timeline should recompute the relative progression for all resources
+    // that share the same title, and not use the progression relative to each resource
+
+    /* const findNearestTitle = (currentHref: string): string => {
+      const currentIndex = readingOrder.findIndex(item => getBaseUrl(item.href) === getBaseUrl(currentHref));
+    
+      if (currentIndex === -1) return "";
+      
+      for (let i = currentIndex; i >= 0; i--) {
+        const item = readingOrder[i];
+        // Find matching TOC items for this reading order item
+        const matchingTocItems = flatToc.filter(t => 
+          getBaseUrl(t.href) === getBaseUrl(item.href)
+        );
+        
+        // If we have a matching TOC item with a title, return it
+        const title = matchingTocItems[0]?.title?.trim();
+        if (title) return title;
+      }
+      
+      return "";
+    } */;
+
     // Process reading order items
     for (const item of readingOrder) {
-      const toc = publication?.toc?.items || [];
-      const flatToc = toc.flatMap(t => [t, ...(t.children?.items || [])]);
-
       // Find all matching TOC items (with or without fragment)
       const matchingTocItems = flatToc.filter(t => {
         const baseHref = getBaseUrl(t.href);
@@ -175,7 +240,7 @@ export const useTimeline = ({
         href: item.href,
         title: matchingTocItems[0]?.title || "",
         fragments: matchingTocItems
-          .map(t => t.href.split('#')[1])
+          .map(t => t.href.split("#")[1])
           .filter(Boolean),
         children: matchingTocItems[0]?.children?.items?.map(child => ({
           title: child.title,
@@ -218,7 +283,6 @@ export const useTimeline = ({
     return timelineItems;
   }, [publication?.readingOrder?.items, publication?.toc?.items, positionsList]);
 
-  // Callback to update previous and next items
   const updateTimelineItems = useCallback(() => {
     if (!currentLocation || !timelineItems) {
       setPreviousItem(null);
@@ -272,32 +336,13 @@ export const useTimeline = ({
     updateTimelineItems();
   }, [currentLocation, tocTree, timelineItems, handleTocEntryOnNav, updateTimelineItems]);
 
-  // Effect to handle onChange when state changes
+  // Update the singleton and call onChange
   useEffect(() => {
-    if (!onChange) return;
+    timelineInstance = timeline;
+    if (onChange) {
+      onChange(timeline);
+    }
+  }, [timeline, onChange]);
 
-    const timeline: UnstableTimeline = {
-      items: timelineItems,
-      toc: {
-        tree: tocTree,
-        currentEntry: currentTocEntry
-      },
-      currentItem,
-      previousItem,
-      nextItem
-    };
-
-    onChange(timeline);
-  }, [timelineItems, currentItem, tocTree, currentTocEntry, previousItem, nextItem, onChange]);
-
-  return {
-    items: timelineItems,
-    toc: {
-      tree: tocTree,
-      currentEntry: currentTocEntry
-    },
-    currentItem,
-    previousItem,
-    nextItem
-  };
+  return timeline;
 };

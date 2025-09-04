@@ -15,7 +15,8 @@ import {
   ThThemeKeys, 
   ThLayoutDirection, 
   ThLayoutUI,
-  ThBackLinkVariant
+  ThBackLinkVariant,
+  ThProgressionDisplayFormat
 } from "./models/enums";
 import { ThCollapsibility, ThCollapsibilityVisibility } from "@/core/Components/Actions/hooks/useCollapsibility";
 import { defaultActionKeysObject } from "./models";
@@ -187,6 +188,7 @@ export interface ThPreferences<T extends Partial<CustomizableKeys> = {}> {
     };
   };
   affordances: {
+    progressionDisplayFormat: ThProgressionDisplayFormat | Array<ThProgressionDisplayFormat>;
     scroll: {
       hintInImmersive: boolean;
       toggleOnMiddlePointer: Array<"tap" | "click">;

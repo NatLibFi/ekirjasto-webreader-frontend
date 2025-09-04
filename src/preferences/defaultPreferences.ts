@@ -15,7 +15,8 @@ import {
   ThTextSettingsKeys,
   ThSheetHeaderVariant,
   ThLayoutUI,
-  ThBackLinkVariant
+  ThBackLinkVariant,
+  ThProgressionDisplayFormat
 } from "./models/enums";
 import { createPreferences } from "./preferences";
 
@@ -194,6 +195,10 @@ export const defaultPreferences = createPreferences({
     }
   },
   affordances: {
+    progressionDisplayFormat: [
+      ThProgressionDisplayFormat.positionsOfTotal, 
+      ThProgressionDisplayFormat.progressionOfResource
+    ], 
     scroll: {
       hintInImmersive: true,
       toggleOnMiddlePointer: ["tap"],

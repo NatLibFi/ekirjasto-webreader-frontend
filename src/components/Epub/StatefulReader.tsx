@@ -90,7 +90,6 @@ import {
 import { 
   setFXL, 
   setRTL, 
-  setProgression, 
   setRunningHead, 
   setPositionsList,
   setTimeline,
@@ -169,7 +168,6 @@ export const StatefulReader = ({
 
   const isFXL = useAppSelector(state => state.publication.isFXL);
   const positionsList = useAppSelector(state => state.publication.positionsList);
-  const progression = useAppSelector(state => state.publication.progression);
 
   const textAlign = useAppSelector(state => state.settings.textAlign);
   const columnCount = useAppSelector(state => state.settings.columnCount);
@@ -260,7 +258,7 @@ export const StatefulReader = ({
   const timeline = useTimeline({
     publication: publication,
     currentLocation: localData,
-    currentPositions: progression.currentPositions || [],
+    currentPositions: currentPositions() || [],
     positionsList: positionsList,
     onChange: (timeline) => {
       dispatch(setTimeline(timeline));
@@ -332,24 +330,12 @@ export const StatefulReader = ({
     }
   };
 
-  const handleProgression = useCallback((locator: Locator) => {
-    const relativeRef = locator.title || t("reader.app.progression.referenceFallback");
-      
-    dispatch(setProgression( { 
-      currentPositions: currentPositions(), 
-      relativeProgression: locator.locations.progression, 
-      currentChapter: relativeRef, 
-      totalProgression: locator.locations.totalProgression 
-    }));
-  }, [dispatch, currentPositions, t]);
-
   // We need this as a workaround due to positionChanged being unreliable
   // in FXL – if the frame is in the pool hidden and is shown again,
   // positionChanged won’t fire.
   const handleFXLProgression = useCallback((locator: Locator) => {
-    handleProgression(locator);
     setLocalData(locator);
-  }, [handleProgression, setLocalData]);
+  }, [setLocalData]);
 
   onFXLPositionChange(handleFXLProgression);
 
@@ -427,7 +413,6 @@ export const StatefulReader = ({
       if (navLayout() !== Layout.fixed) {
         const debouncedHandleProgression = debounce(
           async () => {
-            handleProgression(locator);
             setLocalData(locator);
           }, 250);
         debouncedHandleProgression();
@@ -684,15 +669,11 @@ export const StatefulReader = ({
     const pubTitle = publication.metadata.title.getTranslation("en");
 
     dispatch(setRunningHead(pubTitle));
-    dispatch(setProgression({ currentPublication: pubTitle }));
 
     let positionsList: Locator[] | undefined;
 
     const fetchPositions = async () => {
       positionsList = await publication.positionsFromManifest();
-      if (positionsList && positionsList.length > 0) {
-        dispatch(setProgression( { totalPositions: positionsList.length }))
-      };
       const deserializedPositionsList = deserializePositions(positionsList);
       dispatch(setPositionsList(deserializedPositionsList));
     };

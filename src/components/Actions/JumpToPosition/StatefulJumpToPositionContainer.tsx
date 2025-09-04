@@ -25,8 +25,7 @@ export const StatefulJumpToPositionContainer = ({
   const actionState = useAppSelector(state => state.actions.keys[ThActionsKeys.jumpToPosition]);
   const positionsList = useAppSelector(state => state.publication.positionsList);
 
-  // TODO: Update. We don’t have a timeline yet, so we use the progression we already have
-  const positionNumbers = useAppSelector(state => state.publication.progression.currentPositions);
+  const positionNumbers = useAppSelector(state => state.publication.unstableTimeline?.progression?.currentPositions);
 
   const reducedMotion = useAppSelector(state => state.theming.prefersReducedMotion);
   const dispatch = useAppDispatch();

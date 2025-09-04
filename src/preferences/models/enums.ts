@@ -12,6 +12,16 @@ export enum ThLayoutUI {
   layered = "layered-ui"
 }
 
+export enum ThProgressionDisplayFormat {
+  positionsOfTotal = "positionsOfTotal",            // x-y of z
+  positions = "positions",                          // x-y
+  overallProgression = "overallProgression",        // x%
+  positionsLeft = "positionsLeft",                  // x left in chapter
+  resourceProgression = "resourceProgression",      // x%
+  progressionOfResource = "progressionOfResource",  // x% of y
+  none = "none"                                     // nothing displayed
+}
+
 export enum ThActionsKeys {
   fullscreen = "fullscreen",
   jumpToPosition = "jumpToPosition",
