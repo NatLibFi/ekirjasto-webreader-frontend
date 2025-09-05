@@ -202,11 +202,10 @@ export const useTimeline = ({
 
     // Function to find the first non-empty title by searching backward 
     // in flatToc from the current item"s position
-    // This is not used currently because it is failing with progressionOfResource
-    // Effectively, timeline should recompute the relative progression for all resources
-    // that share the same title, and not use the progression relative to each resource
-
-    /* const findNearestTitle = (currentHref: string): string => {
+    // The issue with this fallback is that for progressionOfResource
+    // the progression is effectively scoped to the reading order item
+    // so we have to differentiate using the index 
+    const findNearestTitle = (currentHref: string): string => {
       const currentIndex = readingOrder.findIndex(item => getBaseUrl(item.href) === getBaseUrl(currentHref));
     
       if (currentIndex === -1) return "";
@@ -218,13 +217,16 @@ export const useTimeline = ({
           getBaseUrl(t.href) === getBaseUrl(item.href)
         );
         
-        // If we have a matching TOC item with a title, return it
+        // If we have a matching TOC item with a title, return it with the difference in indices
         const title = matchingTocItems[0]?.title?.trim();
-        if (title) return title;
+        if (title) {
+          const diff = currentIndex - i;
+          return diff > 0 ? `${ title } (${ diff + 1 })` : title;
+        }
       }
       
       return "";
-    } */;
+    };
 
     // Process reading order items
     for (const item of readingOrder) {
@@ -238,7 +240,7 @@ export const useTimeline = ({
       // Create timeline item with all matching titles
       const timelineItem: TimelineItem = {
         href: item.href,
-        title: matchingTocItems[0]?.title || "",
+        title: item.title || matchingTocItems[0]?.title || findNearestTitle(item.href),
         fragments: matchingTocItems
           .map(t => t.href.split("#")[1])
           .filter(Boolean),
