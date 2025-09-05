@@ -17,7 +17,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setActionOpen } from "@/lib/actionsReducer";
 
 export const StatefulTocTrigger = ({ variant }: StatefulActionTriggerProps) => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const { t } = useI18n();
   const actionState = useAppSelector(state => state.actions.keys[ThActionsKeys.toc]);
   const dispatch = useAppDispatch();
@@ -35,12 +35,12 @@ export const StatefulTocTrigger = ({ variant }: StatefulActionTriggerProps) => {
       ? <StatefulOverflowMenuItem 
           label={ t("reader.toc.trigger") }
           SVGIcon={ TocIcon } 
-          shortcut={ RSPrefs.actions.keys[ThActionsKeys.toc].shortcut }
+          shortcut={ preferences.actions.keys[ThActionsKeys.toc].shortcut }
           id={ ThActionsKeys.toc }
           onAction={ () => setOpen(!actionState?.isOpen) }
         />
       : <StatefulActionIcon 
-          visibility={ RSPrefs.actions.keys[ThActionsKeys.toc].visibility }
+          visibility={ preferences.actions.keys[ThActionsKeys.toc].visibility }
           aria-label={ t("reader.toc.trigger") } 
           placement="bottom"
           tooltipLabel={ t("reader.toc.tooltip") } 

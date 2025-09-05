@@ -11,12 +11,12 @@ import { useAppSelector } from "@/lib/hooks";
 
 export const StatefulReaderRunningHead = () => {
   const { t } = useI18n();
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   
   const unstableTimeline = useAppSelector(state => state.publication.unstableTimeline);
   const isFXL = useAppSelector(state => state.publication.isFXL);
 
-  const runningHeadFormat = isFXL ? RSPrefs.theming.header?.runningHead?.format?.fxl : RSPrefs.theming.header?.runningHead?.format?.reflow || ThRunningHeadFormat.title;
+  const runningHeadFormat = isFXL ? preferences.theming.header?.runningHead?.format?.fxl : preferences.theming.header?.runningHead?.format?.reflow || ThRunningHeadFormat.title;
 
   let runningHead = t("reader.app.header.runningHeadFallback");
   if (runningHeadFormat === ThRunningHeadFormat.title) {

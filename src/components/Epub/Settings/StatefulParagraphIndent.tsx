@@ -17,13 +17,13 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setParagraphIndent, setPublisherStyles } from "@/lib/settingsReducer";
 
 export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsItemProps) => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const { t } = useI18n();
   const paragraphIndent = useAppSelector(state => state.settings.paragraphIndent);
   const paragraphIndentRangeConfig = {
-      variant: RSPrefs.settings.keys?.[ThSettingsKeys.paragraphIndent]?.variant ?? defaultParagraphIndent.variant,
-      range: RSPrefs.settings.keys?.[ThSettingsKeys.paragraphIndent]?.range ?? defaultParagraphIndent.range,
-      step: RSPrefs.settings.keys?.[ThSettingsKeys.paragraphIndent]?.step ?? defaultParagraphIndent.step
+      variant: preferences.settings.keys?.[ThSettingsKeys.paragraphIndent]?.variant ?? defaultParagraphIndent.variant,
+      range: preferences.settings.keys?.[ThSettingsKeys.paragraphIndent]?.range ?? defaultParagraphIndent.range,
+      step: preferences.settings.keys?.[ThSettingsKeys.paragraphIndent]?.step ?? defaultParagraphIndent.step
     };
   const dispatch = useAppDispatch();
 

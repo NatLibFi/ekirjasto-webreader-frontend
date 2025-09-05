@@ -19,7 +19,7 @@ import { useAppDispatch } from "@/lib/hooks";
 import { setSettingsContainer } from "@/lib/readerReducer";
 
 export const StatefulTextGroup = () => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const { t } = useI18n();
   const { textSettingsComponentsMap } = usePlugins();
   const dispatch = useAppDispatch();
@@ -36,7 +36,7 @@ export const StatefulTextGroup = () => {
       moreTooltip={ t("reader.settings.text.advanced.tooltip") }
       onPressMore={ setTextContainer }
       componentsMap={ textSettingsComponentsMap }
-      prefs={ RSPrefs.settings.text }
+      prefs={ preferences.settings.text }
       defaultPrefs={ {
         main: defaultTextSettingsMain, 
         subPanel: defaultTextSettingsSubpanel
@@ -47,8 +47,8 @@ export const StatefulTextGroup = () => {
 }
 
 export const StatefulTextGroupContainer = () => {
-  const RSPrefs = usePreferences();
-  const displayOrder = RSPrefs.settings.text?.subPanel as ThTextSettingsKeys[] | null | undefined || defaultTextSettingsSubpanel;
+  const { preferences } = usePreferences();
+  const displayOrder = preferences.settings.text?.subPanel as ThTextSettingsKeys[] | null | undefined || defaultTextSettingsSubpanel;
   const { textSettingsComponentsMap } = usePlugins();
 
   return(

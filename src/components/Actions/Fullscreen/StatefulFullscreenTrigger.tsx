@@ -26,7 +26,7 @@ export const StatefulFullscreenTrigger = ({ variant }: StatefulActionTriggerProp
   // Note: Not using React Aria ToggleButton here as fullscreen is quite
   // difficult to control in isolation due to collapsibility + shortcuts
 
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const { t } = useI18n();
 
   const dispatch = useAppDispatch();
@@ -58,13 +58,13 @@ export const StatefulFullscreenTrigger = ({ variant }: StatefulActionTriggerProp
       ? <StatefulOverflowMenuItem 
           label={ label }
           SVGIcon={ Icon } 
-          shortcut={ RSPrefs.actions.keys[ThActionsKeys.fullscreen].shortcut }
+          shortcut={ preferences.actions.keys[ThActionsKeys.fullscreen].shortcut }
           onAction={ fs.handleFullscreen } 
           id={ ThActionsKeys.fullscreen }
         />
       : <StatefulActionIcon 
           className={ readerSharedUI.iconCompSm }
-          visibility={ RSPrefs.actions.keys[ThActionsKeys.fullscreen].visibility }  
+          visibility={ preferences.actions.keys[ThActionsKeys.fullscreen].visibility }  
           aria-label={ label }
           placement="bottom" 
           tooltipLabel={ t("reader.fullscreen.tooltip") } 

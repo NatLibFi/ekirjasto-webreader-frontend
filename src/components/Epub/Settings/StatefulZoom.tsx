@@ -20,7 +20,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setFontSize } from "@/lib/settingsReducer";
 
 export const StatefulZoom = () => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const { t } = useI18n();
   const fontSize = useAppSelector((state) => state.settings.fontSize);
   const isFXL = useAppSelector((state) => state.publication.isFXL);
@@ -56,11 +56,11 @@ export const StatefulZoom = () => {
   }
 
   const zoomRangeConfig = {
-    variant: RSPrefs.settings.keys?.[ThSettingsKeys.zoom]?.variant || defaultFontSize.variant,
+    variant: preferences.settings.keys?.[ThSettingsKeys.zoom]?.variant || defaultFontSize.variant,
     range: preferencesEditor?.fontSize.supportedRange
-      ? getEffectiveRange(RSPrefs.settings.keys?.[ThSettingsKeys.zoom]?.range, defaultFontSize.range, preferencesEditor?.fontSize.supportedRange)
-      : RSPrefs.settings.keys?.[ThSettingsKeys.zoom]?.range || defaultFontSize.range,
-    step: RSPrefs.settings.keys?.[ThSettingsKeys.zoom]?.step || preferencesEditor?.fontSize.step || defaultFontSize.step
+      ? getEffectiveRange(preferences.settings.keys?.[ThSettingsKeys.zoom]?.range, defaultFontSize.range, preferencesEditor?.fontSize.supportedRange)
+      : preferences.settings.keys?.[ThSettingsKeys.zoom]?.range || defaultFontSize.range,
+    step: preferences.settings.keys?.[ThSettingsKeys.zoom]?.step || preferencesEditor?.fontSize.step || defaultFontSize.step
   }
 
   return (

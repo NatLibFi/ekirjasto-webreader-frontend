@@ -32,7 +32,7 @@ export const StatefulReaderHeader = ({
 }) => {
   const headerRef = useRef<HTMLDivElement>(null);
   const { reflowActionKeys, fxlActionKeys } = usePreferenceKeys();
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const { t } = useI18n();
   const { actionsComponentsMap } = usePlugins();
   
@@ -120,7 +120,7 @@ export const StatefulReaderHeader = ({
       onMouseLeave={ removeHover }
       { ...focusWithinProps }
     >
-      { RSPrefs.theming.header?.backLink && <StatefulBackLink className={ readerHeaderStyles.backLinkWrapper } /> }
+      { preferences.theming.header?.backLink && <StatefulBackLink className={ readerHeaderStyles.backLinkWrapper } /> }
       
       <StatefulReaderRunningHead />
       
@@ -128,15 +128,15 @@ export const StatefulReaderHeader = ({
         id="reader-header-overflowMenu" 
         items={ listActionItems() }
         prefs={{ 
-          ...RSPrefs.actions, 
+          ...preferences.actions, 
           displayOrder: isFXL 
-            ? RSPrefs.actions.fxlOrder 
-            : RSPrefs.actions.reflowOrder 
+            ? preferences.actions.fxlOrder 
+            : preferences.actions.reflowOrder 
         }}
         className={ readerHeaderStyles.actionsWrapper } 
         aria-label={ t("reader.app.header.actions") } 
         overflowMenuClassName={ 
-          (!isScroll || RSPrefs.affordances.scroll.hintInImmersive) 
+          (!isScroll || preferences.affordances.scroll.hintInImmersive) 
             ? overflowMenuStyles.hintButton 
             : undefined 
         }

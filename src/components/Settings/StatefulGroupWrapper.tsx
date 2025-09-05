@@ -35,7 +35,7 @@ export const StatefulGroupWrapper = ({
   prefs,
   defaultPrefs
 }: StatefulGroupWrapperProps) => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   
   const main = prefs?.main || defaultPrefs.main;
   const displayOrder = prefs?.subPanel !== undefined 
@@ -63,13 +63,13 @@ export const StatefulGroupWrapper = ({
           "aria-label": moreLabel,
           compounds: {
             tooltipTrigger: {
-              delay: RSPrefs.theming.icon.tooltipDelay,
-              closeDelay: RSPrefs.theming.icon.tooltipDelay
+              delay: preferences.theming.icon.tooltipDelay,
+              closeDelay: preferences.theming.icon.tooltipDelay
             },
             tooltip: {
               className: readerSharedUI.tooltip,
               placement: "top",
-              offset: RSPrefs.theming.icon.tooltipOffset || 0
+              offset: preferences.theming.icon.tooltipOffset || 0
             },
             label: moreTooltip
           },

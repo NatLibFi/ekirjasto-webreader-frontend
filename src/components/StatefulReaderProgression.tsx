@@ -48,7 +48,7 @@ export const StatefulReaderProgression = ({
   className?: string 
 }) => {
   const { t } = useI18n();
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   
   const unstableTimeline = useAppSelector(state => state.publication.unstableTimeline);
   const isFXL = useAppSelector(state => state.publication.isFXL);
@@ -57,7 +57,7 @@ export const StatefulReaderProgression = ({
   
   // Get the display format, handling both single format and array of formats
   const displayFormat = useMemo(() => {
-    const format = isFXL ? RSPrefs.theming.progression?.format?.fxl : RSPrefs.theming.progression?.format?.reflow;
+    const format = isFXL ? preferences.theming.progression?.format?.fxl : preferences.theming.progression?.format?.reflow;
     if (!format) return ThProgressionFormat.resourceProgression;
     
     const hasPositions = !!unstableTimeline?.progression?.currentPositions?.length;
@@ -69,7 +69,7 @@ export const StatefulReaderProgression = ({
     }
     
     return format;
-  }, [RSPrefs.theming.progression?.format, unstableTimeline, isFXL]);
+  }, [preferences.theming.progression?.format, unstableTimeline, isFXL]);
 
   // Update display text based on current position and timeline
   useEffect(() => {

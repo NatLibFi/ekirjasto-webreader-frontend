@@ -26,7 +26,7 @@ import { buildThemeObject } from "@/preferences/helpers/buildThemeObject";
 
 export const StatefulTheme = ({ mapArrowNav }: { mapArrowNav?: number }) => {
   const { fxlThemeKeys, reflowThemeKeys } = usePreferenceKeys();
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const { t } = useI18n();
 
   const radioGroupRef = useRef<HTMLDivElement | null>(null);
@@ -43,8 +43,8 @@ export const StatefulTheme = ({ mapArrowNav }: { mapArrowNav?: number }) => {
   const themeItems = useRef<(ThemeKeyType | "auto")[]>(
     themeArray.filter((theme: ThemeKeyType | "auto") => {
       if (theme === "auto") {
-        return RSPrefs.theming.themes.systemThemes !== undefined && 
-          Object.values(RSPrefs.theming.themes.systemThemes).every(t => 
+        return preferences.theming.themes.systemThemes !== undefined && 
+          Object.values(preferences.theming.themes.systemThemes).every(t => 
             themeArray.includes(t)
           );
       }
@@ -59,8 +59,8 @@ export const StatefulTheme = ({ mapArrowNav }: { mapArrowNav?: number }) => {
   const updatePreference = useCallback(async (value: ThemeKeyType | "auto") => {
     const themeProps = buildThemeObject<typeof value>({
       theme: value,
-      themeKeys: RSPrefs.theming.themes.keys,
-      systemThemes: RSPrefs.theming.themes.systemThemes,
+      themeKeys: preferences.theming.themes.keys,
+      systemThemes: preferences.theming.themes.systemThemes,
       colorScheme
     })
     await submitPreferences(themeProps);
@@ -69,7 +69,7 @@ export const StatefulTheme = ({ mapArrowNav }: { mapArrowNav?: number }) => {
       key: isFXL ? "fxl" : "reflow", 
       value: value
     }));
-  }, [isFXL, RSPrefs.theming.themes.keys, RSPrefs.theming.themes.systemThemes, submitPreferences, dispatch, colorScheme]);
+  }, [isFXL, preferences.theming.themes.keys, preferences.theming.themes.systemThemes, submitPreferences, dispatch, colorScheme]);
 
   // It’s easier to inline styles from preferences for these
   // than spamming the entire app with all custom properties right now
@@ -82,23 +82,25 @@ export const StatefulTheme = ({ mapArrowNav }: { mapArrowNav?: number }) => {
     };
 
     if (t === "auto") {
-      if (RSPrefs.theming.themes.systemThemes !== undefined) {
+      if (preferences.theming.themes.systemThemes !== undefined) {
         cssProps.background = isRTL 
-        ? `linear-gradient(148deg, ${ RSPrefs.theming.themes.keys[RSPrefs.theming.themes.systemThemes.dark].background } 48%, ${ RSPrefs.theming.themes.keys[RSPrefs.theming.themes.systemThemes.light].background } 100%)` 
-        : `linear-gradient(148deg, ${ RSPrefs.theming.themes.keys[RSPrefs.theming.themes.systemThemes.light].background } 0%, ${ RSPrefs.theming.themes.keys[RSPrefs.theming.themes.systemThemes.dark].background } 48%)`;
+        ? `linear-gradient(148deg, ${ preferences.theming.themes.keys[preferences.theming.themes.systemThemes.dark].background } 48%, ${ preferences.theming.themes.keys[preferences.theming.themes.systemThemes.light].background } 100%)` 
+        : `linear-gradient(148deg, ${ preferences.theming.themes.keys[preferences.theming.themes.systemThemes.light].background } 0%, ${ preferences.theming.themes.keys[preferences.theming.themes.systemThemes.dark].background } 48%)`;
         cssProps.color = "#ffffff";
-        cssProps.border = `1px solid ${ RSPrefs.theming.themes.keys[RSPrefs.theming.themes.systemThemes.light].subdue }`;
+        cssProps.border = `1px solid ${ preferences.theming.themes.keys[preferences.theming.themes.systemThemes.light].subdue }`;
       } else {
         cssProps.display = "none";
       }
     } else {
-      cssProps.background = RSPrefs.theming.themes.keys[t].background;
-      cssProps.color = RSPrefs.theming.themes.keys[t].text;
-      cssProps.border = `1px solid ${ RSPrefs.theming.themes.keys[t].subdue }`;
+      const themeKey = t as keyof typeof preferences.theming.themes.keys;
+      const theme = preferences.theming.themes.keys[themeKey];
+      cssProps.background = theme.background;
+      cssProps.color = theme.text;
+      cssProps.border = `1px solid ${theme.subdue}`;
     };
     
     return cssProps;
-  }, [RSPrefs.theming.themes.keys, RSPrefs.theming.themes.systemThemes, isRTL]);
+  }, [preferences.theming.themes.keys, preferences.theming.themes.systemThemes, isRTL]);
 
   // mapArrowNav is the number of columns. This assumption 
   // should be safe since even in vertical-writing, 

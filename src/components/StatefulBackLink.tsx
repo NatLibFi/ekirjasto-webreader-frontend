@@ -25,20 +25,20 @@ export const StatefulBackLink = ({
   className?: string 
 }) => {
   const { t } = useI18n();
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const direction = useAppSelector(state => state.reader.direction);
   const isRTL = direction === ThLayoutDirection.rtl;
   
-  const variant = RSPrefs.theming.header?.backLink?.variant || ThBackLinkVariant.arrow;
-  const href = RSPrefs.theming.header?.backLink?.href;
-  const content = RSPrefs.theming.header?.backLink?.content;
-  const visibility = RSPrefs.theming.header?.backLink?.visibility || "partially";
+  const variant = preferences.theming.header?.backLink?.variant || ThBackLinkVariant.arrow;
+  const href = preferences.theming.header?.backLink?.href;
+  const content = preferences.theming.header?.backLink?.content;
+  const visibility = preferences.theming.header?.backLink?.visibility || "partially";
   const backLinkClassName = classNames(backLinkStyles.backLink, visibility === "always" ? readerSharedUI.alwaysVisible : readerSharedUI.partiallyVisible);
 
   const compounds = {
     tooltipTrigger: {
-      delay: RSPrefs.theming.arrow.tooltipDelay,
-      closeDelay: RSPrefs.theming.arrow.tooltipDelay
+      delay: preferences.theming.arrow.tooltipDelay,
+      closeDelay: preferences.theming.arrow.tooltipDelay
     },
     tooltip: {
       className: readerSharedUI.tooltip

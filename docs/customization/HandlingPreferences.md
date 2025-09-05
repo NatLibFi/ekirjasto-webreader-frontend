@@ -2,7 +2,7 @@
 
 In case you need to use the Preferences package, you can use the following helpers to create and merge preferences objects.
 
-It also provides a `PreferencesProvider` component that makes the preferences available to all components, as well as a context hook, `usePreferences()`.
+It also provides a `PreferencesProvider` component that makes the preferences available to all components, as well as a context hook, `usePreferences()`, that allows you to access and update the preferences.
 
 ## Create Preferences
 
@@ -103,7 +103,7 @@ Components can then access the preferences using the `usePreferences` hook:
 
 ```
 function MyComponent() {
-  const preferences = usePreferences();
+  const { preferences, update } = usePreferences();
   
   // Now you can use preferences
   const { direction, locale } = preferences;

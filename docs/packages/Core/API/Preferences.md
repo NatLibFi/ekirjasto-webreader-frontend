@@ -26,15 +26,16 @@ interface Props<T extends Partial<CustomizableKeys>> {
 
 ### usePreferences
 
-Hook for accessing preferences context.
+Hook for accessing and updating the preferences context.
 
 ```typescript
-function usePreferences<T extends Partial<CustomizableKeys>>(): ThPreferences<T>
+function usePreferences<T extends Partial<CustomizableKeys>>(): ThPreferencesContextType<T>
 ```
 
 **Features:**
 - Type-safe preferences access
 - Default values handling
+- Update method
 - Context validation
 
 ### usePreferenceKeys

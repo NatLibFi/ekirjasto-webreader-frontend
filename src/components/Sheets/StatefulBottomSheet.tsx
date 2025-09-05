@@ -51,7 +51,7 @@ export const StatefulBottomSheet = ({
   scrollTopOnFocus,
   dismissEscapeKeyClose
 }: StatefulBottomSheetProps) => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const { t } = useI18n()
   const direction = useAppSelector((state) => state.reader.direction);
   const prefersReducedMotion = useAppSelector(state => state.theming.prefersReducedMotion);
@@ -79,7 +79,7 @@ export const StatefulBottomSheet = ({
     // the initialProp should always be one item from last
     let snapArray: number[] = [];
 
-    const snapPref = RSPrefs.actions.keys[id as keyof typeof RSPrefs.actions.keys].snapped;
+    const snapPref = preferences.actions.keys[id as keyof typeof preferences.actions.keys].snapped;
     if (snapPref) {
       // We must start with minHeight to see if it’s 
       // constrained by a detent as it means
@@ -165,7 +165,7 @@ export const StatefulBottomSheet = ({
     }
 
     return snapArray;
-  }, [id, RSPrefs]);
+  }, [id, preferences]);
 
   const snapIdx = useRef<number | null>(null);
 
@@ -208,7 +208,7 @@ export const StatefulBottomSheet = ({
   }, [snapArray, onClosePress]);
 
   const maxWidthPref = useMemo(() => {
-    const maxWidth = RSPrefs.actions.keys[id as keyof typeof RSPrefs.actions.keys].snapped?.maxWidth;
+    const maxWidth = preferences.actions.keys[id as keyof typeof preferences.actions.keys].snapped?.maxWidth;
     if (typeof maxWidth === "undefined") {
       return undefined;
     } else if (maxWidth === null) {
@@ -216,14 +216,14 @@ export const StatefulBottomSheet = ({
     } else {
       return `${ maxWidth }px`;
     }
-  }, [id, RSPrefs]);
+  }, [id, preferences]);
 
   const scrimPref = useMemo(() => {
     let scrimPref: ScrimPref = {
       active: false,
       override: undefined
     }
-    const scrim = RSPrefs.actions.keys[id as keyof typeof RSPrefs.actions.keys].snapped?.scrim;
+    const scrim = preferences.actions.keys[id as keyof typeof preferences.actions.keys].snapped?.scrim;
     if (scrim) {
       scrimPref.active = true;
 
@@ -233,7 +233,7 @@ export const StatefulBottomSheet = ({
     }
 
     return scrimPref;
-  }, [id, RSPrefs]);
+  }, [id, preferences]);
 
   const detentClassName = useMemo(() => {
     let className = "";

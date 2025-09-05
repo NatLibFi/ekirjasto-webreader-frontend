@@ -17,13 +17,13 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setLetterSpacing, setPublisherStyles } from "@/lib/settingsReducer";
 
 export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsItemProps) => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const { t } = useI18n();
   const letterSpacing = useAppSelector(state => state.settings.letterSpacing);
   const letterSpacingRangeConfig = {
-    variant: RSPrefs.settings.keys?.[ThSettingsKeys.letterSpacing]?.variant ?? defaultLetterSpacing.variant,
-    range: RSPrefs.settings.keys?.[ThSettingsKeys.letterSpacing]?.range ?? defaultLetterSpacing.range,
-    step: RSPrefs.settings.keys?.[ThSettingsKeys.letterSpacing]?.step ?? defaultLetterSpacing.step
+    variant: preferences.settings.keys?.[ThSettingsKeys.letterSpacing]?.variant ?? defaultLetterSpacing.variant,
+    range: preferences.settings.keys?.[ThSettingsKeys.letterSpacing]?.range ?? defaultLetterSpacing.range,
+    step: preferences.settings.keys?.[ThSettingsKeys.letterSpacing]?.step ?? defaultLetterSpacing.step
   };
   const dispatch = useAppDispatch();
 

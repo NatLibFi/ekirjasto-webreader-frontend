@@ -90,7 +90,6 @@ import { ThLayoutOptions } from "@edrlab/thorium-web/core/preferences";
 import { 
   StatefulSwitch,
   useEpubNavigator,
-  usePreferences,
   useAppDispatch,
   useAppSelector,
   setScroll

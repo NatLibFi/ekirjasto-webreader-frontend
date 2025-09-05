@@ -22,7 +22,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { dockAction } from "@/lib/actionsReducer";
 
 export const StatefulDockStart = ({ variant, associatedKey }: StatefulActionTriggerProps) => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const { t } = useI18n();
   const direction = useAppSelector(state => state.reader.direction);
   const actionsMap = useAppSelector(state => state.actions.keys);
@@ -55,7 +55,7 @@ export const StatefulDockStart = ({ variant, associatedKey }: StatefulActionTrig
       ? <StatefulOverflowMenuItem 
           label={ localeKey.trigger }
           SVGIcon={ isRTL ? DocktoRight : DockToLeft } 
-          shortcut={ RSPrefs.docking.keys[ThDockingKeys.start].shortcut }
+          shortcut={ preferences.docking.keys[ThDockingKeys.start].shortcut }
           onAction={ handlePress } 
           id={ `${ ThDockingKeys.start }-${ associatedKey }` }
           isDisabled={ isDisabled }

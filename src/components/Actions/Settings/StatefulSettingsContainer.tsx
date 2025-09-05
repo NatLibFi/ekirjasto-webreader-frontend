@@ -44,7 +44,7 @@ export const StatefulSettingsContainer = ({
     subPanelSpacingSettingsKeys,
     subPanelTextSettingsKeys,
   } = usePreferenceKeys();
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const { t } = useI18n();
   const { settingsComponentsMap } = usePlugins();
   const isFXL = useAppSelector(state => state.publication.isFXL);
@@ -138,16 +138,16 @@ export const StatefulSettingsContainer = ({
   const getHeaderVariant = useCallback(() => {
     switch (contains) {
       case ThSettingsContainerKeys.text:
-        return RSPrefs.settings.text?.header || ThSheetHeaderVariant.close;
+        return preferences.settings.text?.header || ThSheetHeaderVariant.close;
 
       case ThSettingsContainerKeys.spacing:
-        return RSPrefs.settings.spacing?.header || ThSheetHeaderVariant.close;
+        return preferences.settings.spacing?.header || ThSheetHeaderVariant.close;
 
       case ThSettingsContainerKeys.initial:
       default:
         return ThSheetHeaderVariant.close;
     }
-  }, [contains, RSPrefs.settings.spacing, RSPrefs.settings.text]);
+  }, [contains, preferences.settings.spacing, preferences.settings.text]);
 
 useEffect(() => {
   const handleEscape = (event: KeyboardEvent) => {

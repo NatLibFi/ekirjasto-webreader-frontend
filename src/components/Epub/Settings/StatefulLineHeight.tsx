@@ -21,7 +21,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setLineHeight, setPublisherStyles } from "@/lib/settingsReducer";
 
 export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemProps) => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const { t } = useI18n();
   const publisherStyles = useAppSelector(state => state.settings.publisherStyles);
   const lineHeight = useAppSelector(state => state.settings.lineHeight);
@@ -31,9 +31,9 @@ export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemPr
 
   const lineHeightOptions = useRef({
     [ThLineHeightOptions.publisher]: null,
-    [ThLineHeightOptions.small]: RSPrefs.settings.keys?.[ThSettingsKeys.lineHeight]?.[ThLineHeightOptions.small] || defaultLineHeights[ThLineHeightOptions.small],
-    [ThLineHeightOptions.medium]: RSPrefs.settings.keys?.[ThSettingsKeys.lineHeight]?.[ThLineHeightOptions.medium] || defaultLineHeights[ThLineHeightOptions.medium],
-    [ThLineHeightOptions.large]: RSPrefs.settings.keys?.[ThSettingsKeys.lineHeight]?.[ThLineHeightOptions.large] || defaultLineHeights[ThLineHeightOptions.large],
+    [ThLineHeightOptions.small]: preferences.settings.keys?.[ThSettingsKeys.lineHeight]?.[ThLineHeightOptions.small] || defaultLineHeights[ThLineHeightOptions.small],
+    [ThLineHeightOptions.medium]: preferences.settings.keys?.[ThSettingsKeys.lineHeight]?.[ThLineHeightOptions.medium] || defaultLineHeights[ThLineHeightOptions.medium],
+    [ThLineHeightOptions.large]: preferences.settings.keys?.[ThSettingsKeys.lineHeight]?.[ThLineHeightOptions.large] || defaultLineHeights[ThLineHeightOptions.large],
   });
 
   const updatePreference = useCallback(async (value: string) => {

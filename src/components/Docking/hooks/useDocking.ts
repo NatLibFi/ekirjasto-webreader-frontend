@@ -16,7 +16,7 @@ import { usePreferences } from "@/preferences/hooks/usePreferences";
 let dockingMap: Required<BreakpointsMap<ThDockingTypes>> | null = null;
 
 export const useDocking = <T extends string>(key: T) => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const breakpoint = useAppSelector(state => state.theming.breakpoint);
   const actionsMap = useAppSelector(state => state.actions.keys);
   const actionState = actionsMap[key];
@@ -28,21 +28,21 @@ export const useDocking = <T extends string>(key: T) => {
     dockingMap = makeBreakpointsMap<ThDockingTypes>({
       defaultValue: ThDockingTypes.both, 
       fromEnum: ThDockingTypes, 
-      pref: RSPrefs.docking.dock, 
+      pref: preferences.docking.dock, 
       disabledValue: ThDockingTypes.none 
     });
   }
   const currentDockConfig = breakpoint && dockingMap[breakpoint];
   
   // Use type assertion to tell TypeScript that the key is valid
-  const dockablePref = (RSPrefs.actions.keys[key as keyof typeof RSPrefs.actions.keys])?.docked?.dockable || ThDockingTypes.none;
+  const dockablePref = (preferences.actions.keys[key as keyof typeof preferences.actions.keys])?.docked?.dockable || ThDockingTypes.none;
   
-  const defaultSheet = (RSPrefs.actions.keys[key as keyof typeof RSPrefs.actions.keys])?.sheet?.defaultSheet || ThSheetTypes.popover;
+  const defaultSheet = (preferences.actions.keys[key as keyof typeof preferences.actions.keys])?.sheet?.defaultSheet || ThSheetTypes.popover;
   
   const sheetMap = makeBreakpointsMap<ThSheetTypes>({
-    defaultValue: (RSPrefs.actions.keys[key as keyof typeof RSPrefs.actions.keys])?.sheet?.defaultSheet || ThSheetTypes.popover,
+    defaultValue: (preferences.actions.keys[key as keyof typeof preferences.actions.keys])?.sheet?.defaultSheet || ThSheetTypes.popover,
     fromEnum: ThSheetTypes,
-    pref: (RSPrefs.actions.keys[key as keyof typeof RSPrefs.actions.keys])?.sheet?.breakpoints
+    pref: (preferences.actions.keys[key as keyof typeof preferences.actions.keys])?.sheet?.breakpoints
   });
   const sheetPref = breakpoint && sheetMap[breakpoint] || defaultSheet;
 
@@ -78,7 +78,7 @@ export const useDocking = <T extends string>(key: T) => {
     let dockerKeys: ThDockingKeys[] = [];
     // In order for an action to be dockable, the dock slot has to exist
     // and the dockable preference of key.docked should match the values
-    RSPrefs.docking.displayOrder.forEach((dockingKey: ThDockingKeys) => {
+    preferences.docking.displayOrder.forEach((dockingKey: ThDockingKeys) => {
       switch(dockingKey) {
         case ThDockingKeys.transient:
           // We already handled both cases for none 
@@ -103,7 +103,7 @@ export const useDocking = <T extends string>(key: T) => {
     if (dockerKeys.length === 1 && dockerKeys[0] === ThDockingKeys.transient) return [];
 
     return dockerKeys;
-  }, [RSPrefs.docking.displayOrder, currentDockConfig, sheetPref, dockablePref, canBeDocked]);
+  }, [preferences.docking.displayOrder, currentDockConfig, sheetPref, dockablePref, canBeDocked]);
 
   const getSheetType = useCallback(() => {
     // First check the dockable pref is none to return early

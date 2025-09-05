@@ -17,13 +17,13 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setPublisherStyles, setWordSpacing } from "@/lib/settingsReducer";
 
 export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemProps) => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const { t } = useI18n();
   const wordSpacing = useAppSelector(state => state.settings.wordSpacing);
   const wordSpacingRangeConfig = {
-    variant: RSPrefs.settings.keys?.[ThSettingsKeys.wordSpacing]?.variant ?? defaultWordSpacing.variant,
-    range: RSPrefs.settings.keys?.[ThSettingsKeys.wordSpacing]?.range ?? defaultWordSpacing.range,
-    step: RSPrefs.settings.keys?.[ThSettingsKeys.wordSpacing]?.step ?? defaultWordSpacing.step
+    variant: preferences.settings.keys?.[ThSettingsKeys.wordSpacing]?.variant ?? defaultWordSpacing.variant,
+    range: preferences.settings.keys?.[ThSettingsKeys.wordSpacing]?.range ?? defaultWordSpacing.range,
+    step: preferences.settings.keys?.[ThSettingsKeys.wordSpacing]?.step ?? defaultWordSpacing.step
   };
   const dispatch = useAppDispatch();
 

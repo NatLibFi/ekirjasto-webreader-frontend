@@ -34,7 +34,7 @@ export const StatefulReaderArrowButton = ({
   onPress,
   ...props
 }: StatefulReaderArrowButtonProps) => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const { t } = useI18n();
   
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -110,8 +110,8 @@ export const StatefulReaderArrowButton = ({
       { ...props }
       compounds={ {
         tooltipTrigger: {
-          delay: RSPrefs.theming.arrow.tooltipDelay,
-          closeDelay: RSPrefs.theming.arrow.tooltipDelay
+          delay: preferences.theming.arrow.tooltipDelay,
+          closeDelay: preferences.theming.arrow.tooltipDelay
         },
         tooltip: {
           placement: direction === "left" ? "right" : "left",

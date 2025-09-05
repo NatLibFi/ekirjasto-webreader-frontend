@@ -19,7 +19,7 @@ import { useAppDispatch } from "@/lib/hooks";
 import { setSettingsContainer } from "@/lib/readerReducer";
 
 export const StatefulSpacingGroup = () => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const { t } = useI18n();
   const { spacingSettingsComponentsMap } = usePlugins();
   const dispatch = useAppDispatch();
@@ -36,7 +36,7 @@ export const StatefulSpacingGroup = () => {
       moreTooltip={ t("reader.settings.spacing.advanced.tooltip") }
       onPressMore={ setSpacingContainer }
       componentsMap={ spacingSettingsComponentsMap }
-      prefs={ RSPrefs.settings.spacing }
+      prefs={ preferences.settings.spacing }
       defaultPrefs={ {
         main: defaultSpacingSettingsMain, 
         subPanel: defaultSpacingSettingsSubpanel
@@ -47,8 +47,8 @@ export const StatefulSpacingGroup = () => {
 }
 
 export const StatefulSpacingGroupContainer = () => {
-  const RSPrefs = usePreferences();
-  const displayOrder = RSPrefs.settings.spacing?.subPanel as ThSpacingSettingsKeys[] | null | undefined || defaultSpacingSettingsSubpanel;
+  const { preferences } = usePreferences();
+  const displayOrder = preferences.settings.spacing?.subPanel as ThSpacingSettingsKeys[] | null | undefined || defaultSpacingSettingsSubpanel;
   const { spacingSettingsComponentsMap } = usePlugins();
 
   return(

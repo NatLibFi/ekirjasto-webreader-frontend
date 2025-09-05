@@ -15,7 +15,7 @@ import {
  * This allows components to use the keys as indexes without type errors
  */
 export function usePreferenceKeys<T extends Partial<CustomizableKeys>>() {
-  const preferences = usePreferences();
+  const { preferences } = usePreferences();
   
   // Return an object with typed keys for each customizable section
   return {
