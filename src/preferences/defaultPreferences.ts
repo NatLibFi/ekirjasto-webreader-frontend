@@ -54,7 +54,8 @@ export const defaultPreferences = createPreferences({
         ],
         fxl: [
           ThProgressionFormat.positionsOfTotal, 
-          ThProgressionFormat.progressionOfResource
+          ThProgressionFormat.overallProgression,
+          ThProgressionFormat.none
         ]
       }
     },
