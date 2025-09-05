@@ -26,7 +26,7 @@
       "progression": {
         "wrapper": "Progression dans la publication",
         "of": "{{ current }} de {{ reference }}",
-        "positionsLeft": "{{ count }} positions restantes dans {{ reference }}",
+        "positionsLeft": "{{ count }} restantes dans {{ reference }}",
         "referenceFallback": "chapitre en cours",
         "pubFallback": "la publication"
       },

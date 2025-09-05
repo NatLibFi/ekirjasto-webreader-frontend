@@ -9,7 +9,7 @@ import { ThBreakpoints, ThLayoutUI } from "@/preferences/models/enums";
 import { ThFooter } from "@/core/Components/Reader/ThFooter";
 import { StatefulReaderProgression } from "./StatefulReaderProgression";
 import { ThInteractiveOverlay } from "../core/Components/Reader/ThInteractiveOverlay";
-import { StatefulPagination } from "./StatefulPagination";
+import { StatefulReaderPagination } from "./StatefulReaderPagination";
 import { ThPaginationLinkProps } from "@/core/Components/Reader/ThPagination";
 
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
@@ -138,7 +138,7 @@ export const StatefulReaderFooter = ({
       { ...focusWithinProps }
     >
       { isScroll && !isFXL
-        ? <StatefulPagination 
+        ? <StatefulReaderPagination 
             aria-label={ t("reader.navigation.scroll.wrapper") }
             links={ updateLinks() } 
             compounds={ {
@@ -156,7 +156,7 @@ export const StatefulReaderFooter = ({
             } } 
           >
             <StatefulReaderProgression className={ readerPaginationStyles.progression } />
-          </StatefulPagination> 
+          </StatefulReaderPagination> 
         : <StatefulReaderProgression /> }
     </ThFooter>
     </>

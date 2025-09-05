@@ -16,7 +16,8 @@ import {
   ThLayoutDirection, 
   ThLayoutUI,
   ThBackLinkVariant,
-  ThProgressionDisplayFormat
+  ThProgressionFormat,
+  ThRunningHeadFormat
 } from "./models/enums";
 import { ThCollapsibility, ThCollapsibilityVisibility } from "@/core/Components/Actions/hooks/useCollapsibility";
 import { defaultActionKeysObject } from "./models";
@@ -149,6 +150,21 @@ export interface ThPreferences<T extends Partial<CustomizableKeys> = {}> {
     pageGutter: number;
   };
   theming: {
+    header?: {
+      backLink?: ThBackLinkPref | null;
+      runningHead?: {
+        format: {
+          reflow: ThRunningHeadFormat;
+          fxl: ThRunningHeadFormat;
+        }
+      }
+    };
+    progression?: {
+      format: {
+        reflow: ThProgressionFormat | Array<ThProgressionFormat>;
+        fxl: ThProgressionFormat | Array<ThProgressionFormat>;
+      };
+    };
     arrow: {
       size: number;
       offset: number;
@@ -188,16 +204,12 @@ export interface ThPreferences<T extends Partial<CustomizableKeys> = {}> {
     };
   };
   affordances: {
-    progressionDisplayFormat: ThProgressionDisplayFormat | Array<ThProgressionDisplayFormat>;
     scroll: {
       hintInImmersive: boolean;
       toggleOnMiddlePointer: Array<"tap" | "click">;
       hideOnForwardScroll: boolean;
       showOnBackwardScroll: boolean;
     }
-  };
-  header: {
-    backLink?: ThBackLinkPref | null;
   };
   actions: ThActionsPref<KeysOf<T["actionKeys"], ThActionsKeys>>;
   shortcuts: {

@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo } from "react";
 
 import progressionStyles from "./assets/styles/readerProgression.module.css";
 
-import { ThProgressionDisplayFormat } from "@/preferences/models/enums";
+import { ThProgressionFormat } from "@/preferences/models/enums";
 
 import { ThProgression } from "@/core/Components/Reader/ThProgression";
 
@@ -15,27 +15,27 @@ import { useAppSelector } from "@/lib/hooks";
 
 // Helper to get the best matching display format from an array of formats
 const getBestMatchingFormat = (
-  formats: ThProgressionDisplayFormat[],
+  formats: ThProgressionFormat[],
   hasPositions: boolean,
   hasProgression: boolean
-): ThProgressionDisplayFormat | null => {
+): ThProgressionFormat | null => {
   for (const format of formats) {
     switch (format) {
-      case ThProgressionDisplayFormat.positionsOfTotal:
-      case ThProgressionDisplayFormat.positions:
-      case ThProgressionDisplayFormat.positionsLeft:
+      case ThProgressionFormat.positionsOfTotal:
+      case ThProgressionFormat.positions:
+      case ThProgressionFormat.positionsLeft:
         if (hasPositions) {
           return format;
         }
         break;
-      case ThProgressionDisplayFormat.overallProgression:
-      case ThProgressionDisplayFormat.resourceProgression:
-      case ThProgressionDisplayFormat.progressionOfResource:
+      case ThProgressionFormat.overallProgression:
+      case ThProgressionFormat.resourceProgression:
+      case ThProgressionFormat.progressionOfResource:
         if (hasProgression) {
           return format;
         }
         break;
-      case ThProgressionDisplayFormat.none:
+      case ThProgressionFormat.none:
         return format;
     }
   }
@@ -49,28 +49,31 @@ export const StatefulReaderProgression = ({
 }) => {
   const { t } = useI18n();
   const RSPrefs = usePreferences();
+  
   const unstableTimeline = useAppSelector(state => state.publication.unstableTimeline);
+  const isFXL = useAppSelector(state => state.publication.isFXL);
+
   const [displayText, setDisplayText] = useState("");
   
   // Get the display format, handling both single format and array of formats
   const displayFormat = useMemo(() => {
-    const format = RSPrefs.affordances?.progressionDisplayFormat;
-    if (!format) return ThProgressionDisplayFormat.none;
+    const format = isFXL ? RSPrefs.theming.progression?.format?.fxl : RSPrefs.theming.progression?.format?.reflow;
+    if (!format) return ThProgressionFormat.resourceProgression;
     
     const hasPositions = !!unstableTimeline?.progression?.currentPositions?.length;
     const hasProgression = unstableTimeline?.progression?.relativeProgression !== undefined;
     
     if (Array.isArray(format)) {
       return getBestMatchingFormat(format, hasPositions, hasProgression) || 
-             ThProgressionDisplayFormat.none;
+             ThProgressionFormat.resourceProgression;
     }
     
     return format;
-  }, [RSPrefs.affordances?.progressionDisplayFormat, unstableTimeline]);
+  }, [RSPrefs.theming.progression?.format, unstableTimeline, isFXL]);
 
   // Update display text based on current position and timeline
   useEffect(() => {
-    if (displayFormat === ThProgressionDisplayFormat.none || !unstableTimeline?.progression) {
+    if (displayFormat === ThProgressionFormat.none || !unstableTimeline?.progression) {
       setDisplayText("");
       return;
     }
@@ -95,13 +98,13 @@ export const StatefulReaderProgression = ({
     };
         
     switch (displayFormat) {
-      case ThProgressionDisplayFormat.positions:
+      case ThProgressionFormat.positions:
         if (currentPositions.length > 0) {
           text = formatPositions(currentPositions);
         }
         break;
         
-      case ThProgressionDisplayFormat.positionsOfTotal:
+      case ThProgressionFormat.positionsOfTotal:
         if (currentPositions.length > 0 && totalPositions) {
           text = t("reader.app.progression.of", { 
             current: formatPositions(currentPositions),
@@ -110,7 +113,7 @@ export const StatefulReaderProgression = ({
         }
         break;
         
-      case ThProgressionDisplayFormat.positionsLeft:
+      case ThProgressionFormat.positionsLeft:
         if (positionsLeft !== undefined) {
           text = t("reader.app.progression.positionsLeft", { 
             count: positionsLeft,
@@ -119,21 +122,21 @@ export const StatefulReaderProgression = ({
         }
         break;
         
-      case ThProgressionDisplayFormat.overallProgression:
+      case ThProgressionFormat.overallProgression:
         if (totalProgression !== undefined) {
           const percentage = Math.round(totalProgression * 100);
           text = `${ percentage }%`;
         }
         break;
         
-      case ThProgressionDisplayFormat.resourceProgression:
+      case ThProgressionFormat.resourceProgression:
         if (relativeProgression !== undefined) {
           const percentage = Math.round(relativeProgression * 100);
           text = `${ percentage }%`;
         }
         break;
         
-      case ThProgressionDisplayFormat.progressionOfResource:
+      case ThProgressionFormat.progressionOfResource:
         if (relativeProgression !== undefined) {
           const percentage = Math.round(relativeProgression * 100);
           text = t("reader.app.progression.of", {
@@ -147,7 +150,7 @@ export const StatefulReaderProgression = ({
     setDisplayText(text);
   }, [displayFormat, unstableTimeline?.progression, t]);
 
-  if (!displayText || displayFormat === ThProgressionDisplayFormat.none) {
+  if (!displayText || displayFormat === ThProgressionFormat.none) {
     return null;
   }
 

@@ -16,7 +16,8 @@ import {
   ThSheetHeaderVariant,
   ThLayoutUI,
   ThBackLinkVariant,
-  ThProgressionDisplayFormat
+  ThProgressionFormat,
+  ThRunningHeadFormat
 } from "./models/enums";
 import { createPreferences } from "./preferences";
 
@@ -32,6 +33,31 @@ export const defaultPreferences = createPreferences({
     pageGutter: 20
   },
   theming: {
+    header: {
+      backLink: {
+        variant: ThBackLinkVariant.arrow,
+        visibility: "partially",
+        href: "/"
+      },
+      runningHead: {
+        format: {
+          reflow: ThRunningHeadFormat.title,
+          fxl: ThRunningHeadFormat.title
+        }
+      }
+    },
+    progression: {
+      format: {
+        reflow: [
+          ThProgressionFormat.positionsOfTotal, 
+          ThProgressionFormat.progressionOfResource
+        ],
+        fxl: [
+          ThProgressionFormat.positionsOfTotal, 
+          ThProgressionFormat.progressionOfResource
+        ]
+      }
+    },
     arrow: {
       size: 40, // Size of the left and right arrows in px
       offset: 5 // offset of the arrows from the edges in px
@@ -194,23 +220,12 @@ export const defaultPreferences = createPreferences({
       }
     }
   },
-  affordances: {
-    progressionDisplayFormat: [
-      ThProgressionDisplayFormat.positionsOfTotal, 
-      ThProgressionDisplayFormat.progressionOfResource
-    ], 
+  affordances: { 
     scroll: {
       hintInImmersive: true,
       toggleOnMiddlePointer: ["tap"],
       hideOnForwardScroll: true,
       showOnBackwardScroll: true
-    }
-  },
-  header: {
-    backLink: {
-      variant: ThBackLinkVariant.arrow,
-      visibility: "partially",
-      href: "/"
     }
   },
   shortcuts: {

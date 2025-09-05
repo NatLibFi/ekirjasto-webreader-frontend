@@ -6,7 +6,7 @@ import { ThPagination, ThPaginationProps } from "@/core/Components/Reader/ThPagi
 
 import readerPaginationStyles from "./assets/styles/readerPagination.module.css";
   
-export const StatefulPagination = ({
+export const StatefulReaderPagination = ({
   ref,
   links,
   compounds,

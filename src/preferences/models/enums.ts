@@ -1,5 +1,10 @@
 "use client";
 
+export enum ThLayoutUI {
+  stacked = "stacked-ui",
+  layered = "layered-ui"
+}
+
 export enum ThBackLinkVariant {
   arrow = "arrow",
   home = "home",
@@ -7,12 +12,14 @@ export enum ThBackLinkVariant {
   custom = "custom"
 }
 
-export enum ThLayoutUI {
-  stacked = "stacked-ui",
-  layered = "layered-ui"
+export enum ThRunningHeadFormat {
+  title = "title",
+  chapter = "chapter",
+  // titleAndChapter = "titleAndChapter",
+  none = "none"
 }
 
-export enum ThProgressionDisplayFormat {
+export enum ThProgressionFormat {
   positionsOfTotal = "positionsOfTotal",            // x-y of z
   positions = "positions",                          // x-y
   overallProgression = "overallProgression",        // x%

@@ -21,6 +21,7 @@ export interface TimelineItem {
 }
 
 export interface UnstableTimeline {
+  title?: string;
   items?: {
     [href: string]: TimelineItem;
   };
@@ -69,6 +70,7 @@ export const useTimeline = ({
 
   // Create the timeline object
   const timeline = useMemo(() => ({
+    title: publication?.metadata.title.getTranslation("en"),
     items: timelineItems,
     toc: {
       tree: tocTree,
@@ -88,6 +90,7 @@ export const useTimeline = ({
         : 0
     }
   }), [
+    publication?.metadata.title,
     timelineItems,
     tocTree,
     currentTocEntry,

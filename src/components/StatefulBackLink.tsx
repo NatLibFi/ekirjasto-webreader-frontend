@@ -29,10 +29,10 @@ export const StatefulBackLink = ({
   const direction = useAppSelector(state => state.reader.direction);
   const isRTL = direction === ThLayoutDirection.rtl;
   
-  const variant = RSPrefs.header.backLink?.variant || ThBackLinkVariant.arrow;
-  const href = RSPrefs.header.backLink?.href;
-  const content = RSPrefs.header.backLink?.content;
-  const visibility = RSPrefs.header.backLink?.visibility || "partially";
+  const variant = RSPrefs.theming.header?.backLink?.variant || ThBackLinkVariant.arrow;
+  const href = RSPrefs.theming.header?.backLink?.href;
+  const content = RSPrefs.theming.header?.backLink?.content;
+  const visibility = RSPrefs.theming.header?.backLink?.visibility || "partially";
   const backLinkClassName = classNames(backLinkStyles.backLink, visibility === "always" ? readerSharedUI.alwaysVisible : readerSharedUI.partiallyVisible);
 
   const compounds = {

@@ -12,10 +12,11 @@ import overflowMenuStyles from "./Actions/assets/styles/overflowMenu.module.css"
 import { ThActionEntry } from "@/core/Components/Actions/ThActionsBar";
 import { ThHeader  } from "@/core/Components/Reader/ThHeader";
 import { StatefulBackLink } from "./StatefulBackLink";
-import { ThRunningHead } from "@/core/Components/Reader/ThRunningHead";
+import { StatefulReaderRunningHead } from "./StatefulReaderRunningHead";
 import { ThInteractiveOverlay } from "../core/Components/Reader/ThInteractiveOverlay";
 import { StatefulCollapsibleActionsBar } from "./Actions/StatefulCollapsibleActionsBar";
 
+import { useI18n } from "@/i18n/useI18n";
 import { usePlugins } from "./Plugins/PluginProvider";
 import { usePreferences } from "@/preferences/hooks";
 import { useActions } from "@/core/Components";
@@ -23,7 +24,6 @@ import { useFocusWithin } from "react-aria";
 
 import { setHovering } from "@/lib/readerReducer";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { useI18n } from "@/i18n/useI18n";
 
 export const StatefulReaderHeader = ({
   layout
@@ -40,7 +40,6 @@ export const StatefulReaderHeader = ({
   const overflowMap = useAppSelector(state => state.actions.overflow);
   const isFXL = useAppSelector(state => state.publication.isFXL);
   const isScroll = useAppSelector(state => state.settings.scroll);
-  const runningHead = useAppSelector(state => state.publication.runningHead);
   const isImmersive = useAppSelector(state => state.reader.isImmersive);
   const isHovering = useAppSelector(state => state.reader.isHovering);
   const hasScrollAffordance = useAppSelector(state => state.reader.hasScrollAffordance);
@@ -121,13 +120,9 @@ export const StatefulReaderHeader = ({
       onMouseLeave={ removeHover }
       { ...focusWithinProps }
     >
-      { RSPrefs.header.backLink && <StatefulBackLink className={ readerHeaderStyles.backLinkWrapper } /> }
+      { RSPrefs.theming.header?.backLink && <StatefulBackLink className={ readerHeaderStyles.backLinkWrapper } /> }
       
-      <ThRunningHead 
-        label={ runningHead || t("reader.app.header.runningHeadFallback") } 
-        syncDocTitle={ true }
-        aria-label={ t("reader.app.header.runningHead") }
-      />
+      <StatefulReaderRunningHead />
       
       <StatefulCollapsibleActionsBar 
         id="reader-header-overflowMenu" 

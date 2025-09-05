@@ -90,7 +90,6 @@ import {
 import { 
   setFXL, 
   setRTL, 
-  setRunningHead, 
   setPositionsList,
   setTimeline,
   setPublicationStart,
@@ -665,10 +664,6 @@ export const StatefulReader = ({
 
     dispatch(setRTL(publication.metadata.effectiveReadingProgression === ReadingProgression.rtl));
     dispatch(setFXL(publication.metadata.effectiveLayout === Layout.fixed));
-
-    const pubTitle = publication.metadata.title.getTranslation("en");
-
-    dispatch(setRunningHead(pubTitle));
 
     let positionsList: Locator[] | undefined;
 

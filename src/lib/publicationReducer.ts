@@ -4,7 +4,6 @@ import { Locator } from "@readium/shared";
 import { UnstableTimeline } from "@/core/Hooks/useTimeline";
 
 export interface PublicationReducerState {
-  runningHead?: string;
   isFXL: boolean;
   isRTL: boolean;
   positionsList: Locator[],
@@ -14,7 +13,6 @@ export interface PublicationReducerState {
 }
 
 const initialState: PublicationReducerState = {
-  runningHead: undefined,
   isFXL: false,
   isRTL: false,
   positionsList: [],
@@ -27,9 +25,6 @@ export const publicationSlice = createSlice({
   name: "publication",
   initialState,
   reducers: {
-    setRunningHead: (state, action) => {
-      state.runningHead = action.payload
-    },
     setFXL: (state, action) => {
       state.isFXL = action.payload
     },
@@ -78,7 +73,6 @@ export const publicationSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const { 
-  setRunningHead,
   setFXL,
   setRTL,
   setPositionsList,

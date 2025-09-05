@@ -4,6 +4,8 @@ The `theming` property is responsible for the look and feel of the app, as it al
 
 - breakpoints;
 - layout UI, defaults and constraints;
+- header’s back link;
+- progression;
 - arrows and icons; 
 - themes.
 
@@ -83,6 +85,118 @@ This means:
 - the default scrim is color black with `20%` alpha;
 - the bottom sheets are constrained to `600px`, unless overridden for an action;
 - the popover sheets are constrained to `400px`.
+
+## Header
+
+The `header` preference allows you to configure the header of the reader. It accepts the following properties:
+
+- `backLink`: The back link configuration
+- `runningHead`: The running head format
+
+### BackLink
+
+The `backLink` preference allows you to configure the back button in the header. It accepts the following properties:
+
+- `href`: (string) The URL to navigate to when the back button is clicked
+- `visibility`: Visibility of the back button. If `always`, the back button will be always visible. If `partially`, the back button will be hidden in immersive mode. It is `partially` by default.
+- `variant?`: Variant for the back link. Can be one of enum `ThBackLinkVariant`:
+  - `arrow`: Shows an arrow icon (the default if `undefined`)
+  - `home`: Shows a home icon
+  - `library`: Shows a library/books icon
+  - `custom`: Use with `content` to provide a custom icon
+- `content?`: Optional custom content for the back button when `variant` is set to `custom`. Can be either:
+  - An image with `{ type: "img"; src: string; alt?: string }`
+  - An SVG with `{ type: "svg"; content: string }` with the `content` string being the raw inline SVG markup
+
+For example:
+
+```typescript
+theming: {
+  ...
+  header: {
+    backLink: {
+      href: "/library",
+      variant: ThBackLinkVariant.custom,
+      visibility: "always",
+      content: {
+        type: "img",
+        src: "/path/to/custom-icon.png",
+        alt: "Back to Library"
+      }
+    }
+  }
+}
+```
+
+Or for a simple home button:
+
+```typescript
+theming: {
+  ...
+  header: {
+    backLink: {
+      href: "/",
+      variant: ThBackLinkVariant.home
+    }
+  }
+}
+```
+
+If `backLink` is `undefined` or `null`, then the back button will not be rendered.
+
+### Running Head
+
+The `runningHead` preference allows you to configure the running head format in the header. It accepts the following properties:
+
+- `format`: Format of the running head:
+  - `reflow`: The running head format for reflowable EPUBs
+  - `fxl`: The running head format for Fixed-Layout EPUBs
+
+Each format can be one or an array of enum `ThRunningHeadFormat`:
+  - `title`: The title of the publication
+  - `chapter`: The chapter of the publication
+  - `none`: Hides the running head display
+
+```typescript
+theming: {
+  ...
+  header: {
+    runningHead: {
+      reflow: ThRunningHeadFormat.title,
+      fxl: ThRunningHeadFormat.chapter
+    }
+  }
+}
+```
+
+## Progression
+
+The `progression` preference allows you to configure the progression format in the footer:
+
+- `format`: Format of the progression: 
+  - `reflow`: The progression format for reflowable EPUBs
+  - `fxl`: The progression format for Fixed-Layout EPUBs
+
+Each format can be one or an array of enum `ThProgressionFormat`:
+  - `positionsOfTotal`: "x-y of z" (e.g. "10-12 of 50")
+  - `positions`: "x-y" (e.g. "10-12")
+  - `overallProgression`: "x%" (e.g. "25%")
+  - `positionsLeft`: "x left in chapter" (e.g. "5 left in Chapter 1")
+  - `resourceProgression`: "x%" (e.g. "75%")
+  - `progressionOfResource`: "x% of y" (e.g. "75% of Chapter 1")
+  - `none`: Hides the progression display
+
+```typescript
+theming: {
+  ...
+  progression: {
+    format: {
+      reflow: ThProgressionFormat.progressionOfResource,
+      fxl: [ThProgressionFormat.positionsOfTotal, ThProgressionFormat.none]
+    }
+  }
+}
+```
 
 ## Arrows and icons
 
