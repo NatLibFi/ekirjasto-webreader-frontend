@@ -100,7 +100,7 @@ export const StatefulTheme = ({ mapArrowNav }: { mapArrowNav?: number }) => {
     };
     
     return cssProps;
-  }, [preferences.theming.themes.keys, preferences.theming.themes.systemThemes, isRTL]);
+  }, [preferences, isRTL]);
 
   // mapArrowNav is the number of columns. This assumption 
   // should be safe since even in vertical-writing, 

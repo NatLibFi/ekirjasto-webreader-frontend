@@ -153,16 +153,16 @@ export interface ThPreferences<T extends Partial<CustomizableKeys> = {}> {
     header?: {
       backLink?: ThBackLinkPref | null;
       runningHead?: {
-        format: {
-          reflow: ThRunningHeadFormat;
-          fxl: ThRunningHeadFormat;
+        format?: {
+          reflow?: ThRunningHeadFormat;
+          fxl?: ThRunningHeadFormat;
         }
       }
     };
     progression?: {
-      format: {
-        reflow: ThProgressionFormat | Array<ThProgressionFormat>;
-        fxl: ThProgressionFormat | Array<ThProgressionFormat>;
+      format?: {
+        reflow?: ThProgressionFormat | Array<ThProgressionFormat>;
+        fxl?: ThProgressionFormat | Array<ThProgressionFormat>;
       };
     };
     arrow: {

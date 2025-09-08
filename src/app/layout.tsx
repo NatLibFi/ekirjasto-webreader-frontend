@@ -4,7 +4,7 @@ import { eKirjastoPreferences } from "../preferences/eKirjastoPreferences";
 
 
 import { ThStoreProvider } from "@/lib/ThStoreProvider";
-import { ThPreferencesProvider } from "@/preferences";
+import { ThPreferencesProvider } from "@/preferences/ThPreferencesProvider";
 import { ThI18nProvider } from "@/i18n/ThI18nProvider";
 
 export const runtime = "edge";

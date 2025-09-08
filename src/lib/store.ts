@@ -7,6 +7,7 @@ import settingsReducer, { SettingsReducerState } from "@/lib/settingsReducer";
 import themeReducer, { ThemeReducerState } from "@/lib/themeReducer";
 import actionsReducer, { ActionsReducerState } from "@/lib/actionsReducer";
 import publicationReducer, { PublicationReducerState } from "./publicationReducer";
+import preferencesReducer, { PreferencesReducerState } from "./preferencesReducer";
 
 import debounce from "debounce";
 
@@ -22,6 +23,7 @@ export type RootState = {
   theming: ThemeReducerState;
   actions: ActionsReducerState;
   publication: PublicationReducerState;
+  preferences: PreferencesReducerState;
   [key: string]: any; // For external reducers
 };
 
@@ -66,7 +68,12 @@ const loadState = (storageKey?: string) => {
     const resolvedKey = storageKey || DEFAULT_STORAGE_KEY;
     const serializedState = localStorage.getItem(resolvedKey);
     if (serializedState === null) {
-      return { actions: undefined, settings: undefined, theming: undefined };
+      return { 
+        actions: undefined, 
+        settings: undefined, 
+        theming: undefined,
+        preferences: undefined
+      };
     }
     const deserializedState = JSON.parse(serializedState);
     deserializedState.actions = updateActionsState(deserializedState.actions);
@@ -77,7 +84,12 @@ const loadState = (storageKey?: string) => {
 
     return deserializedState;
   } catch (err) {
-    return { actions: undefined, settings: undefined, theming: undefined };
+    return { 
+      actions: undefined, 
+      settings: undefined, 
+      theming: undefined,
+      preferences: undefined
+    };
   }
 };
 
@@ -92,6 +104,7 @@ const saveState = (state: any, storageKey?: string, externalReducers: Record<str
     if (state.actions) stateToPersist.actions = state.actions;
     if (state.settings) stateToPersist.settings = state.settings;
     if (state.theming) stateToPersist.theming = state.theming;
+    if (state.preferences) stateToPersist.preferences = state.preferences;
     
     // External reducers to persist
     Object.entries(externalReducers).forEach(([key, config]) => {
@@ -115,6 +128,7 @@ export const makeStore = (storageKey?: string, externalReducers: Record<string, 
     theming: themeReducer,
     actions: actionsReducer,
     publication: publicationReducer,
+    preferences: preferencesReducer,
     ...Object.entries(externalReducers).reduce((acc, [key, config]) => ({
       ...acc,
       [key]: config.reducer
@@ -129,6 +143,7 @@ export const makeStore = (storageKey?: string, externalReducers: Record<string, 
     actions: persistedState.actions,
     settings: persistedState.settings,
     theming: persistedState.theming,
+    preferences: persistedState.preferences,
     // Include persisted state for external reducers that have it
     ...Object.entries(externalReducers).reduce((acc, [key, config]) => {
       if (config.persist && persistedState[key] !== undefined) {

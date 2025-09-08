@@ -62,7 +62,7 @@ This will create a new preferences object with the default preferences and the o
 import { ThPreferencesProvider } from "@edrlab/thorium-web/core/preferences";
 const App = () => {
   return (
-      <ThPreferencesProvider value={ myPreferences }>
+      <ThPreferencesProvider initialPreferences={ myPreferences }>
         {/* Your application */}
       </ThPreferencesProvider>
   )

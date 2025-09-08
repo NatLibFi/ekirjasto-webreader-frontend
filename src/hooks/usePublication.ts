@@ -10,11 +10,11 @@ export interface UsePublicationOptions {
   onError?: (error: string) => void;
 }
 
-export function usePublication({ 
+export const usePublication = ({ 
   url, 
   allowedDomains, 
   onError = () => {} 
-}: UsePublicationOptions) {
+}: UsePublicationOptions) => {
   const [error, setError] = useState("");
   const [manifest, setManifest] = useState<object | undefined>(undefined);
   const [selfLink, setSelfLink] = useState<string | undefined>(undefined);

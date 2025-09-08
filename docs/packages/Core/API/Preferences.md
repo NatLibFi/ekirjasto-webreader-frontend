@@ -11,7 +11,8 @@ Context provider component for preferences management.
 **Props:**
 ```typescript
 interface Props<T extends Partial<CustomizableKeys>> {
-  value?: ThPreferences<T>;
+  adapter?: PreferencesAdapter;
+  initialPreferences?: ThPreferences<T>;
   children: React.ReactNode;
 }
 ```
@@ -21,6 +22,7 @@ interface Props<T extends Partial<CustomizableKeys>> {
 - Default preferences handling
 - Type-safe customization
 - Direction setting
+- Adapter support
 
 ## Hooks
 

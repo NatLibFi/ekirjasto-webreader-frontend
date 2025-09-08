@@ -65,9 +65,16 @@ The `<ThStoreProvider>` is a Redux store provider that accepts two optional prop
 
 The `<ThPreferencesProvider>` is a context provider used to configure all the reader’s components: the actions to display and their configuration, the settings to display and their order, the size of icons and navigation arrows, the themes exposed to users, etc.
 
-It accepts one optional prop:
+It accepts two optional props:
 
-- `value`: your own preferences if you need to modify or extend the default ones.
+- `adapter`: your own adapter if you need to modify or extend the default one.
+- `initialPreferences`: your own preferences if you need to modify or extend the default ones.
+
+### StatefulPreferencesProvider
+
+The `<StatefulPreferencesProvider>` is a Preferences Provider embedding a Redux Adapter. It is using a `PreferencesSlice` to handle the preferences through Redux states and persist their values. 
+
+This can come in handy if you want to update the preferences through UI Components and keep the values persisted across sessions.
 
 ### ThI18nProvider
 

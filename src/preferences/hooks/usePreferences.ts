@@ -2,14 +2,8 @@
 
 import { useContext } from "react";
 import { ThPreferencesContext } from "../ThPreferencesContext";
-import { ThPreferences, DefaultKeys, CustomizableKeys } from "../preferences";
 
-type ThPreferencesContextType<T extends Partial<CustomizableKeys>> = {
-  preferences: ThPreferences<T>;
-  update: (updater: (prev: ThPreferences<T>) => ThPreferences<T>) => void;
-};
-
-export const usePreferences = <T extends Partial<CustomizableKeys> = DefaultKeys>(): ThPreferencesContextType<T> => {
+export const usePreferences = () => {
   const context = useContext(ThPreferencesContext);
   
   if (!context) {
@@ -17,4 +11,4 @@ export const usePreferences = <T extends Partial<CustomizableKeys> = DefaultKeys
   }
   
   return context;
-};
+}

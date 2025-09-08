@@ -1,31 +1,65 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+import { ThPreferences } from "./preferences";
+
 import { defaultPreferences } from "./defaultPreferences";
 
-import { ThPreferences, CustomizableKeys } from "./preferences";
 import { ThDirectionSetter } from "./ThDirectionSetter";
 import { ThPreferencesContext } from "./ThPreferencesContext";
 
-export function ThPreferencesProvider<T extends Partial<CustomizableKeys>>({
-  value,
-  children,
-}: {
-  value?: ThPreferences<T>;
+import { PreferencesAdapter } from "./adapters/PreferencesAdapter";
+import { MemoryPreferencesAdapter } from "./adapters/MemoryPreferencesAdapter";
+import type { ExtendedKeys } from "./ThPreferencesContext";
+
+interface Props {
+  adapter?: PreferencesAdapter<ExtendedKeys>;
   children: React.ReactNode;
-}) {
-  const [preferences, setPreferences] = useState<ThPreferences<T>>(
-    () => value || { ...defaultPreferences } as ThPreferences<T>
+}
+
+export const ThPreferencesProvider = ({ 
+  adapter,
+  children, 
+}: Props) => {
+  // Create a default in-memory adapter if none is provided
+  const effectiveAdapter = useMemo(() => {
+    return adapter || new MemoryPreferencesAdapter<ExtendedKeys>(
+      defaultPreferences as ThPreferences<ExtendedKeys>
+    );
+  }, [adapter]);
+  
+  const [preferences, setPreferences] = useState<ThPreferences<ExtendedKeys>>(() => 
+    effectiveAdapter.getPreferences() as ThPreferences<ExtendedKeys>
   );
+
+  // Handle preference changes
+  const handlePreferenceChange = useCallback((newPrefs: ThPreferences<ExtendedKeys>) => {
+    setPreferences(prev => {
+      // Only update if preferences actually changed
+      return JSON.stringify(prev) === JSON.stringify(newPrefs) ? prev : newPrefs;
+    });
+  }, []);
+
+  // Set up and clean up subscription to preference changes
+  useEffect(() => {
+    // Set up the subscription
+    effectiveAdapter.subscribe(handlePreferenceChange);
+    
+    // Clean up the subscription when the component unmounts or dependencies change
+    return () => {
+      effectiveAdapter.unsubscribe(handlePreferenceChange);
+    };
+  }, [effectiveAdapter, handlePreferenceChange]);
 
   const contextValue = useMemo(() => ({
     preferences,
-    update: (updater: (prev: ThPreferences<T>) => ThPreferences<T>) => {
-      setPreferences(prev => updater({ ...prev }));
+    updatePreferences: (newPrefs: ThPreferences<ExtendedKeys>) => {
+      effectiveAdapter.setPreferences(newPrefs);
     },
-  }), [preferences]);
+  }), [preferences, effectiveAdapter]);
 
-  return (    
+  return (
     <ThPreferencesContext.Provider value={ contextValue }>
       <ThDirectionSetter direction={ preferences.direction }>
         { children }

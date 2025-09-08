@@ -10,6 +10,8 @@ export * from "../Settings";
 export * from "../Sheets";
 export * from "../StatefulLoader";
 export * from "../PublicationGrid";
+export * from "../StatefulPreferencesProvider";
+
 // export * from "../StatefulReaderArrowButton";
 // export * from "../StatefulReaderFooter";
 // export * from "../StatefulReaderHeader";
@@ -27,7 +29,7 @@ export * from "../../lib";
 
 export {
   usePreferences,
-  ThPreferencesProvider
+  ThPreferencesProvider,
 } from "../../preferences";
 
 export {

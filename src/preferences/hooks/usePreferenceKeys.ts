@@ -14,7 +14,7 @@ import {
  * Hook to safely access and use preference keys with proper type inference
  * This allows components to use the keys as indexes without type errors
  */
-export function usePreferenceKeys<T extends Partial<CustomizableKeys>>() {
+export const usePreferenceKeys = <T extends Partial<CustomizableKeys>>() => {
   const { preferences } = usePreferences();
   
   // Return an object with typed keys for each customizable section

@@ -2,15 +2,20 @@
 
 import { createContext } from "react";
 import { defaultPreferences } from "./defaultPreferences";
-import { ThPreferences, CustomizableKeys } from "./preferences";
+import { ThPreferences, CustomizableKeys, DefaultKeys } from "./preferences";
 
-type ThPreferencesContextType<T extends Partial<CustomizableKeys>> = {
-  preferences: ThPreferences<T>;
-  update: (updater: (prev: ThPreferences<T>) => ThPreferences<T>) => void;
+export type ExtendedKeys = CustomizableKeys & DefaultKeys;
+
+export interface PreferencesContextValue {
+  preferences: ThPreferences<ExtendedKeys>;
+  updatePreferences: (prefs: ThPreferences<ExtendedKeys>) => void;
+}
+
+const defaultValue: PreferencesContextValue = {
+  preferences: defaultPreferences as ThPreferences<ExtendedKeys>,
+  updatePreferences: () => {
+    throw new Error('updatePreferences must be used within a ThPreferencesProvider with an adapter');
+  },
 };
 
-// Create a singleton context instance
-export const ThPreferencesContext = createContext<ThPreferencesContextType<any>>({
-  preferences: defaultPreferences,
-  update: () => {},
-});
+export const ThPreferencesContext = createContext<PreferencesContextValue>(defaultValue);

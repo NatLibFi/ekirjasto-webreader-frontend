@@ -85,7 +85,7 @@ const myPreferences = createPreferences({
 
 function App() {
   return (
-    <ThPreferencesProvider value={myPreferences}>
+    <ThPreferencesProvider initialPreferences={ myPreferences }>
       {/* Your application components */}
     </ThPreferencesProvider>
   );
