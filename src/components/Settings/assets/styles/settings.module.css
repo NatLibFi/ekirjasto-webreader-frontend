@@ -72,7 +72,7 @@
 }
 
 .readerSettingsRadio {
-  padding: 5px;
+  padding: calc(var(--layout-spacing) / 4);
   border-radius: var(--layout-radius);
   box-sizing: border-box;
   border: 2px solid transparent;
@@ -82,6 +82,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: calc(var(--layout-spacing) / 2);
   min-width: 0;
   width: 100%;
 }
