@@ -12,14 +12,14 @@ importers:
         specifier: 2.0.0-beta.19
         version: 2.0.0-beta.19
       '@readium/navigator':
-        specifier: ^2.1.0
-        version: 2.1.0
+        specifier: ^2.1.1
+        version: 2.1.1
       '@readium/navigator-html-injectables':
-        specifier: ^2.1.0
-        version: 2.1.0
+        specifier: ^2.1.1
+        version: 2.1.1
       '@readium/shared':
-        specifier: ^2.1.0
-        version: 2.1.0
+        specifier: ^2.1.1
+        version: 2.1.1
       '@reduxjs/toolkit':
         specifier: ^2.8.2
         version: 2.8.2(react-redux@9.2.0(@types/react@19.1.10)(react@19.1.1)(redux@5.0.1))(react@19.1.1)
@@ -1818,16 +1818,16 @@ packages:
   '@readium/css@2.0.0-beta.19':
     resolution: {integrity: sha512-yZrWzxpG3RKgJ7+iVZYCNYZZeGxx9d4ipyppBd/1RGsodHgykjAt8pPT/Ngpob6KiZ1rga5boDFrH8JiNASg2g==}
 
-  '@readium/navigator-html-injectables@2.1.0':
-    resolution: {integrity: sha512-bgCza6MHuQXreXxkM6HvSIzzqr2VdKW4Cq43aPkTIcs6BRIZkugtGQJCyQIZQNH6vreuaLjtOogQJzEha9fDdQ==}
+  '@readium/navigator-html-injectables@2.1.1':
+    resolution: {integrity: sha512-DXbRCBgxC1JVtWiOz941IoPuEGKOHu7Wy9HQKfz4Ej5A9nVYuoyrG4XxPTPXbsiW6LAb99jrJetbj6srq83dCQ==}
     engines: {node: '>=18'}
 
-  '@readium/navigator@2.1.0':
-    resolution: {integrity: sha512-KG0fn3XPK73TRgBvF91vDJ8mlBGdDgJ8ULvnOluS0Ui1OElgvFTVMvxZr4EXNZXbmf6bdr04RR1AtNAslm7wJw==}
+  '@readium/navigator@2.1.1':
+    resolution: {integrity: sha512-QRPif05Yv/qNeZD1fzgu9txwFub+UHkoWvsBDHpRkNTr5zFEw+IMIded0H13ExirORHkoIBfQ7km0gRGSORpPg==}
     engines: {node: '>=18'}
 
-  '@readium/shared@2.1.0':
-    resolution: {integrity: sha512-zs+F48WF/LsV6pl6X+02beHJoAgD1GQ+W7I4w8H0rdfY8rJWGIuZzeR1HTq/TYjUgX1l0sJf/6LYCTJfIMNANA==}
+  '@readium/shared@2.1.1':
+    resolution: {integrity: sha512-TYHdek1sFJqcgQQIeawxq8BBgSj6pBZ32E/GNhCvfGezFPHEffocVKZUavoUypiV3zS9/AokbLnlqbxYDBR77w==}
     engines: {node: '>=18'}
 
   '@reduxjs/toolkit@2.8.2':
@@ -6217,11 +6217,11 @@ snapshots:
 
   '@readium/css@2.0.0-beta.19': {}
 
-  '@readium/navigator-html-injectables@2.1.0': {}
+  '@readium/navigator-html-injectables@2.1.1': {}
 
-  '@readium/navigator@2.1.0': {}
+  '@readium/navigator@2.1.1': {}
 
-  '@readium/shared@2.1.0': {}
+  '@readium/shared@2.1.1': {}
 
   '@reduxjs/toolkit@2.8.2(react-redux@9.2.0(@types/react@19.1.10)(react@19.1.1)(redux@5.0.1))(react@19.1.1)':
     dependencies:
