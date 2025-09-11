@@ -19,11 +19,11 @@ import {
   ThProgressionFormat,
   ThRunningHeadFormat
 } from "./models/enums";
-import { createPreferences } from "./preferences";
+import { createPreferences, ThPreferences, DefaultKeys } from "./preferences";
 
 import ReadiumCSSColors from "@readium/css/css/vars/colors.json";
 
-export const defaultPreferences = createPreferences({
+export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<DefaultKeys>({
 //  direction: ThLayoutDirection.ltr,
 //  locale: "en",
   typography: {

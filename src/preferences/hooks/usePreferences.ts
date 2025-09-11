@@ -3,7 +3,9 @@
 import { useContext } from "react";
 import { ThPreferencesContext } from "../ThPreferencesContext";
 
-export const usePreferences = () => {
+import type { PreferencesContextValue } from "../ThPreferencesContext";
+
+export const usePreferences = (): PreferencesContextValue => {
   const context = useContext(ThPreferencesContext);
   
   if (!context) {

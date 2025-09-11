@@ -1,5 +1,5 @@
 // Peripherals based on XBReader
-import { ThActionsPref } from "@/preferences";
+import { ThActionsPref, DefaultKeys } from "@/preferences";
 
 import { ThActionsKeys } from "@/preferences/models/enums";
 
@@ -26,10 +26,10 @@ export default class Peripherals {
   private targets: EventTarget[] = [];
   private readonly callbacks: PCallbacks;
   private readonly store: ReturnType<typeof useAppStore>;
-  private readonly actionsPref: ThActionsPref<ThActionsKeys> | undefined;
+  private readonly actionsPref: ThActionsPref<DefaultKeys> | undefined;
   private readonly shortcuts: PShortcuts;
 
-  constructor(store: ReturnType<typeof useAppStore>, actionsPref: ThActionsPref<ThActionsKeys> | undefined, callbacks: PCallbacks) {
+  constructor(store: ReturnType<typeof useAppStore>, actionsPref: ThActionsPref<DefaultKeys> | undefined, callbacks: PCallbacks) {
     this.observers.forEach((method) => {
       (this as any)["on" + method] = (this as any)["on" + method].bind(this);
     });
@@ -53,7 +53,7 @@ export default class Peripherals {
       : this.actionsPref.reflowOrder;
 
     for (const actionKey of displayOrder) {
-      const shortcutString = this.actionsPref.keys[actionKey as keyof typeof ThActionsKeys].shortcut;
+      const shortcutString = this.actionsPref.keys[actionKey].shortcut;
       
       if (shortcutString) {
         const shortcutObj = buildShortcut(shortcutString);

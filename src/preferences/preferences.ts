@@ -20,7 +20,6 @@ import {
   ThRunningHeadFormat
 } from "./models/enums";
 import { ThCollapsibility, ThCollapsibilityVisibility } from "@/core/Components/Actions/hooks/useCollapsibility";
-import { defaultActionKeysObject } from "./models";
 
 export type ThBackLinkContent = 
   | { 
@@ -69,13 +68,25 @@ export interface ThActionsTokens {
   snapped?: ThActionsSnappedPref;
 };
 
-export interface ThActionsPref<T extends string> {
-  reflowOrder: T[];
-  fxlOrder: T[];
+export type CustomizableKeys = {
+  action?: string;
+  theme?: string;
+  settings?: string;
+  text?: string;
+  spacing?: string;
+};
+
+export type ActionKey<K extends CustomizableKeys> = ThActionsKeys | Extract<K["action"], string>;
+export type ThemeKey<K extends CustomizableKeys> = ThThemeKeys | Extract<K["theme"], string>;
+export type SettingsKey<K extends CustomizableKeys> = ThSettingsKeys | Extract<K["settings"], string>;
+export type TextSettingsKey<K extends CustomizableKeys> = ThTextSettingsKeys | Extract<K["text"], string>;
+export type SpacingSettingsKey<K extends CustomizableKeys> = ThSpacingSettingsKeys | Extract<K["spacing"], string>;
+
+export interface ThActionsPref<K extends CustomizableKeys> {
+  reflowOrder: Array<ActionKey<K>>;
+  fxlOrder: Array<ActionKey<K>>;
   collapse: ThCollapsibility;
-  keys: {
-    [key in T]: ThActionsTokens;
-  }
+  keys: Record<ActionKey<K>, ThActionsTokens>;
 };
 
 export interface ThDockingPref<T extends string> {
@@ -112,35 +123,8 @@ export type ThSettingsKeyTypes = {
 
 export type ThConstraintKeys = Extract<ThSheetTypes, ThSheetTypes.bottomSheet | ThSheetTypes.popover> | "pagination";
 
-// Simplified type for customizable keys
-export type CustomKeyType = string;
-
-export interface CustomizableKeys {
-  actionKeys: CustomKeyType;
-  themeKeys: CustomKeyType;
-  settingsKeys: CustomKeyType;
-  textSettingsKeys: CustomKeyType;
-  spacingSettingsKeys: CustomKeyType;
-  constraintsKeys: CustomKeyType;
-  customSettingsKeyTypes: Record<string, unknown>;
-}
-
-// Default keys with standard enum values
-export interface DefaultKeys {
-  actionKeys: ThActionsKeys;
-  themeKeys: ThThemeKeys;
-  settingsKeys: ThSettingsKeys;
-  textSettingsKeys: ThTextSettingsKeys;
-  spacingSettingsKeys: ThSpacingSettingsKeys;
-  constraintsKeys: ThConstraintKeys;
-  customSettingsKeyTypes: ThSettingsKeyTypes;
-}
-
-// Type helper for key arrays and objects
-export type KeysOf<T, D> = T extends CustomKeyType ? T : D;
-
 // Main preferences interface with simplified generics
-export interface ThPreferences<T extends Partial<CustomizableKeys> = {}> {
+export interface ThPreferences<K extends CustomizableKeys = {}> {
   direction?: ThLayoutDirection;
   locale?: string;
   typography: {
@@ -187,20 +171,19 @@ export interface ThPreferences<T extends Partial<CustomizableKeys> = {}> {
         scrim: string;
       };
       constraints?: {
-        [key in KeysOf<T["constraintsKeys"], ThConstraintKeys>]?: number | null
+        [key in ThConstraintKeys]?: number | null
       }
     };
     breakpoints: BreakpointsMap<number | null>;
     themes: {
-      reflowOrder: Array<KeysOf<T["themeKeys"], ThThemeKeys> | "auto">;
-      fxlOrder: Array<KeysOf<T["themeKeys"], ThThemeKeys> | "auto">;
+      reflowOrder: Array<ThemeKey<K> | "auto">;
+      fxlOrder: Array<ThemeKey<K> | "auto">;
       systemThemes?: {
-        light: KeysOf<T["themeKeys"], ThThemeKeys>;
-        dark: KeysOf<T["themeKeys"], ThThemeKeys>;
+        light: ThemeKey<K>;
+        dark: ThemeKey<K>;
       };
-      keys: {
-        [key in KeysOf<T["themeKeys"], ThThemeKeys>]: ThemeTokens;
-      };
+      // keys never includes "auto"
+      keys: Record<Exclude<ThemeKey<K>, "auto"> & string, ThemeTokens>;
     };
   };
   affordances: {
@@ -211,18 +194,18 @@ export interface ThPreferences<T extends Partial<CustomizableKeys> = {}> {
       showOnBackwardScroll: boolean;
     }
   };
-  actions: ThActionsPref<KeysOf<T["actionKeys"], ThActionsKeys>>;
+  actions: ThActionsPref<K>;
   shortcuts: {
     representation: UnstableShortcutRepresentation;
     joiner?: string;
   };
   docking: ThDockingPref<ThDockingKeys>;
   settings: {
-    reflowOrder: Array<KeysOf<T["settingsKeys"], ThSettingsKeys>>;
-    fxlOrder: Array<KeysOf<T["settingsKeys"], ThSettingsKeys>>;
-    keys?: T["customSettingsKeyTypes"] | ThSettingsKeyTypes;
-    text?: ThSettingsGroupPref<KeysOf<T["textSettingsKeys"], ThTextSettingsKeys>>;
-    spacing?: ThSettingsGroupPref<KeysOf<T["spacingSettingsKeys"], ThSpacingSettingsKeys>>;
+    reflowOrder: Array<SettingsKey<K>>;
+    fxlOrder: Array<SettingsKey<K>>;
+    keys?: ThSettingsKeyTypes;
+    text?: ThSettingsGroupPref<TextSettingsKey<K>>;
+    spacing?: ThSettingsGroupPref<SpacingSettingsKey<K>>;
   };
 }
 
@@ -231,9 +214,9 @@ export interface ThPreferences<T extends Partial<CustomizableKeys> = {}> {
  * @param params The preferences object to create
  * @returns A new preferences object
  */
-export const createPreferences = <T extends Partial<CustomizableKeys>>(
-  params: ThPreferences<T>
-): ThPreferences<T> => {
+export const createPreferences = <K extends CustomizableKeys = {}>(
+  params: ThPreferences<K>
+): ThPreferences<K> => {
   // Helper function to validate keys against the provided order arrays
   const validateObjectKeys = <K extends string, V>(
     orderArrays: K[][],
@@ -264,19 +247,17 @@ export const createPreferences = <T extends Partial<CustomizableKeys>>(
   
   // Validate actions
   if (params.actions) {
-    validateObjectKeys<KeysOf<T["actionKeys"], ThActionsKeys>, ThActionsTokens>(
-      [params.actions.reflowOrder, params.actions.fxlOrder],
+    validateObjectKeys<ActionKey<K>, ThActionsTokens>(
+      [params.actions.reflowOrder as Array<ActionKey<K>>, params.actions.fxlOrder as Array<ActionKey<K>>],
       params.actions.keys as Record<string, ThActionsTokens>,
-      "actions",
-      undefined,
-      defaultActionKeysObject as ThActionsTokens
+      "actions"
     );
   }
   
   // Validate themes
   if (params.theming?.themes) {
-    validateObjectKeys<KeysOf<T["themeKeys"], ThThemeKeys> | "auto", ThemeTokens>(
-      [params.theming.themes.reflowOrder, params.theming.themes.fxlOrder],
+    validateObjectKeys<ThemeKey<K> | "auto", ThemeTokens>(
+      [params.theming.themes.reflowOrder as Array<ThemeKey<K> | "auto">, params.theming.themes.fxlOrder as Array<ThemeKey<K> | "auto">],
       params.theming.themes.keys as Record<string, ThemeTokens>,
       "theming.themes",
       "auto" // Special case for themes
@@ -286,9 +267,12 @@ export const createPreferences = <T extends Partial<CustomizableKeys>>(
   return params;
 };
 
+// Default internal keys alias for convenience
+export type DefaultKeys = {};
+
 // Simplified type helpers
-export type ActionKeyType = ThActionsKeys | CustomKeyType;
-export type ThemeKeyType = ThThemeKeys | CustomKeyType;
-export type SettingsKeyType = ThSettingsKeys | CustomKeyType;
-export type TextSettingsKeyType = ThTextSettingsKeys | CustomKeyType;
-export type SpacingSettingsKeyType = ThSpacingSettingsKeys | CustomKeyType;
+export type ActionKeyType = ThActionsKeys;
+export type ThemeKeyType = ThThemeKeys;
+export type SettingsKeyType = ThSettingsKeys;
+export type TextSettingsKeyType = ThTextSettingsKeys;
+export type SpacingSettingsKeyType = ThSpacingSettingsKeys;

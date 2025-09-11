@@ -2,9 +2,9 @@
 
 import { createContext } from "react";
 import { defaultPreferences } from "./defaultPreferences";
-import { ThPreferences, CustomizableKeys, DefaultKeys } from "./preferences";
+import { ThPreferences, DefaultKeys } from "./preferences";
 
-export type ExtendedKeys = CustomizableKeys & DefaultKeys;
+export type ExtendedKeys = DefaultKeys;
 
 export interface PreferencesContextValue {
   preferences: ThPreferences<ExtendedKeys>;
