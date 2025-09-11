@@ -123,6 +123,12 @@ export type ThSettingsKeyTypes = {
 
 export type ThConstraintKeys = Extract<ThSheetTypes, ThSheetTypes.bottomSheet | ThSheetTypes.popover> | "pagination";
 
+export interface ThFormatPref<T extends string | Array<string>> {
+  default: T;
+  breakpoints?: BreakpointsMap<T>;
+  displayInImmersive?: boolean;
+}
+
 // Main preferences interface with simplified generics
 export interface ThPreferences<K extends CustomizableKeys = {}> {
   direction?: ThLayoutDirection;
@@ -138,15 +144,15 @@ export interface ThPreferences<K extends CustomizableKeys = {}> {
       backLink?: ThBackLinkPref | null;
       runningHead?: {
         format?: {
-          reflow?: ThRunningHeadFormat;
-          fxl?: ThRunningHeadFormat;
+          reflow?: ThFormatPref<ThRunningHeadFormat>;
+          fxl?: ThFormatPref<ThRunningHeadFormat>;
         }
       }
     };
     progression?: {
       format?: {
-        reflow?: ThProgressionFormat | Array<ThProgressionFormat>;
-        fxl?: ThProgressionFormat | Array<ThProgressionFormat>;
+        reflow?: ThFormatPref<ThProgressionFormat | Array<ThProgressionFormat>>;
+        fxl?: ThFormatPref<ThProgressionFormat | Array<ThProgressionFormat>>;
       };
     };
     arrow: {

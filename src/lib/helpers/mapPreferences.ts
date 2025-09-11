@@ -1,19 +1,20 @@
 import { PreferencesReducerState } from '../preferencesReducer';
 import { ThPreferences, CustomizableKeys } from '@/preferences/preferences';
+import { ThProgressionFormat, ThRunningHeadFormat } from '@/preferences/models/enums';
 
-export const mapPreferencesToState = <T extends CustomizableKeys>(prefs: ThPreferences<T>): PreferencesReducerState => {
+export const mapPreferencesToState = <T extends CustomizableKeys>(prefs: ThPreferences<T>): PreferencesReducerState => {  
   return {
     l10n: {
       locale: prefs.locale,
       direction: prefs.direction
     },
     progressionFormat: {
-      reflow: prefs.theming?.progression?.format?.reflow,
-      fxl: prefs.theming?.progression?.format?.fxl
+      reflow: prefs.theming?.progression?.format?.reflow?.default,
+      fxl: prefs.theming?.progression?.format?.fxl?.default
     },
     runningHeadFormat: {
-      reflow: prefs.theming?.header?.runningHead?.format?.reflow,
-      fxl: prefs.theming?.header?.runningHead?.format?.fxl
+      reflow: prefs.theming?.header?.runningHead?.format?.reflow?.default,
+      fxl: prefs.theming?.header?.runningHead?.format?.fxl?.default
     },
     ui: {
       reflow: prefs.theming?.layout?.ui?.reflow,
@@ -38,21 +39,49 @@ export const mapStateToPreferences = <T extends CustomizableKeys = CustomizableK
     direction: state.l10n?.direction ?? currentPrefs.direction,
     theming: {
       ...currentPrefs.theming,
-      progression: {
-        format: {
-          reflow: state.progressionFormat?.reflow ?? currentPrefs.theming.progression?.format?.reflow,
-          fxl: state.progressionFormat?.fxl ?? currentPrefs.theming.progression?.format?.fxl
-        }
-      },
-      header: state.runningHeadFormat ? {
-        ...currentPrefs.theming.header,
-        runningHead: {
+      ...(state.progressionFormat && {
+        progression: {
+          ...currentPrefs.theming.progression,
           format: {
-            reflow: state.runningHeadFormat.reflow ?? currentPrefs.theming.header?.runningHead?.format?.reflow,
-            fxl: state.runningHeadFormat.fxl ?? currentPrefs.theming.header?.runningHead?.format?.fxl
+            ...currentPrefs.theming.progression?.format,
+            ...(state.progressionFormat.reflow !== undefined && {
+              reflow: {
+                default: state.progressionFormat.reflow as ThProgressionFormat | ThProgressionFormat[],
+                displayInImmersive: currentPrefs.theming.progression?.format?.reflow?.displayInImmersive
+              }
+            }),
+            ...(state.progressionFormat.fxl !== undefined && {
+              fxl: {
+                default: state.progressionFormat.fxl as ThProgressionFormat | ThProgressionFormat[],
+                displayInImmersive: currentPrefs.theming.progression?.format?.fxl?.displayInImmersive
+              }
+            })
           }
         }
-      } : currentPrefs.theming.header,
+      }),
+      ...(state.runningHeadFormat && {
+        header: {
+          ...currentPrefs.theming.header,
+          runningHead: {
+            ...currentPrefs.theming.header?.runningHead,
+            format: {
+              ...currentPrefs.theming.header?.runningHead?.format,
+              ...(state.runningHeadFormat.reflow !== undefined && {
+                reflow: {
+                  default: state.runningHeadFormat.reflow as ThRunningHeadFormat,
+                  displayInImmersive: currentPrefs.theming.header?.runningHead?.format?.reflow?.displayInImmersive
+                }
+              }),
+              ...(state.runningHeadFormat.fxl !== undefined && {
+                fxl: {
+                  default: state.runningHeadFormat.fxl as ThRunningHeadFormat,
+                  displayInImmersive: currentPrefs.theming.header?.runningHead?.format?.fxl?.displayInImmersive
+                }
+              })
+            }
+          }
+        }
+      }),
       layout: {
         ...currentPrefs.theming.layout,
         ui: state.ui ? {

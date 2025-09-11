@@ -13,6 +13,8 @@ import { usePreferences } from "@/preferences/hooks/usePreferences";
 
 import { useAppSelector } from "@/lib/hooks";
 
+import { makeBreakpointsMap } from "@/core/Helpers/breakpointsMap";
+
 // Helper to get the best matching display format from an array of formats
 const getBestMatchingFormat = (
   formats: ThProgressionFormat[],
@@ -52,24 +54,49 @@ export const StatefulReaderProgression = ({
   
   const unstableTimeline = useAppSelector(state => state.publication.unstableTimeline);
   const isFXL = useAppSelector(state => state.publication.isFXL);
+  const isImmersive = useAppSelector(state => state.reader.isImmersive);
+  const isHovering = useAppSelector(state => state.reader.isHovering);
+  const breakpoint = useAppSelector(state => state.theming.breakpoint);
 
   const [displayText, setDisplayText] = useState("");
   
+  const formatPref = isFXL 
+    ? preferences.theming.progression?.format?.fxl
+    : preferences.theming.progression?.format?.reflow;
+  
+  const breakpointsMap = useMemo(() => {
+    return makeBreakpointsMap<ThProgressionFormat | ThProgressionFormat[]>({
+      defaultValue: formatPref?.default || ThProgressionFormat.resourceProgression,
+      fromEnum: ThProgressionFormat,
+      pref: formatPref?.breakpoints
+    });
+  }, [formatPref]);
+  
+  // Get the format for the current breakpoint
+  const currentFormat = breakpoint ? 
+    (breakpointsMap[breakpoint] || formatPref?.default) : 
+    (formatPref?.default || ThProgressionFormat.resourceProgression);
+  
   // Get the display format, handling both single format and array of formats
   const displayFormat = useMemo(() => {
-    const format = isFXL ? preferences.theming.progression?.format?.fxl : preferences.theming.progression?.format?.reflow;
-    if (!format) return ThProgressionFormat.resourceProgression;
+    if (!currentFormat) return ThProgressionFormat.resourceProgression;
     
+    // Check if we should hide in immersive mode
+    if (isImmersive && formatPref?.displayInImmersive === false && !isHovering) {
+      return ThProgressionFormat.none;
+    }
+    
+    const format = Array.isArray(currentFormat) ? currentFormat[0] : currentFormat;
     const hasPositions = !!unstableTimeline?.progression?.currentPositions?.length;
     const hasProgression = unstableTimeline?.progression?.relativeProgression !== undefined;
     
-    if (Array.isArray(format)) {
-      return getBestMatchingFormat(format, hasPositions, hasProgression) || 
+    if (Array.isArray(currentFormat)) {
+      return getBestMatchingFormat(currentFormat, hasPositions, hasProgression) || 
              ThProgressionFormat.resourceProgression;
     }
     
     return format;
-  }, [preferences.theming.progression?.format, unstableTimeline, isFXL]);
+  }, [currentFormat, unstableTimeline?.progression, isImmersive, formatPref, isHovering]);
 
   // Update display text based on current position and timeline
   useEffect(() => {

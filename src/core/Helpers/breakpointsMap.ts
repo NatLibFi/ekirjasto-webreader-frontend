@@ -15,7 +15,10 @@ export const makeBreakpointsMap = <T>({
   disabledValue?: T;
 }): Required<BreakpointsMap<T>> => {
   
-  const isValidType = (t: string) => {
+  const isValidType = (t: string | string[]) => {
+    if (Array.isArray(t)) {
+      return t.every(v => Object.values(fromEnum).includes(v));
+    }
     return Object.values(fromEnum).includes(t);
   };
 
@@ -39,8 +42,14 @@ export const makeBreakpointsMap = <T>({
     });
   } else if (typeof pref === "object") {
     Object.entries(pref).forEach(([key, value]) => {
-      if (value && isValidType(value.toString())) {
-        breakpointsMap[key as ThBreakpoints] = value;
+      if (!value) return;
+      
+      const isValid = Array.isArray(value) 
+        ? value.every(v => isValidType(v))
+        : isValidType(value.toString());
+        
+      if (isValid) {
+        breakpointsMap[key as ThBreakpoints] = value as T;
       }
     });
   }

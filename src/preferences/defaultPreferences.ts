@@ -41,22 +41,54 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
       },
       runningHead: {
         format: {
-          reflow: ThRunningHeadFormat.title,
-          fxl: ThRunningHeadFormat.title
+          reflow: {
+            default: ThRunningHeadFormat.title
+          },
+          fxl: {
+            default: ThRunningHeadFormat.title,
+            displayInImmersive: false
+          }
         }
       }
     },
     progression: {
       format: {
-        reflow: [
-          ThProgressionFormat.positionsOfTotal, 
-          ThProgressionFormat.progressionOfResource
-        ],
-        fxl: [
-          ThProgressionFormat.positionsOfTotal, 
-          ThProgressionFormat.overallProgression,
-          ThProgressionFormat.none
-        ]
+        reflow: {
+          default: [
+            ThProgressionFormat.positionsOfTotal, 
+            ThProgressionFormat.progressionOfResource
+          ],
+          breakpoints: {
+            [ThBreakpoints.compact]: [
+              ThProgressionFormat.positions, 
+              ThProgressionFormat.resourceProgression
+            ],
+            [ThBreakpoints.medium]: [
+              ThProgressionFormat.positions, 
+              ThProgressionFormat.resourceProgression
+            ]
+          }
+        },
+        fxl: {
+          default: [
+            ThProgressionFormat.positionsOfTotal, 
+            ThProgressionFormat.overallProgression,
+            ThProgressionFormat.none
+          ],
+          breakpoints: {
+            [ThBreakpoints.compact]: [
+              ThProgressionFormat.positions, 
+              ThProgressionFormat.overallProgression,
+              ThProgressionFormat.none
+            ],
+            [ThBreakpoints.medium]: [
+              ThProgressionFormat.positions, 
+              ThProgressionFormat.overallProgression,
+              ThProgressionFormat.none
+            ]
+          },
+          displayInImmersive: false
+        }
       }
     },
     arrow: {
