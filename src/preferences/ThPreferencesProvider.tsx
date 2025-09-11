@@ -9,12 +9,12 @@ import { defaultPreferences } from "./defaultPreferences";
 import { ThDirectionSetter } from "./ThDirectionSetter";
 import { ThPreferencesContext } from "./ThPreferencesContext";
 
-import { PreferencesAdapter } from "./adapters/PreferencesAdapter";
-import { MemoryPreferencesAdapter } from "./adapters/MemoryPreferencesAdapter";
+import { ThPreferencesAdapter } from "./adapters/ThPreferencesAdapter";
+import { ThMemoryPreferencesAdapter } from "./adapters/ThMemoryPreferencesAdapter";
 import type { ExtendedKeys } from "./ThPreferencesContext";
 
 interface Props {
-  adapter?: PreferencesAdapter<ExtendedKeys>;
+  adapter?: ThPreferencesAdapter<ExtendedKeys>;
   children: React.ReactNode;
 }
 
@@ -24,7 +24,7 @@ export const ThPreferencesProvider = ({
 }: Props) => {
   // Create a default in-memory adapter if none is provided
   const effectiveAdapter = useMemo(() => {
-    return adapter || new MemoryPreferencesAdapter<ExtendedKeys>(
+    return adapter || new ThMemoryPreferencesAdapter<ExtendedKeys>(
       defaultPreferences as ThPreferences<ExtendedKeys>
     );
   }, [adapter]);

@@ -7,7 +7,7 @@ import { DefaultKeys, ThPreferences } from "@/preferences/preferences";
 import { defaultPreferences } from "@/preferences/defaultPreferences";
 
 import { ThPreferencesProvider } from "@/preferences/ThPreferencesProvider";
-import { ReduxPreferencesAdapter } from "@/lib/ReduxPreferencesAdapter";
+import { ThReduxPreferencesAdapter } from "@/lib/ThReduxPreferencesAdapter";
 
 import { RootState } from "@/lib/store";
 
@@ -21,7 +21,7 @@ export const StatefulPreferencesProvider = ({
   const store = useStore<RootState>();
   
   const adapter = useMemo(() => {
-    return new ReduxPreferencesAdapter<DefaultKeys>(store, initialPrefs);
+    return new ThReduxPreferencesAdapter<DefaultKeys>(store, initialPrefs);
   }, [store, initialPrefs]);
   
   return (

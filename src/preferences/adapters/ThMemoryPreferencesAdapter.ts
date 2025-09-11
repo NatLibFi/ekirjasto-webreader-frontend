@@ -1,7 +1,7 @@
 import { ThPreferences, CustomizableKeys } from "../preferences";
-import { PreferencesAdapter } from "./PreferencesAdapter";
+import { ThPreferencesAdapter } from "./ThPreferencesAdapter";
 
-export class MemoryPreferencesAdapter<T extends CustomizableKeys = CustomizableKeys> implements PreferencesAdapter<T> {
+export class ThMemoryPreferencesAdapter<T extends CustomizableKeys = CustomizableKeys> implements ThPreferencesAdapter<T> {
   private prefs: ThPreferences<T>;
   private listeners: Set<(prefs: ThPreferences<T>) => void> = new Set();
 

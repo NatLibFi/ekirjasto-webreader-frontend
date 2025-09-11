@@ -2,13 +2,13 @@ import { Store } from "@reduxjs/toolkit";
 
 import { ThPreferences, CustomizableKeys } from "../preferences/preferences";
 
-import { PreferencesAdapter } from "../preferences/adapters/PreferencesAdapter";
+import { ThPreferencesAdapter } from "../preferences/adapters/ThPreferencesAdapter";
 
 import { AppState } from "@/lib/store";
 import { preferencesSlice } from "@/lib/preferencesReducer";
 import { mapStateToPreferences } from "@/lib/helpers/mapPreferences";
 
-export class ReduxPreferencesAdapter<T extends CustomizableKeys = CustomizableKeys> implements PreferencesAdapter<T> {
+export class ThReduxPreferencesAdapter<T extends CustomizableKeys = CustomizableKeys> implements ThPreferencesAdapter<T> {
   private store: Store<AppState>;
   private listeners: Set<(prefs: ThPreferences<T>) => void> = new Set();
   private currentPrefs: ThPreferences<T>;

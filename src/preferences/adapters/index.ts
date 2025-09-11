@@ -1,4 +1,4 @@
 "use client";
 
-export * from "./PreferencesAdapter";
-export * from "./MemoryPreferencesAdapter";
+export * from "./ThPreferencesAdapter";
+export * from "./ThMemoryPreferencesAdapter";

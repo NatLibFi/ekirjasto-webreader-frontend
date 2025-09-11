@@ -1,7 +1,7 @@
 "use client";
 
 export { ThStoreProvider } from "./ThStoreProvider";
-export * from "./ReduxPreferencesAdapter";
+export * from "./ThReduxPreferencesAdapter";
 export * from "./store";
 export * from "./hooks";
 export * from "./actionsReducer";
