@@ -127,17 +127,25 @@ The application supports two main routes for accessing publications:
 
 Manifest URLs are validated against the allowed domains configured in `.env`. You can configure the allowed domains by setting `NEXT_PUBLIC_MANIFEST_ALLOWED_DOMAINS` in your environment variables.
 
-Finally, to enable the `read/manifest/[manifest]` route in production, set `NEXT_PUBLIC_MANIFEST_FORCE_ENABLE=true` in your environment variables.
+To enable the `read/manifest/[manifest]` route in production, set `NEXT_PUBLIC_MANIFEST_FORCE_ENABLE=true` in your environment variables.
 
-Alternatively, you can set them in bash:
+For CDN or subdirectory support, you can set `NEXT_PUBLIC_ASSET_PREFIX` to your CDN URL or subdirectory path (e.g., `https://cdn.example.com` or `/subdirectory`). This will be used as the base path for all static assets.
+
+You can set these environment variables in your `.env` file or directly in bash when running the application:
 
 ```bash
-NEXT_PUBLIC_MANIFEST_ALLOWED_DOMAINS="publication-server.readium.org" NEXT_PUBLIC_MANIFEST_FORCE_ENABLE=true pnpm build && pnpm start
+NEXT_PUBLIC_MANIFEST_ALLOWED_DOMAINS="publication-server.readium.org"
+NEXT_PUBLIC_MANIFEST_FORCE_ENABLE=true
+NEXT_PUBLIC_ASSET_PREFIX="https://cdn.example.com"
+
+pnpm build && pnpm start
 ```
 
 They should override the values in `.env`.
 
 Remember that you have to rebuild and restart the app for the changes to take effect since environment variables in Next.js are embedded at build time.
+
+For more information, see [Environment Variables](./EnvironmentVariables.md).
 
 ## Configuration and Setup
 
