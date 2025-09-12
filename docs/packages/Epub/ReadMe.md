@@ -241,8 +241,13 @@ To add your custom components to the Reader Component, you need to configure the
 ```tsx
 import { createPreferences, ThPreferences } from "@edrlab/thorium-web/core";
 
+// Define your custom keys
+type YourCustomKeys = {
+  action: "custom-action-key" | ThActionsKeys;
+} & CustomizableKeys;
+
 // Create your custom preferences
-const myPreferences: ThPreferences = createPreferences({
+const myPreferences: ThPreferences = createPreferences<YourCustomKeys>({
   //... other preferences
   actions: {
     //... other props

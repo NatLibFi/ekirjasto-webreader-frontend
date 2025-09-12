@@ -8,113 +8,95 @@ It also provides a `PreferencesProvider` component that makes the preferences av
 
 The `createPreferences` helper allows you to create a new preferences object with your own custom configuration. This is the primary way to set up the preferences for your Thorium Web implementation.
 
-```
-const myPreferences = createPreferences({
-  direction: ThLayoutDirection.ltr,
-  locale: "en-US",
-  typography: {
-    optimalLineLength: 65,
-    pageGutter: 20
-  },
-  // ... other preference settings
+### Basic Usage
+
+```typescript
+import { createPreferences } from "@edrlab/thorium-web/preferences";
+
+// Create preferences with default keys
+const prefs = createPreferences({
+  direction: "ltr",
+  locale: "en-US"
 });
 ```
 
-The function accepts a single parameter, `params`, which is a `ThPreferences<T>` object containing all your custom preferences.
+### Custom Action Keys
 
-`T` is an optional type parameter that extends `Partial<CustomizableKeys>`. This allows you to customize the enum types used for various settings (actions, themes, etc.), although type inference should work most of the time.
+Let’s imagine you need to add a custom action key to the preferences. You can do this by following these steps:
 
-It returns a new `ThPreferences<T>` object with all the properties you provided.
+1. Define your action keys
+2. Extend `CustomizableKeys`
+3. Create preferences with your custom keys type
 
-You can extend the default keys with your own custom keys like this:
+```typescript
+import { createPreferences, CustomizableKeys } from "@edrlab/thorium-web/preferences";
+import { ThActionsKeys } from "@edrlab/thorium-web/preferences/models/enums";
 
-```
-import { createPreferences, ThPreferences } from "@edrlab/thorium-web/preferences";
-
-// Define custom action keys
-enum MyCustomActionKeys {
-  fullscreen = "fullscreen",
-  settings = "settings",
-  toc = "toc",
-  myCustomAction = "myCustomAction" // Custom action
+// 1. Define your action keys
+enum MyActions {
+  customAction = "customAction"
 }
 
-// Create preferences with custom keys
-const myPreferences = createPreferences({
-  // ... other preferences
+// 2. Extend CustomizableKeys
+type MyKeys = {
+  action: MyActions | ThActionsKeys;  // Include default actions
+} & CustomizableKeys;
+
+// 3. Create preferences
+const prefs = createPreferences<MyKeys>({
   actions: {
-    //... other action props
-    reflowOrder: [
-      MyCustomActionKeys.settings,
-      MyCustomActionKeys.toc,
-      MyCustomActionKeys.myCustomAction,
-      MyCustomActionKeys.fullscreen
-    ],
-    collapse: {
-      // ... collapse settings
-    },
+    reflowOrder: [ThActionsKeys.settings, MyActions.customAction],
     keys: {
-      // Configure each action key
-      [MyCustomActionKeys.myCustomAction]: {
+      [MyActions.customAction]: {
         visibility: "always",
-        shortcut: null,
-        // ... other action settings
-      },
-      // ... other action keys
+        shortcut: null
+      }
     }
   }
 });
 ```
 
-Notes: 
-
-- This function simply returns the object you pass to it, preserving all properties
-- Use this function to ensure type safety when creating preferences
-
-## Preferences Provider
+## Using the Provider
 
 The `ThPreferencesProvider` component provides a React context for accessing Thorium Web preferences throughout your application. It serves as the central point for managing and distributing preference settings to all components.
 
-```
-// Create custom preferences
-const myPreferences = createPreferences({
-  direction: ThLayoutDirection.ltr,
-  locale: "en-US",
-  // ... other preference settings
-});
+```typescript
+import { ThPreferencesProvider } from "@edrlab/thorium-web/preferences";
 
 function App() {
   return (
-    <ThPreferencesProvider initialPreferences={ myPreferences }>
-      {/* Your application components */}
+    <ThPreferencesProvider 
+      adapter={ yourAdapter }  // Optional: custom adapter for persistence
+      initialPreferences={ prefs }  // Optional: initial preferences
+    >
+      <YourApp />
     </ThPreferencesProvider>
   );
 }
 ```
 
-The component accepts two props:
+### Provider Props
 
-- `value` (optional): A `ThPreferences` object containing your custom preferences. If not provided, the default preferences will be used.
-- `children` : React nodes that will have access to the preferences context.
+- `adapter?`: Optional custom adapter for persisting preferences
+- `initialPreferences?`: Optional initial preferences object
+- `children`: Your application components
 
-`T` is an optional type parameter that extends `ThPreferences`. This allows you to use custom preference types with proper type safety.
+## Accessing Preferences
 
-Components can then access the preferences using the `usePreferences` hook:
+```typescript
+import { usePreferences } from "@edrlab/thorium-web/preferences";
 
-```
 function MyComponent() {
-  const { preferences, update } = usePreferences();
+  const { preferences } = usePreferences<MyKeys>();
   
-  // Now you can use preferences
-  const { direction, locale } = preferences;
-  
-  return (
-    // Your component implementation
-  );
+  // Read preferences
+  const { direction } = preferences;
 }
 ```
 
-Notes: 
+### Important Notes
 
-- The provider should be placed high in your component tree to ensure all components have access to the preferences
+- The provider should be placed high in your component tree
+- Use a custom adapter for persistence if needed
+- The `usePreferences` hook is read-only - updates should be handled through your adapter
 - You can nest multiple providers to override preferences for specific parts of your application
