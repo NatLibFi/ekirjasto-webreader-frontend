@@ -42,7 +42,7 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
       runningHead: {
         format: {
           reflow: {
-            default: ThRunningHeadFormat.title
+            default: ThRunningHeadFormat.chapter
           },
           fxl: {
             default: ThRunningHeadFormat.title,
