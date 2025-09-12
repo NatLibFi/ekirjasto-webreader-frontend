@@ -76,11 +76,41 @@ export type CustomizableKeys = {
   spacing?: string;
 };
 
-export type ActionKey<K extends CustomizableKeys> = ThActionsKeys | Extract<K["action"], string>;
-export type ThemeKey<K extends CustomizableKeys> = ThThemeKeys | Extract<K["theme"], string>;
-export type SettingsKey<K extends CustomizableKeys> = ThSettingsKeys | Extract<K["settings"], string>;
-export type TextSettingsKey<K extends CustomizableKeys> = ThTextSettingsKeys | Extract<K["text"], string>;
-export type SpacingSettingsKey<K extends CustomizableKeys> = ThSpacingSettingsKeys | Extract<K["spacing"], string>;
+// Key types to better handle custom keys for external consumers
+export type ActionKey<K extends CustomizableKeys> = 
+  K extends { action: infer A } 
+    ? A extends string 
+      ? ThActionsKeys | A 
+      : ThActionsKeys
+    : ThActionsKeys;
+
+export type ThemeKey<K extends CustomizableKeys> = 
+  K extends { theme: infer T } 
+    ? T extends string 
+      ? ThThemeKeys | T 
+      : ThThemeKeys
+    : ThThemeKeys;
+
+export type SettingsKey<K extends CustomizableKeys> = 
+  K extends { settings: infer S } 
+    ? S extends string 
+      ? ThSettingsKeys | S 
+      : ThSettingsKeys
+    : ThSettingsKeys;
+
+export type TextSettingsKey<K extends CustomizableKeys> = 
+  K extends { text: infer T } 
+    ? T extends string 
+      ? ThTextSettingsKeys | T 
+      : ThTextSettingsKeys
+    : ThTextSettingsKeys;
+
+export type SpacingSettingsKey<K extends CustomizableKeys> = 
+  K extends { spacing: infer S } 
+    ? S extends string 
+      ? ThSpacingSettingsKeys | S 
+      : ThSpacingSettingsKeys
+    : ThSpacingSettingsKeys;
 
 export interface ThActionsPref<K extends CustomizableKeys> {
   reflowOrder: Array<ActionKey<K>>;
@@ -274,11 +304,17 @@ export const createPreferences = <K extends CustomizableKeys = {}>(
 };
 
 // Default internal keys alias for convenience
-export type DefaultKeys = {};
+export type DefaultKeys = {
+  action: ThActionsKeys;
+  theme: ThThemeKeys;
+  settings: ThSettingsKeys;
+  text: ThTextSettingsKeys;
+  spacing: ThSpacingSettingsKeys;
+};
 
-// Simplified type helpers
-export type ActionKeyType = ThActionsKeys;
-export type ThemeKeyType = ThThemeKeys;
-export type SettingsKeyType = ThSettingsKeys;
-export type TextSettingsKeyType = ThTextSettingsKeys;
-export type SpacingSettingsKeyType = ThSpacingSettingsKeys;
+// Type helpers that support both custom and default keys
+export type ActionKeyType<K extends CustomizableKeys = DefaultKeys> = K['action'] extends string ? K['action'] : ThActionsKeys;
+export type ThemeKeyType<K extends CustomizableKeys = DefaultKeys> = K['theme'] extends string ? K['theme'] : ThThemeKeys;
+export type SettingsKeyType<K extends CustomizableKeys = DefaultKeys> = K['settings'] extends string ? K['settings'] : ThSettingsKeys;
+export type TextSettingsKeyType<K extends CustomizableKeys = DefaultKeys> = K['text'] extends string ? K['text'] : ThTextSettingsKeys;
+export type SpacingSettingsKeyType<K extends CustomizableKeys = DefaultKeys> = K['spacing'] extends string ? K['spacing'] : ThSpacingSettingsKeys;

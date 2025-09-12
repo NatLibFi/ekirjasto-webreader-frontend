@@ -2,37 +2,33 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { ThPreferences, CustomizableKeys } from "./preferences";
-
-import { defaultPreferences } from "./defaultPreferences";
-
-import { ThDirectionSetter } from "./ThDirectionSetter";
-import { ThPreferencesContext } from "./ThPreferencesContext";
+import { ThPreferences, CustomizableKeys, DefaultKeys } from "./preferences";
+import { ThPreferencesContext, defaultPreferencesContextValue } from "./ThPreferencesContext";
 
 import { ThPreferencesAdapter } from "./adapters/ThPreferencesAdapter";
 import { ThMemoryPreferencesAdapter } from "./adapters/ThMemoryPreferencesAdapter";
-import type { ExtendedKeys } from "./ThPreferencesContext";
+import { ThDirectionSetter } from "./ThDirectionSetter";
 
-type Props<K extends CustomizableKeys> = {
+type Props<K extends CustomizableKeys = DefaultKeys> = {
   adapter?: ThPreferencesAdapter<K>;
-  initialPrefs?: ThPreferences<K>;
+  initialPreferences?: ThPreferences<K>;
   children: React.ReactNode;
 };
 
-export const ThPreferencesProvider = <K extends CustomizableKeys = ExtendedKeys>({ 
+export function ThPreferencesProvider<K extends CustomizableKeys = DefaultKeys>({ 
   adapter,
-  initialPrefs,
+  initialPreferences,
   children, 
-}: Props<K>) => {
+}: Props<K>) {
   // Create a default in-memory adapter if none is provided
   const effectiveAdapter = useMemo(() => {
     return adapter || new ThMemoryPreferencesAdapter<K>(
-      (initialPrefs as ThPreferences<K>) ?? (defaultPreferences as ThPreferences<K>)
+      (initialPreferences as ThPreferences<K>) || (defaultPreferencesContextValue.preferences as ThPreferences<K>)
     );
-  }, [adapter, initialPrefs]);
+  }, [adapter, initialPreferences]);
   
-  const [preferences, setPreferences] = useState<ThPreferences<K>>(() => 
-    effectiveAdapter.getPreferences()
+  const [preferences, setPreferences] = useState<ThPreferences<K>>(
+    (initialPreferences || defaultPreferencesContextValue.preferences) as ThPreferences<K>
   );
 
   // Handle preference changes
@@ -56,9 +52,9 @@ export const ThPreferencesProvider = <K extends CustomizableKeys = ExtendedKeys>
 
   // Provide current app context typing
   const contextValue = useMemo(() => ({
-    preferences: preferences as ThPreferences<ExtendedKeys>,
-    updatePreferences: (newPrefs: ThPreferences<ExtendedKeys>) => {
-      effectiveAdapter.setPreferences(newPrefs as ThPreferences<K>);
+    preferences,
+    updatePreferences: (newPrefs: ThPreferences<K>) => {
+      effectiveAdapter.setPreferences(newPrefs);
     },
   }), [preferences, effectiveAdapter]);
 
