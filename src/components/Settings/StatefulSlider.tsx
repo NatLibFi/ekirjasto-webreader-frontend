@@ -8,19 +8,39 @@ import classNames from "classnames";
 
 export interface StatefulSliderProps extends Omit<ThSliderProps, "classNames"> {
   standalone?: boolean;
+  displayTicks?: boolean;
 }
 
 export const StatefulSlider = ({
   standalone,
   label,
+  displayTicks = false,
   ...props
 }: StatefulSliderProps) => {
-  return(
+  const style = {
+    ...(displayTicks && props.range && props.step ? {
+      "--slider-ticks": (() => {
+        const [min, max] = [Math.min(...props.range), Math.max(...props.range)];
+        const step = props.step || 1;
+        const range = max - min;
+        const totalIntervals = range / step;
+        return Math.ceil(totalIntervals);
+      })()
+    } : {}),
+    ...props.style
+  };
+
+  return (
     <>
     <ThSlider
       { ...props }
       { ...(standalone ? { label: label } : {"aria-label": label}) }
-      className={ classNames(settingsStyles.readerSettingsSlider, standalone ? settingsStyles.readerSettingsGroup : "") }
+      className={classNames(
+        settingsStyles.readerSettingsSlider,
+        standalone && settingsStyles.readerSettingsGroup,
+        displayTicks && settingsStyles.readerSettingsSliderWithTicks
+      )}
+      style={ style }
       compounds={{
         label: {
           className: classNames(settingsStyles.readerSettingsLabel, settingsStyles.readerSettingsSliderLabel)

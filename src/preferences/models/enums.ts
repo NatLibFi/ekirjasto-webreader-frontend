@@ -102,6 +102,7 @@ export enum ThSettingsContainerKeys {
 
 export enum ThSettingsRangeVariant {
   slider = "slider",
+  incrementedSlider = "incrementedSlider",
   numberField = "numberField"
 }
 

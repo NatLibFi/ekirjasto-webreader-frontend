@@ -63,6 +63,7 @@ export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsI
       />
       : <StatefulSlider
         standalone={ standalone }
+        displayTicks={ paragraphIndentRangeConfig.variant === ThSettingsRangeVariant.incrementedSlider }
         label={ t("reader.settings.paraIndent.title") }
         defaultValue={ 0 } 
         value={ paragraphIndent || 0 } 

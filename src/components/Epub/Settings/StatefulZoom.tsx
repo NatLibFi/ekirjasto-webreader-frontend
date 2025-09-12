@@ -86,6 +86,7 @@ export const StatefulZoom = () => {
       />
       : <StatefulSlider
         standalone={ true }
+        displayTicks={ zoomRangeConfig.variant === ThSettingsRangeVariant.incrementedSlider }
         defaultValue={ 1 } 
         value={ fontSize } 
         onChange={ async(value) => await updatePreference(value as number) } 

@@ -87,7 +87,7 @@ The `keys` object is used to configure range settings:
 
 These ranges expect: 
 
-- `variant` (optional): from enum `ThSettingsRangeVariant` (slider or numberfield)
+- `variant` (optional): from enum `ThSettingsRangeVariant` (`slider`, `incrementedSlider` or `numberfield`)
 - `range` (optional): the min and max values, as `[number, number]`
 - `step` (optional): the step value, as `number`
 

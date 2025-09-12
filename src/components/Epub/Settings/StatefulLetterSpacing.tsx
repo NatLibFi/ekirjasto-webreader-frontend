@@ -59,6 +59,7 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
       />
       : <StatefulSlider
         standalone={ standalone }
+        displayTicks={ letterSpacingRangeConfig.variant === ThSettingsRangeVariant.incrementedSlider }
         label={ t("reader.settings.letterSpacing.title") }
         defaultValue={ 0 } 
         value={ letterSpacing || 0 } 

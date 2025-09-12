@@ -59,6 +59,7 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
       />
       : <StatefulSlider
         standalone={ standalone }
+        displayTicks={ wordSpacingRangeConfig.variant === ThSettingsRangeVariant.incrementedSlider }
         label={ t("reader.settings.wordSpacing.title") }
         defaultValue={ 0 } 
         value={ wordSpacing || 0 } 

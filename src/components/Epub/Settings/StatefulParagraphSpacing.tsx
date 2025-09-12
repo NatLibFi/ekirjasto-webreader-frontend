@@ -63,6 +63,7 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
       />
       : <StatefulSlider
         standalone={ standalone }
+        displayTicks={ paragraphSpacingRangeConfig.variant === ThSettingsRangeVariant.incrementedSlider }
         label={ t("reader.settings.paraSpacing.title") }
         defaultValue={ 0 } 
         value={ paragraphSpacing || 0 } 
