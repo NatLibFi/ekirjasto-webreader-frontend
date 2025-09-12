@@ -2,20 +2,20 @@ import { ThPreferences, CustomizableKeys } from "../preferences";
 import { ThPreferencesAdapter } from "./ThPreferencesAdapter";
 
 export class ThMemoryPreferencesAdapter<T extends CustomizableKeys = CustomizableKeys> implements ThPreferencesAdapter<T> {
-  private prefs: ThPreferences<T>;
+  private preferences: ThPreferences<T>;
   private listeners: Set<(prefs: ThPreferences<T>) => void> = new Set();
 
-  constructor(initialPrefs: ThPreferences<T>) {
-    this.prefs = { ...initialPrefs };
+  constructor(initialPreferences: ThPreferences<T>) {
+    this.preferences = { ...initialPreferences };
   }
 
   public getPreferences(): ThPreferences<T> {
-    return { ...this.prefs };
+    return { ...this.preferences };
   }
 
   public setPreferences(prefs: ThPreferences<T>): void {
-    this.prefs = { ...prefs };
-    this.notifyListeners(this.prefs);
+    this.preferences = { ...prefs };
+    this.notifyListeners(this.preferences);
   }
 
   public subscribe(listener: (prefs: ThPreferences<T>) => void): void {

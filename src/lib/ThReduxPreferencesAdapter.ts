@@ -11,11 +11,11 @@ import { mapStateToPreferences } from "@/lib/helpers/mapPreferences";
 export class ThReduxPreferencesAdapter<T extends CustomizableKeys = CustomizableKeys> implements ThPreferencesAdapter<T> {
   private store: Store<AppState>;
   private listeners: Set<(prefs: ThPreferences<T>) => void> = new Set();
-  private currentPrefs: ThPreferences<T>;
+  private currentPreferences: ThPreferences<T>;
 
-  constructor(store: Store<AppState>, initialPrefs: ThPreferences<T>) {
+  constructor(store: Store<AppState>, initialPreferences: ThPreferences<T>) {
     this.store = store;
-    this.currentPrefs = initialPrefs;
+    this.currentPreferences = initialPreferences;
     
     this.store.subscribe(() => {
       const state = this.store.getState();
@@ -25,28 +25,28 @@ export class ThReduxPreferencesAdapter<T extends CustomizableKeys = Customizable
   }
 
   public getPreferences(): ThPreferences<T> {
-    return { ...this.currentPrefs };
+    return { ...this.currentPreferences };
   }
 
   public setPreferences(prefs: ThPreferences<T>): void {
-    this.currentPrefs = prefs;
+    this.currentPreferences = prefs;
     this.store.dispatch(preferencesSlice.actions.updateFromPreferences(prefs as any));
     this.notifyListeners(prefs);
   }
 
-  public subscribe(callback: (prefs: ThPreferences<T>) => void): void {
-    this.listeners.add(callback);
-    callback(this.getPreferences());
+  public subscribe(listener: (prefs: ThPreferences<T>) => void): void {
+    this.listeners.add(listener);
+    listener(this.getPreferences());
   }
 
-  public unsubscribe(callback: (prefs: ThPreferences<T>) => void): void {
-    this.listeners.delete(callback);
+  public unsubscribe(listener: (prefs: ThPreferences<T>) => void): void {
+    this.listeners.delete(listener);
   }
 
   private mapStateToPreferences(state: AppState): ThPreferences<T> {
-    if (!state.preferences) return this.currentPrefs;
+    if (!state.preferences) return this.currentPreferences;
     
-    const updatedPrefs = mapStateToPreferences<T>(state.preferences, { ...this.currentPrefs });
+    const updatedPrefs = mapStateToPreferences<T>(state.preferences, { ...this.currentPreferences });
     return updatedPrefs;
   }
 

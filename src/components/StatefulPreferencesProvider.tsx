@@ -13,16 +13,16 @@ import { RootState } from "@/lib/store";
 
 export const StatefulPreferencesProvider = ({ 
   children,
-  initialPrefs = defaultPreferences as ThPreferences<DefaultKeys>
+  initialPreferences = defaultPreferences as ThPreferences<DefaultKeys>
 }: { 
   children: ReactNode;
-  initialPrefs?: ThPreferences<DefaultKeys>;
+  initialPreferences?: ThPreferences<DefaultKeys>;
 }) => {
   const store = useStore<RootState>();
   
   const adapter = useMemo(() => {
-    return new ThReduxPreferencesAdapter<DefaultKeys>(store, initialPrefs);
-  }, [store, initialPrefs]);
+    return new ThReduxPreferencesAdapter<DefaultKeys>(store, initialPreferences);
+  }, [store, initialPreferences]);
   
   return (
     <ThPreferencesProvider adapter={ adapter }>
