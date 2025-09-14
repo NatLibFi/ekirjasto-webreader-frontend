@@ -1,1 +1,12 @@
-{}
+{
+    "reader": {
+        "app": {
+            "loading": "جارٍ التحميل",
+            "publicationWrapper": "أنت الآن داخل المنشور.",
+            "docking": {
+                "dockingLeft": "لوحة مثبتة على اليسار",
+                "dockingRight": "لوحة مثبتة على اليمين"
+            }
+        }
+    }
+}
