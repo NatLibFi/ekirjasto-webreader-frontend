@@ -5,12 +5,10 @@ import { mapPreferencesToState } from "@/lib/helpers/mapPreferences";
 
 export class ThMemoryPreferencesAdapter<T extends CustomizableKeys = CustomizableKeys> implements ThPreferencesAdapter<T> {
   private currentPreferences: ThPreferences<T>;
-  private normalizedState: PreferencesReducerState;
   private listeners: Set<(prefs: ThPreferences<T>) => void> = new Set();
 
   constructor(initialPreferences: ThPreferences<T>) {
     this.currentPreferences = { ...initialPreferences };
-    this.normalizedState = mapPreferencesToState(this.currentPreferences);
   }
 
   public getPreferences(): ThPreferences<T> {
@@ -19,7 +17,6 @@ export class ThMemoryPreferencesAdapter<T extends CustomizableKeys = Customizabl
 
   public setPreferences(prefs: ThPreferences<T>): void {
     this.currentPreferences = { ...prefs };
-    this.normalizedState = mapPreferencesToState(this.currentPreferences);
     this.notifyListeners(this.currentPreferences);
   }
 
