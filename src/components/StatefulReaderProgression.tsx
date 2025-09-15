@@ -64,23 +64,27 @@ export const StatefulReaderProgression = ({
   const formatPref = isFXL 
     ? preferences.theming.progression?.format?.fxl
     : preferences.theming.progression?.format?.reflow;
+
+  const fallbackFormat = isFXL 
+    ? ThProgressionFormat.overallProgression
+    : ThProgressionFormat.resourceProgression;
   
   const breakpointsMap = useMemo(() => {
     return makeBreakpointsMap<ThProgressionFormat | ThProgressionFormat[]>({
-      defaultValue: formatPref?.default || ThProgressionFormat.resourceProgression,
+      defaultValue: formatPref?.default || fallbackFormat,
       fromEnum: ThProgressionFormat,
       pref: formatPref?.breakpoints
     });
-  }, [formatPref]);
+  }, [formatPref, fallbackFormat]);
   
   // Get the format for the current breakpoint
   const currentFormat = breakpoint ? 
     (breakpointsMap[breakpoint] || formatPref?.default) : 
-    (formatPref?.default || ThProgressionFormat.resourceProgression);
+    (formatPref?.default || fallbackFormat);
   
   // Get the display format, handling both single format and array of formats
   const displayFormat = useMemo(() => {
-    if (!currentFormat) return ThProgressionFormat.resourceProgression;
+    if (!currentFormat) return fallbackFormat;
     
     // Check if we should hide in immersive mode
     if (isImmersive && formatPref?.displayInImmersive === false && !isHovering) {
@@ -93,11 +97,11 @@ export const StatefulReaderProgression = ({
     
     if (Array.isArray(currentFormat)) {
       return getBestMatchingFormat(currentFormat, hasPositions, hasProgression) || 
-             ThProgressionFormat.resourceProgression;
+        fallbackFormat;
     }
     
     return format;
-  }, [currentFormat, unstableTimeline?.progression, isImmersive, formatPref, isHovering]);
+  }, [currentFormat, unstableTimeline?.progression, formatPref, fallbackFormat, isImmersive, isHovering]);
 
   // Update display text based on current position and timeline
   useEffect(() => {
