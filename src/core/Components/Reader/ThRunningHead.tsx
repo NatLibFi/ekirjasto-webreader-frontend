@@ -7,7 +7,7 @@ import { HTMLAttributesWithRef } from "../customTypes";
 export interface ThRunningHeadProps extends HTMLAttributesWithRef<HTMLHeadingElement> {
   ref?: React.RefObject<HTMLHeadingElement>
   label: string;
-  syncDocTitle?: boolean;  
+  syncDocTitle?: boolean | string;  
 }
 
 export const ThRunningHead = ({ 
@@ -18,7 +18,7 @@ export const ThRunningHead = ({
 }: ThRunningHeadProps) => {
 
   useEffect(() => {
-    if (syncDocTitle && label) document.title = label;
+    if (syncDocTitle && label) document.title = syncDocTitle === true ? label : syncDocTitle;
   }, [syncDocTitle, label])
 
   return(
