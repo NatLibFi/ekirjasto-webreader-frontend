@@ -321,8 +321,8 @@ export type DefaultKeys = {
 };
 
 // Type helpers that support both custom and default keys
-export type ActionKeyType<K extends CustomizableKeys = DefaultKeys> = K['action'] extends string ? K['action'] : ThActionsKeys;
-export type ThemeKeyType<K extends CustomizableKeys = DefaultKeys> = K['theme'] extends string ? K['theme'] : ThThemeKeys;
-export type SettingsKeyType<K extends CustomizableKeys = DefaultKeys> = K['settings'] extends string ? K['settings'] : ThSettingsKeys;
-export type TextSettingsKeyType<K extends CustomizableKeys = DefaultKeys> = K['text'] extends string ? K['text'] : ThTextSettingsKeys;
-export type SpacingSettingsKeyType<K extends CustomizableKeys = DefaultKeys> = K['spacing'] extends string ? K['spacing'] : ThSpacingSettingsKeys;
+export type ActionKeyType<K extends CustomizableKeys = DefaultKeys> = K["action"] extends string ? K["action"] : ThActionsKeys;
+export type ThemeKeyType<K extends CustomizableKeys = DefaultKeys> = K["theme"] extends string ? K["theme"] : ThThemeKeys;
+export type SettingsKeyType<K extends CustomizableKeys = DefaultKeys> = K["settings"] extends string ? K["settings"] : ThSettingsKeys;
+export type TextSettingsKeyType<K extends CustomizableKeys = DefaultKeys> = K["text"] extends string ? K["text"] : ThTextSettingsKeys;
+export type SpacingSettingsKeyType<K extends CustomizableKeys = DefaultKeys> = K["spacing"] extends string ? K["spacing"] : ThSpacingSettingsKeys;

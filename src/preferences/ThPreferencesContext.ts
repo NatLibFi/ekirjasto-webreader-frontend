@@ -16,6 +16,6 @@ export const ThPreferencesContext = createContext<PreferencesContextValue<any> |
 export const defaultPreferencesContextValue: PreferencesContextValue<DefaultKeys> = {
   preferences: defaultPreferences as ThPreferences<DefaultKeys>,
   updatePreferences: () => {
-    throw new Error('updatePreferences must be used within a ThPreferencesProvider with an adapter');
+    throw new Error("updatePreferences must be used within a ThPreferencesProvider with an adapter");
   },
 };

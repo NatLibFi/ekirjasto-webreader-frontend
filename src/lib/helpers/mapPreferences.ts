@@ -1,6 +1,6 @@
-import { PreferencesReducerState } from '../preferencesReducer';
-import { ThPreferences, CustomizableKeys } from '@/preferences/preferences';
-import { ThProgressionFormat, ThRunningHeadFormat } from '@/preferences/models/enums';
+import { PreferencesReducerState } from "../preferencesReducer";
+import { ThPreferences, CustomizableKeys } from "@/preferences/preferences";
+import { ThProgressionFormat, ThRunningHeadFormat } from "@/preferences/models/enums";
 
 export const mapPreferencesToState = <T extends CustomizableKeys>(prefs: ThPreferences<T>): PreferencesReducerState => {  
   return {

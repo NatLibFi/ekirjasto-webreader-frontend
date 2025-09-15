@@ -30,8 +30,8 @@ export const ThGrid = <T extends unknown>({
         padding: 0,
         display: "grid",
         boxSizing: "border-box",
-        gridTemplateColumns: `repeat(auto-fill, minmax(min(100%, ${typeof columnWidth === 'string' ? columnWidth : columnWidth + 'px'}), 1fr))`,
-        gap: typeof gap === 'string' ? gap : gap + 'px'
+        gridTemplateColumns: `repeat(auto-fill, minmax(min(100%, ${typeof columnWidth === "string" ? columnWidth : columnWidth + "px"}), 1fr))`,
+        gap: typeof gap === "string" ? gap : gap + "px"
       }}
     >
       { items.map((item, index) => (
