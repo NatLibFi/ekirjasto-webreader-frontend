@@ -31,7 +31,6 @@ export const StatefulFontWeight = ({ standalone = true }: StatefulSettingsItemPr
     <>
     <StatefulSlider
       standalone={ standalone }
-      displayTicks={ true }
       label={ t("reader.settings.fontWeight.title") }
       defaultValue={ 400 } 
       value={ fontWeight } 
