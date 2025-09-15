@@ -148,22 +148,53 @@ If `backLink` is `undefined` or `null`, then the back button will not be rendere
 
 The `runningHead` preference allows you to configure the running head format in the header. It accepts the following properties:
 
-- `format`: Format of the running head:
-  - `reflow`: The running head format for reflowable EPUBs
-  - `fxl`: The running head format for Fixed-Layout EPUBs
+- `format`: Format of the running head, with properties for both reflowable and fixed-layout EPUBs:
+  - `reflow`: Configuration for reflowable EPUBs
+  - `fxl`: Configuration for Fixed-Layout EPUBs
 
-Each format can be one or an array of enum `ThRunningHeadFormat`:
-  - `title`: The title of the publication
-  - `chapter`: The chapter of the publication
-  - `none`: Hides the running head display
+Both `reflow` and `fxl` share the same structure:
+- `default`: Default format configuration
+  - `variants`: The format variant to use (e.g., `ThRunningHeadFormat.chapter` or `ThRunningHeadFormat.title`)
+  - `displayInImmersive`: Whether to show in immersive mode (default: `true`)
+  - `displayInFullscreen`: Whether to show in fullscreen mode (default: `false` for reflow, `true` for fxl)
+- `breakpoints` (optional): Breakpoint-specific configurations
+  - `[breakpoint]`: Breakpoint name (e.g., `ThBreakpoints.compact`)
+    - `variants`: Format variant for this breakpoint
+    - `displayInImmersive`: Whether to show in immersive mode for this breakpoint
+    - `displayInFullscreen`: Whether to show in fullscreen mode for this breakpoint
+
+Available `ThRunningHeadFormat` variants:
+- `title`: Displays the publication title
+- `chapter`: Displays the current chapter/section title
+- `none`: Hides the running head display
+
+Example configuration:
 
 ```typescript
 theming: {
-  ...
   header: {
     runningHead: {
-      reflow: ThRunningHeadFormat.title,
-      fxl: ThRunningHeadFormat.chapter
+      format: {
+        reflow: {
+          default: {
+            variants: ThRunningHeadFormat.chapter,
+            displayInImmersive: true,
+            displayInFullscreen: false
+          },
+          breakpoints: {
+            [ThBreakpoints.compact]: {
+              variants: ThRunningHeadFormat.chapter,
+              displayInImmersive: false
+            }
+          }
+        },
+        fxl: {
+          default: {
+            variants: ThRunningHeadFormat.title,
+            displayInFullscreen: true
+          }
+        }
+      }
     }
   }
 }
@@ -171,29 +202,67 @@ theming: {
 
 ## Progression
 
-The `progression` preference allows you to configure the progression format in the footer:
+The `progression` preference allows you to configure the progression display format. It accepts the following properties:
 
-- `format`: Format of the progression: 
-  - `reflow`: The progression format for reflowable EPUBs
-  - `fxl`: The progression format for Fixed-Layout EPUBs
+- `format`: Format of the progression display, with properties for both reflowable and fixed-layout EPUBs:
+  - `reflow`: Configuration for reflowable EPUBs
+  - `fxl`: Configuration for Fixed-Layout EPUBs
 
-Each format can be one or an array of enum `ThProgressionFormat`:
-  - `positionsPercentOfTotal`: "x-y of z (%)" (e.g. "25 of 50 (50%)")
-  - `positionsOfTotal`: "x-y of z" (e.g. "10-12 of 50")
-  - `positions`: "x-y" (e.g. "10-12")
-  - `overallProgression`: "x%" (e.g. "25%")
-  - `positionsLeft`: "x left in chapter" (e.g. "5 left in Chapter 1")
-  - `resourceProgression`: "x%" (e.g. "75%")
-  - `progressionOfResource`: "x% of y" (e.g. "75% of Chapter 1")
-  - `none`: Hides the progression display
+Both `reflow` and `fxl` share the same structure:
+- `default`: Default format configuration
+  - `variants`: The format variant(s) to use (e.g., `ThProgressionFormat.positionsPercentOfTotal` or an array of formats)
+  - `displayInImmersive`: Whether to show in immersive mode
+  - `displayInFullscreen`: Whether to show in fullscreen mode
+- `breakpoints` (optional): Breakpoint-specific configurations
+  - `[breakpoint]`: Breakpoint name (e.g., `ThBreakpoints.compact`)
+    - `variants`: Format variant(s) for this breakpoint
+    - `displayInImmersive`: Whether to show in immersive mode for this breakpoint
+    - `displayInFullscreen`: Whether to show in fullscreen mode for this breakpoint
+
+Available `ThProgressionFormat` variants:
+- `positionsPercentOfTotal`: "x-y of z (%)" (e.g. "25 of 50 (50%)")
+- `positionsOfTotal`: "x-y of z" (e.g. "10-12 of 50")
+- `positions`: "x-y" (e.g. "10-12")
+- `overallProgression`: "x%" (e.g. "25%")
+- `positionsLeft`: "x left in chapter" (e.g. "5 left in Chapter 1")
+- `resourceProgression`: "x%" (e.g. "75%")
+- `progressionOfResource`: "x% of y" (e.g. "75% of Chapter 1")
+- `none`: Hides the progression display
+
+Example configuration:
 
 ```typescript
 theming: {
-  ...
   progression: {
     format: {
-      reflow: ThProgressionFormat.progressionOfResource,
-      fxl: [ThProgressionFormat.positionsOfTotal, ThProgressionFormat.none]
+      reflow: {
+        default: {
+          variants: [
+            ThProgressionFormat.positionsPercentOfTotal,
+            ThProgressionFormat.progressionOfResource
+          ],
+          displayInImmersive: true,
+          displayInFullscreen: false
+        },
+        breakpoints: {
+          [ThBreakpoints.compact]: {
+            variants: [
+              ThProgressionFormat.positionsOfTotal,
+              ThProgressionFormat.resourceProgression
+            ],
+            displayInImmersive: false
+          }
+        }
+      },
+      fxl: {
+        default: {
+          variants: [
+            ThProgressionFormat.positionsOfTotal,
+            ThProgressionFormat.overallProgression
+          ],
+          displayInFullscreen: true
+        }
+      }
     }
   }
 }

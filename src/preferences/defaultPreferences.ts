@@ -42,11 +42,32 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
       runningHead: {
         format: {
           reflow: {
-            default: ThRunningHeadFormat.chapter
+            default: {
+              variants: ThRunningHeadFormat.chapter,
+              displayInImmersive: true,
+              displayInFullscreen: false
+            },
+            breakpoints: {
+              [ThBreakpoints.compact]: {
+                variants: ThRunningHeadFormat.chapter,
+                displayInImmersive: false,
+                displayInFullscreen: false
+              }
+            }
           },
           fxl: {
-            default: ThRunningHeadFormat.title,
-            displayInImmersive: false
+            default: {
+              variants: ThRunningHeadFormat.title,
+              displayInImmersive: true,
+              displayInFullscreen: true
+            },
+            breakpoints: {
+              [ThBreakpoints.compact]: {
+                variants: ThRunningHeadFormat.title,
+                displayInImmersive: false,
+                displayInFullscreen: true
+              }
+            }
           }
         }
       }
@@ -54,40 +75,46 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
     progression: {
       format: {
         reflow: {
-          default: [
-            ThProgressionFormat.positionsOfTotal, 
-            ThProgressionFormat.progressionOfResource
-          ],
-          breakpoints: {
-            [ThBreakpoints.compact]: [
-              ThProgressionFormat.positions, 
-              ThProgressionFormat.resourceProgression
+          default: {
+            variants: [
+              ThProgressionFormat.positionsPercentOfTotal,
+              ThProgressionFormat.progressionOfResource
             ],
-            [ThBreakpoints.medium]: [
-              ThProgressionFormat.positions, 
-              ThProgressionFormat.resourceProgression
-            ]
+            displayInImmersive: true,
+            displayInFullscreen: false
+          },
+          breakpoints: {
+            [ThBreakpoints.compact]: {
+              variants: [
+                ThProgressionFormat.positionsOfTotal, 
+                ThProgressionFormat.resourceProgression
+              ],
+              displayInImmersive: false,
+              displayInFullscreen: false
+            }
           }
         },
         fxl: {
-          default: [
-            ThProgressionFormat.positionsOfTotal, 
-            ThProgressionFormat.overallProgression,
-            ThProgressionFormat.none
-          ],
-          breakpoints: {
-            [ThBreakpoints.compact]: [
-              ThProgressionFormat.positions, 
+          default: {
+            variants: [
+              ThProgressionFormat.positionsOfTotal, 
               ThProgressionFormat.overallProgression,
               ThProgressionFormat.none
             ],
-            [ThBreakpoints.medium]: [
-              ThProgressionFormat.positions, 
-              ThProgressionFormat.overallProgression,
-              ThProgressionFormat.none
-            ]
+            displayInImmersive: true,
+            displayInFullscreen: true
           },
-          displayInImmersive: false
+          breakpoints: {
+            [ThBreakpoints.compact]: {
+              variants: [
+                ThProgressionFormat.positions, 
+                ThProgressionFormat.overallProgression,
+                ThProgressionFormat.none
+              ],
+              displayInImmersive: false,
+              displayInFullscreen: true
+            }
+          }
         }
       }
     },

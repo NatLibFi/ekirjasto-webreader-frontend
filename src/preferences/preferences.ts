@@ -17,7 +17,8 @@ import {
   ThLayoutUI,
   ThBackLinkVariant,
   ThProgressionFormat,
-  ThRunningHeadFormat
+  ThRunningHeadFormat,
+  ThBreakpoints
 } from "./models/enums";
 import { ThCollapsibility, ThCollapsibilityVisibility } from "@/core/Components/Actions/hooks/useCollapsibility";
 
@@ -153,10 +154,17 @@ export type ThSettingsKeyTypes = {
 
 export type ThConstraintKeys = Extract<ThSheetTypes, ThSheetTypes.bottomSheet | ThSheetTypes.popover> | "pagination";
 
-export interface ThFormatPref<T extends string | Array<string>> {
-  default: T;
-  breakpoints?: BreakpointsMap<T>;
+export interface ThFormatPrefValue<T extends string | Array<string>> {
+  variants: T;
   displayInImmersive?: boolean;
+  displayInFullscreen?: boolean;
+}
+
+export interface ThFormatPref<T extends string | Array<string>> {
+  default: ThFormatPrefValue<T>;
+  breakpoints?: { 
+    [key in ThBreakpoints]?: ThFormatPrefValue<T>;
+  };
 }
 
 // Main preferences interface with simplified generics

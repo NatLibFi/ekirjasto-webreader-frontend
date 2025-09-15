@@ -5,6 +5,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import progressionStyles from "./assets/styles/readerProgression.module.css";
 
 import { ThProgressionFormat } from "@/preferences/models/enums";
+import { ThFormatPrefValue } from "@/preferences";
 
 import { ThProgression } from "@/core/Components/Reader/ThProgression";
 
@@ -56,6 +57,7 @@ export const StatefulReaderProgression = ({
   const unstableTimeline = useAppSelector(state => state.publication.unstableTimeline);
   const isFXL = useAppSelector(state => state.publication.isFXL);
   const isImmersive = useAppSelector(state => state.reader.isImmersive);
+  const isFullscreen = useAppSelector(state => state.reader.isFullscreen);
   const isHovering = useAppSelector(state => state.reader.isHovering);
   const breakpoint = useAppSelector(state => state.theming.breakpoint);
 
@@ -65,43 +67,55 @@ export const StatefulReaderProgression = ({
     ? preferences.theming.progression?.format?.fxl
     : preferences.theming.progression?.format?.reflow;
 
-  const fallbackFormat = isFXL 
-    ? ThProgressionFormat.overallProgression
-    : ThProgressionFormat.resourceProgression;
+  // Get the fallback format based on isFXL
+  const fallbackFormat = useMemo<ThFormatPrefValue<ThProgressionFormat>>(() => ({
+    variants: isFXL ? ThProgressionFormat.overallProgression : ThProgressionFormat.resourceProgression,
+    displayInImmersive: true,
+    displayInFullscreen: true
+  }), [isFXL]);
   
   const breakpointsMap = useMemo(() => {
-    return makeBreakpointsMap<ThProgressionFormat | ThProgressionFormat[]>({
+    return makeBreakpointsMap<ThFormatPrefValue<ThProgressionFormat | ThProgressionFormat[]>>({
       defaultValue: formatPref?.default || fallbackFormat,
       fromEnum: ThProgressionFormat,
-      pref: formatPref?.breakpoints
+      pref: formatPref?.breakpoints,
+      validateKey: "variants"
     });
   }, [formatPref, fallbackFormat]);
   
-  // Get the format for the current breakpoint
-  const currentFormat = breakpoint ? 
-    (breakpointsMap[breakpoint] || formatPref?.default) : 
-    (formatPref?.default || fallbackFormat);
+  // Get current preferences with proper fallback
+  const currentPrefs = useMemo(() => {
+    if (!breakpoint) return formatPref?.default || fallbackFormat;
+    return breakpointsMap[breakpoint] || formatPref?.default || fallbackFormat;
+  }, [breakpoint, breakpointsMap, formatPref?.default, fallbackFormat]);
+
+  const { variants, displayInImmersive, displayInFullscreen } = currentPrefs;
   
   // Get the display format, handling both single format and array of formats
   const displayFormat = useMemo(() => {
-    if (!currentFormat) return fallbackFormat;
+    if (!variants) return fallbackFormat.variants;
     
     // Check if we should hide in immersive mode
-    if (isImmersive && formatPref?.displayInImmersive === false && !isHovering) {
+    if (isImmersive && displayInImmersive === false && !isHovering) {
       return ThProgressionFormat.none;
     }
     
-    const format = Array.isArray(currentFormat) ? currentFormat[0] : currentFormat;
+    // Check if we should hide in fullscreen mode
+    if (isImmersive && isFullscreen && displayInFullscreen === false && !isHovering) {
+      return ThProgressionFormat.none;
+    }
+    
+    const format = Array.isArray(variants) ? variants[0] : variants;
     const hasPositions = !!unstableTimeline?.progression?.currentPositions?.length;
     const hasProgression = unstableTimeline?.progression?.relativeProgression !== undefined;
     
-    if (Array.isArray(currentFormat)) {
-      return getBestMatchingFormat(currentFormat, hasPositions, hasProgression) || 
-        fallbackFormat;
+    if (Array.isArray(variants)) {
+      return getBestMatchingFormat(variants, hasPositions, hasProgression) || 
+        fallbackFormat.variants;
     }
     
     return format;
-  }, [currentFormat, unstableTimeline?.progression, formatPref, fallbackFormat, isImmersive, isHovering]);
+  }, [variants, unstableTimeline?.progression, fallbackFormat, isImmersive, isHovering, isFullscreen, displayInImmersive, displayInFullscreen]);
 
   // Update display text based on current position and timeline
   useEffect(() => {

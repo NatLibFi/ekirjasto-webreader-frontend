@@ -9,12 +9,12 @@ export const mapPreferencesToState = <T extends CustomizableKeys>(prefs: ThPrefe
       direction: prefs.direction
     },
     progressionFormat: {
-      reflow: prefs.theming?.progression?.format?.reflow?.default,
-      fxl: prefs.theming?.progression?.format?.fxl?.default
+      reflow: prefs.theming?.progression?.format?.reflow?.default?.variants,
+      fxl: prefs.theming?.progression?.format?.fxl?.default?.variants
     },
     runningHeadFormat: {
-      reflow: prefs.theming?.header?.runningHead?.format?.reflow?.default,
-      fxl: prefs.theming?.header?.runningHead?.format?.fxl?.default
+      reflow: prefs.theming?.header?.runningHead?.format?.reflow?.default?.variants,
+      fxl: prefs.theming?.header?.runningHead?.format?.fxl?.default?.variants
     },
     ui: {
       reflow: prefs.theming?.layout?.ui?.reflow,
@@ -46,14 +46,20 @@ export const mapStateToPreferences = <T extends CustomizableKeys = CustomizableK
             ...currentPrefs.theming.progression?.format,
             ...(state.progressionFormat.reflow !== undefined && {
               reflow: {
-                default: state.progressionFormat.reflow as ThProgressionFormat | ThProgressionFormat[],
-                displayInImmersive: currentPrefs.theming.progression?.format?.reflow?.displayInImmersive
+                default: {
+                  variants: state.progressionFormat.reflow as ThProgressionFormat | ThProgressionFormat[],
+                  displayInImmersive: currentPrefs.theming.progression?.format?.reflow?.default?.displayInImmersive,
+                  displayInFullscreen: currentPrefs.theming.progression?.format?.reflow?.default?.displayInFullscreen
+                }
               }
             }),
             ...(state.progressionFormat.fxl !== undefined && {
               fxl: {
-                default: state.progressionFormat.fxl as ThProgressionFormat | ThProgressionFormat[],
-                displayInImmersive: currentPrefs.theming.progression?.format?.fxl?.displayInImmersive
+                default: {
+                  variants: state.progressionFormat.fxl as ThProgressionFormat | ThProgressionFormat[],
+                  displayInImmersive: currentPrefs.theming.progression?.format?.fxl?.default?.displayInImmersive,
+                  displayInFullscreen: currentPrefs.theming.progression?.format?.fxl?.default?.displayInFullscreen
+                }
               }
             })
           }
@@ -68,14 +74,20 @@ export const mapStateToPreferences = <T extends CustomizableKeys = CustomizableK
               ...currentPrefs.theming.header?.runningHead?.format,
               ...(state.runningHeadFormat.reflow !== undefined && {
                 reflow: {
-                  default: state.runningHeadFormat.reflow as ThRunningHeadFormat,
-                  displayInImmersive: currentPrefs.theming.header?.runningHead?.format?.reflow?.displayInImmersive
+                  default: {
+                    variants: state.runningHeadFormat.reflow as ThRunningHeadFormat,
+                    displayInImmersive: currentPrefs.theming.header?.runningHead?.format?.reflow?.default?.displayInImmersive,
+                    displayInFullscreen: currentPrefs.theming.header?.runningHead?.format?.reflow?.default?.displayInFullscreen
+                  }
                 }
               }),
               ...(state.runningHeadFormat.fxl !== undefined && {
                 fxl: {
-                  default: state.runningHeadFormat.fxl as ThRunningHeadFormat,
-                  displayInImmersive: currentPrefs.theming.header?.runningHead?.format?.fxl?.displayInImmersive
+                  default: {
+                    variants: state.runningHeadFormat.fxl as ThRunningHeadFormat,
+                    displayInImmersive: currentPrefs.theming.header?.runningHead?.format?.fxl?.default?.displayInImmersive,
+                    displayInFullscreen: currentPrefs.theming.header?.runningHead?.format?.fxl?.default?.displayInFullscreen
+                  }
                 }
               })
             }
