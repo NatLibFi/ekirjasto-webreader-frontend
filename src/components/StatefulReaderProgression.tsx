@@ -23,6 +23,7 @@ const getBestMatchingFormat = (
 ): ThProgressionFormat | null => {
   for (const format of formats) {
     switch (format) {
+      case ThProgressionFormat.positionsPercentOfTotal:
       case ThProgressionFormat.positionsOfTotal:
       case ThProgressionFormat.positions:
       case ThProgressionFormat.positionsLeft:
@@ -137,6 +138,16 @@ export const StatefulReaderProgression = ({
             current: formatPositions(currentPositions),
             reference: totalPositions
           });
+        }
+        break;
+
+      case ThProgressionFormat.positionsPercentOfTotal:
+        if (currentPositions.length > 0 && totalPositions) {
+          const percentage = Math.round((totalProgression || 0) * 100);
+          text = t("reader.app.progression.of", { 
+            current: formatPositions(currentPositions),
+            reference: totalPositions
+          }) + ` (${ percentage }%)`;
         }
         break;
         

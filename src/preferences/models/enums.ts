@@ -20,13 +20,14 @@ export enum ThRunningHeadFormat {
 }
 
 export enum ThProgressionFormat {
-  positionsOfTotal = "positionsOfTotal",            // x-y of z
-  positions = "positions",                          // x-y
-  overallProgression = "overallProgression",        // x%
-  positionsLeft = "positionsLeft",                  // x left in chapter
-  resourceProgression = "resourceProgression",      // x%
-  progressionOfResource = "progressionOfResource",  // x% of y
-  none = "none"                                     // nothing displayed
+  positionsPercentOfTotal = "positionsPercentOfTotal",  // x-y of z (%)
+  positionsOfTotal = "positionsOfTotal",                // x-y of z
+  positions = "positions",                              // x-y
+  overallProgression = "overallProgression",            // x%
+  positionsLeft = "positionsLeft",                      // x left in chapter
+  resourceProgression = "resourceProgression",          // x%
+  progressionOfResource = "progressionOfResource",      // x% of y
+  none = "none"                                         // nothing displayed
 }
 
 export enum ThActionsKeys {

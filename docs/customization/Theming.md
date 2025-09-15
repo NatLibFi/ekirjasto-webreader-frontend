@@ -178,6 +178,7 @@ The `progression` preference allows you to configure the progression format in t
   - `fxl`: The progression format for Fixed-Layout EPUBs
 
 Each format can be one or an array of enum `ThProgressionFormat`:
+  - `positionsPercentOfTotal`: "x-y of z (%)" (e.g. "25 of 50 (50%)")
   - `positionsOfTotal`: "x-y of z" (e.g. "10-12 of 50")
   - `positions`: "x-y" (e.g. "10-12")
   - `overallProgression`: "x%" (e.g. "25%")
