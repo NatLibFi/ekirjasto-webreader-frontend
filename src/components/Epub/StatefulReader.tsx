@@ -550,19 +550,7 @@ export const StatefulReader = ({
 
     // Reset top bar visibility and last position
     dispatch(setImmersive(false));
-
-    const handleConstraint = async (value: number) => {
-      await applyConstraint(value)
-    }
-
-    if (!isScroll) {
-      handleConstraint(arrowsOccupySpace ? arrowsWidth.current : 0)
-        .catch(console.error);
-    } else {
-      handleConstraint(0)
-        .catch(console.error);
-    }
-  }, [isScroll, arrowsOccupySpace, applyConstraint, dispatch]);
+  }, [isScroll, dispatch]);
 
   useEffect(() => {
     cache.current.settings.columnCount = columnCount;
@@ -626,7 +614,13 @@ export const StatefulReader = ({
 
   useEffect(() => {
     cache.current.arrowsOccupySpace = arrowsOccupySpace || false;
-  }, [arrowsOccupySpace]);
+
+    const handleConstraint = async () => {
+      await applyConstraint(arrowsOccupySpace ? arrowsWidth.current : 0)
+    }
+    handleConstraint()
+      .catch(console.error);
+  }, [arrowsOccupySpace, applyConstraint]);
 
   useEffect(() => {
     cache.current.reducedMotion = reducedMotion;
@@ -670,14 +664,6 @@ export const StatefulReader = ({
     preferences.direction && dispatch(setDirection(preferences.direction));
     dispatch(setPlatformModifier(getPlatformModifier()));
   }, [preferences.direction, dispatch]);
-
-  useEffect(() => {
-    const handleConstraint = async () => {
-      await applyConstraint(arrowsOccupySpace ? arrowsWidth.current : 0)
-    }
-    handleConstraint()
-      .catch(console.error);
-  }, [arrowsOccupySpace, applyConstraint]);
 
   useEffect(() => {
     const fetcher: Fetcher = new HttpFetcher(undefined, selfHref);
