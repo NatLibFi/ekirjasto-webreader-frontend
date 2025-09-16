@@ -17,7 +17,8 @@ import {
   ThLayoutUI,
   ThBackLinkVariant,
   ThProgressionFormat,
-  ThRunningHeadFormat
+  ThRunningHeadFormat,
+  ThDocumentTitleFormat
 } from "./models/enums";
 import { createPreferences, ThPreferences, DefaultKeys } from "./preferences";
 
@@ -26,6 +27,11 @@ import ReadiumCSSColors from "@readium/css/css/vars/colors.json";
 export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<DefaultKeys>({
 //  direction: ThLayoutDirection.ltr,
 //  locale: "en",
+  metadata: {
+    documentTitle: {
+      format: ThDocumentTitleFormat.title
+    }
+  },
   typography: {
     minimalLineLength: 35, // undefined | null | number of characters. If 2 cols will switch to 1 based on this
     optimalLineLength: 60, // number of characters. If auto layout, picks colCount based on this

@@ -191,6 +191,19 @@ function useReducedTransparency(
 
 ## Utility Hooks
 
+### useDocumentTitle
+
+Manages document title.
+
+```typescript
+function useDocumentTitle(
+  title?: string
+): void
+```
+
+**Features:**
+- Sets document title if truthy
+
 ### useFullscreen
 
 Manages fullscreen state and transitions.
@@ -222,6 +235,29 @@ function useIsClient(): boolean
 - Safe hydration handling
 - Uses useLayoutEffect for immediate detection
 - Returns false during SSR
+
+### useLocalStorage
+
+Manages local storage with React state synchronization.
+
+```typescript
+function useLocalStorage(
+  key: string
+): {
+  localData: any;
+  setLocalData: (value: any) => void;
+  getLocalData: () => any;
+  clearLocalData: () => void;
+  cachedLocalData: React.MutableRefObject<any>;
+}
+```
+
+**Features:**
+- Automatically syncs with localStorage
+- Provides getter, setter, and clear methods
+- Maintains local state and a cached ref of the value
+- Handles JSON serialization/deserialization
+- Returns the current value and cached ref
 
 ### usePrevious
 

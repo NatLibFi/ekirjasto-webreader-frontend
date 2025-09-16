@@ -19,7 +19,8 @@ import {
   ThLineHeightOptions, 
   ThSettingsKeys, 
   ThTextAlignOptions, 
-  ThLayoutUI
+  ThLayoutUI,
+  ThDocumentTitleFormat
 } from "../../preferences/models/enums";
 import { ThColorScheme } from "@/core/Hooks/useColorScheme";
 
@@ -62,6 +63,7 @@ import { usePrevious } from "@/core/Hooks/usePrevious";
 import { useI18n } from "@/i18n/useI18n";
 import { useTimeline } from "@/core/Hooks/useTimeline";
 import { useLocalStorage } from "@/core/Hooks/useLocalStorage";
+import { useDocumentTitle } from "@/core/Hooks/useDocumentTitle";
 
 import { toggleActionOpen } from "@/lib/actionsReducer";
 import { useAppSelector, useAppDispatch, useAppStore } from "@/lib/hooks";
@@ -263,6 +265,35 @@ export const StatefulReader = ({
       dispatch(setTimeline(timeline));
     }
   });
+
+  const documentTitleFormat = preferences.metadata?.documentTitle?.format;
+  
+  let documentTitle: string | undefined;
+  
+  if (documentTitleFormat) {
+    if (typeof documentTitleFormat === "object") {
+      documentTitle = documentTitleFormat.custom;
+    } else {
+      switch (documentTitleFormat) {
+        case ThDocumentTitleFormat.title:
+          documentTitle = timeline?.title;
+          break;
+        case ThDocumentTitleFormat.chapter:
+          documentTitle = timeline?.progression?.currentChapter;
+          break;
+        case ThDocumentTitleFormat.titleAndChapter:
+          if (timeline?.title && timeline?.progression?.currentChapter) {
+            documentTitle = `${ timeline.title } – ${ timeline.progression.currentChapter }`;
+          }
+          break;
+        case ThDocumentTitleFormat.none:
+          documentTitle = undefined;
+          break;
+      }
+    }
+  }
+
+  useDocumentTitle(documentTitle);
 
   // We need to use a cache so that we can use updated values
   // without re-rendering the component, and reloading EpubNavigator

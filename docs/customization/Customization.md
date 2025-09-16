@@ -16,6 +16,20 @@ Values can be `ltr` or `rtl` and a `ThLayoutDirection` enum is available as well
 
 For direction to work properly, the `locale` has to be set as well, since React Aria Components require this locale to derive the correct direction. If you don’t set it, then the user’s system/browser locale will be used, with the risk of resulting to a conflicting `dir` being used. 
 
+## Metadata
+
+### Document Title
+
+The `documentTitle` preference allows you to configure the document title of the reader. It accepts the following properties:
+
+- `format`: The format of the document title. Can be one of enum `ThDocumentTitleFormat`:
+  - `title`: The publication title
+  - `chapter`: The current chapter/section title
+  - `titleAndChapter`: The publication title and the current chapter/section title
+  - `none`: Use the default document title from markup
+
+It can also be an object with property `custom` to provide an arbitrary document title.
+
 ## Typography
 
 The `typography` object can be used to set the following properties:

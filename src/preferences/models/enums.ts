@@ -12,6 +12,13 @@ export enum ThBackLinkVariant {
   custom = "custom"
 }
 
+export enum ThDocumentTitleFormat {
+  title = "title",
+  chapter = "chapter",
+  titleAndChapter = "titleAndChapter",
+  none = "none"
+}
+
 export enum ThRunningHeadFormat {
   title = "title",
   chapter = "chapter",

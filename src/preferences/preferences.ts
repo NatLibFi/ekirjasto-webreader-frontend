@@ -18,7 +18,8 @@ import {
   ThBackLinkVariant,
   ThProgressionFormat,
   ThRunningHeadFormat,
-  ThBreakpoints
+  ThBreakpoints,
+  ThDocumentTitleFormat
 } from "./models/enums";
 import { ThCollapsibility, ThCollapsibilityVisibility } from "@/core/Components/Actions/hooks/useCollapsibility";
 
@@ -171,6 +172,12 @@ export interface ThFormatPref<T extends string | Array<string>> {
 export interface ThPreferences<K extends CustomizableKeys = {}> {
   direction?: ThLayoutDirection;
   locale?: string;
+  metadata?: {
+    documentTitle?: {
+      // TODO – Templating of custom
+      format: ThDocumentTitleFormat | { custom: string };
+    };
+  };
   typography: {
     minimalLineLength?: number | null;
     maximalLineLength?: number | null;

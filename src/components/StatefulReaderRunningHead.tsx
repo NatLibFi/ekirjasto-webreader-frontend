@@ -76,23 +76,11 @@ export const StatefulReaderRunningHead = () => {
     }
     return t("reader.app.header.runningHeadFallback");
   }, [displayFormat, unstableTimeline, t]);
-
-  const docTitle = useMemo(() => {
-    if (unstableTimeline?.title && unstableTimeline?.progression?.currentChapter) {
-      return `${ unstableTimeline.title } - ${ unstableTimeline.progression.currentChapter }`;
-    }
-    return unstableTimeline?.title || "";
-  }, [unstableTimeline?.title, unstableTimeline?.progression?.currentChapter]);
-  
-  if (displayFormat === ThRunningHeadFormat.none || !runningHead) {
-    return null;
-  }
   
   return (
     <>
     <ThRunningHead 
       label={ runningHead } 
-      syncDocTitle={ docTitle || false }
       aria-label={ t("reader.app.header.runningHead") }
     />
     </>
