@@ -12,12 +12,24 @@ export interface TocItem {
 
 export interface TimelineItem {
   href: string;
+  readingOrderIndex?: number;
   title?: string;
   fragments?: string[];
   positionRange?: [number, number?];
   progressionRange?: [number, number?];
   totalProgressionRange?: [number, number?];
   children?: TimelineItem[];
+}
+
+export interface TimelineProgression {
+  totalItems?: number;
+  currentIndex?: number;
+  totalPositions: number;
+  currentPositions: number[];
+  relativeProgression?: number;
+  totalProgression?: number;
+  currentChapter?: string;
+  positionsLeft: number;
 }
 
 export interface UnstableTimeline {
@@ -32,14 +44,7 @@ export interface UnstableTimeline {
   currentItem?: TimelineItem | null;
   previousItem?: TimelineItem | null;
   nextItem?: TimelineItem | null;
-  progression?: {
-    totalPositions: number;
-    currentPositions: number[];
-    relativeProgression?: number;
-    totalProgression?: number;
-    currentChapter?: string;
-    positionsLeft: number;
-  };
+  progression?: TimelineProgression;
 }
 
 export let timelineInstance: UnstableTimeline | undefined;
@@ -80,10 +85,12 @@ export const useTimeline = ({
     previousItem,
     nextItem,
     progression: {
+      totalItems: publication?.readingOrder.items.length,
+      currentIndex: currentItem?.readingOrderIndex ? currentItem.readingOrderIndex + 1 : undefined,
       totalPositions: positionsList.length,
       currentPositions: currentPositions || [],
-      relativeProgression: currentLocation?.locations?.progression ?? currentItem?.progressionRange?.[0],
-      totalProgression: currentLocation?.locations?.totalProgression ?? currentItem?.totalProgressionRange?.[0],
+      relativeProgression: currentItem?.progressionRange?.[0],
+      totalProgression: currentItem?.totalProgressionRange?.[0],
       currentChapter: currentItem?.title,
       positionsLeft: currentItem?.positionRange?.[1] && currentPositions[0] !== undefined
         ? Math.max(0, currentItem.positionRange[1] - currentPositions[0])
@@ -91,6 +98,7 @@ export const useTimeline = ({
     }
   }), [
     publication?.metadata.title,
+    publication?.readingOrder.items,
     timelineItems,
     tocTree,
     currentTocEntry,
@@ -98,8 +106,7 @@ export const useTimeline = ({
     previousItem,
     nextItem,
     positionsList,
-    currentPositions,
-    currentLocation
+    currentPositions
   ]);
 
   const buildTocTree = useCallback((
@@ -232,7 +239,7 @@ export const useTimeline = ({
     };
 
     // Process reading order items
-    for (const item of readingOrder) {
+    readingOrder.forEach((item, index) => {
       // Find all matching TOC items (with or without fragment)
       const matchingTocItems = flatToc.filter(t => {
         const baseHref = getBaseUrl(t.href);
@@ -243,18 +250,21 @@ export const useTimeline = ({
       // Create timeline item with all matching titles
       const timelineItem: TimelineItem = {
         href: item.href,
+        readingOrderIndex: index,
         title: item.title || matchingTocItems[0]?.title || findNearestTitle(item.href),
         fragments: matchingTocItems
           .map(t => t.href.split("#")[1])
           .filter(Boolean),
         children: matchingTocItems[0]?.children?.items?.map(child => ({
+          // We do not care about index for children
+          // since currentLocation is guaranteed to be in the reading order
           title: child.title,
           href: child.href
         })) || []
       };
 
       timelineItems[item.href] = timelineItem;
-    }
+    });
   
     // Then add position and progression information from positionsList
     for (const item of readingOrder) {

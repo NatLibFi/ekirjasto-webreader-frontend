@@ -32,6 +32,7 @@ export enum ThProgressionFormat {
   positions = "positions",                              // x-y
   overallProgression = "overallProgression",            // x%
   positionsLeft = "positionsLeft",                      // x left in chapter
+  readingOrderIndex = "readingOrderIndex",              // x of y
   resourceProgression = "resourceProgression",          // x%
   progressionOfResource = "progressionOfResource",      // x% of y
   none = "none"                                         // nothing displayed

@@ -39,6 +39,7 @@ const getBestMatchingFormat = (
           return format;
         }
         break;
+      case ThProgressionFormat.readingOrderIndex:
       case ThProgressionFormat.none:
         return format;
     }
@@ -69,7 +70,7 @@ export const StatefulReaderProgression = ({
 
   // Get the fallback format based on isFXL
   const fallbackFormat = useMemo<ThFormatPrefValue<ThProgressionFormat>>(() => ({
-    variants: isFXL ? ThProgressionFormat.overallProgression : ThProgressionFormat.resourceProgression,
+    variants: isFXL ? ThProgressionFormat.readingOrderIndex : ThProgressionFormat.resourceProgression,
     displayInImmersive: true,
     displayInFullscreen: true
   }), [isFXL]);
@@ -130,7 +131,9 @@ export const StatefulReaderProgression = ({
       relativeProgression,
       totalProgression,
       currentChapter,
-      positionsLeft
+      positionsLeft,
+      totalItems,
+      currentIndex
     } = unstableTimeline.progression;
     
     let text = "";
@@ -198,6 +201,15 @@ export const StatefulReaderProgression = ({
           text = t("reader.app.progression.of", {
             current: `${ percentage }%`,
             reference: currentChapter || t("reader.app.progression.referenceFallback")
+          });
+        }
+        break;
+
+      case ThProgressionFormat.readingOrderIndex:
+        if (currentIndex !== undefined && totalItems !== undefined) {
+          text = t("reader.app.progression.of", {
+            current: currentIndex,
+            reference: totalItems
           });
         }
         break;

@@ -225,6 +225,7 @@ Available `ThProgressionFormat` variants:
 - `positions`: "x-y" (e.g. "10-12")
 - `overallProgression`: "x%" (e.g. "25%")
 - `positionsLeft`: "x left in chapter" (e.g. "5 left in Chapter 1")
+- `readingOrderIndex`: "x of y" (e.g. "1 of 5")
 - `resourceProgression`: "x%" (e.g. "75%")
 - `progressionOfResource`: "x% of y" (e.g. "75% of Chapter 1")
 - `none`: Hides the progression display
