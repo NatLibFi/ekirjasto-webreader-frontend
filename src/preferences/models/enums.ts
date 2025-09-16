@@ -118,7 +118,10 @@ export enum ThThemeKeys {
   paper = "paper",
   contrast1 = "contrast1",
   contrast2 = "contrast2",
-  contrast3 = "contrast3"
+  contrast3 = "contrast3",
+  ekirjasto1 = "E-Kirjasto 1",
+  ekirjasto2 = "E-Kirjasto 2",
+  ekirjasto3 = "E-Kirjasto 3"
 }
 
 export enum ThLayoutDirection {
