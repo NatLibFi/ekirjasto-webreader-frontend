@@ -117,7 +117,10 @@
         "dark": "Dark",
         "contrast1": "Contrast 1",
         "contrast2": "Contrast 2",
-        "contrast3": "Contrast 3"
+        "contrast3": "Contrast 3",
+        "ekirjasto1": "ekirjasto1", 
+        "ekirjasto2": "ekirjasto2", 
+        "ekirjasto3": "ekirjasto3"
       },
       "zoom": {
         "title": "Zoom",
