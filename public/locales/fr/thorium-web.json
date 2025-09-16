@@ -17,7 +17,6 @@
         },
         "label": "Barre supérieure",
         "runningHead": "Titre courant",
-        "runningHeadFallback": "…",
         "actions": "Actions"
       },
       "footer": {

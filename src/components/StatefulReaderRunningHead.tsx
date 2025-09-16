@@ -74,8 +74,10 @@ export const StatefulReaderRunningHead = () => {
     } else if (displayFormat === ThRunningHeadFormat.chapter) {
       return unstableTimeline?.progression?.currentChapter || unstableTimeline?.title || "";
     }
-    return t("reader.app.header.runningHeadFallback");
-  }, [displayFormat, unstableTimeline, t]);
+    return "";
+  }, [displayFormat, unstableTimeline]);
+
+  if (!runningHead || displayFormat === ThRunningHeadFormat.none) return null;
   
   return (
     <>

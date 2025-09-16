@@ -17,7 +17,6 @@
         },
         "label": "Top bar",
         "runningHead": "Running head",
-        "runningHeadFallback": "...",
         "actions": "Actions"
       },
       "footer": {
