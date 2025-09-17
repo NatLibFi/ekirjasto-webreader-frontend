@@ -58,14 +58,14 @@
     "i18next-http-backend": "^3.0.2",
     "motion": ">=12.4.0",
     "react": ">=19.0.0",
-    "react-aria": "^3.42.0",
-    "react-aria-components": "^1.11.0",
+    "react-aria": "3.42.0",
+    "react-aria-components": "1.11.0",
     "react-dom": ">=19.0.0",
     "react-i18next": ">=13.0.0",
     "react-modal-sheet": ">=4.4.0",
     "react-redux": ">=9.2.0",
     "react-resizable-panels": ">=3.0.0",
-    "react-stately": "^3.40.0"
+    "react-stately": "3.40.0"
   },
   "dependencies": {
     "@readium/css": "2.0.0-beta.19",
@@ -81,14 +81,14 @@
     "motion": "^12.23.12",
     "next": "15.5.0",
     "react": "^19.1.1",
-    "react-aria": "^3.42.0",
-    "react-aria-components": "^1.11.0",
+    "react-aria": "3.42.0",
+    "react-aria-components": "1.11.0",
     "react-dom": "^19.1.1",
     "react-i18next": "^15.6.1",
     "react-modal-sheet": "^4.4.0",
     "react-redux": "^9.2.0",
     "react-resizable-panels": "^3.0.4",
-    "react-stately": "^3.40.0"
+    "react-stately": "3.40.0"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",
