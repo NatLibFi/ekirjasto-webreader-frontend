@@ -62,7 +62,7 @@
     "react-aria-components": "^1.12.2",
     "react-dom": "^19.1.1",
     "react-i18next": "^15.7.3",
-    "react-modal-sheet": "^4.4.0",
+    "react-modal-sheet": "^5.1.2",
     "react-redux": "^9.2.0",
     "react-resizable-panels": "^3.0.6",
     "react-stately": "^3.41.0"
@@ -85,7 +85,7 @@
     "react-aria-components": "^1.12.2",
     "react-dom": "^19.1.1",
     "react-i18next": "^15.7.3",
-    "react-modal-sheet": "^4.4.0",
+    "react-modal-sheet": "^5.1.2",
     "react-redux": "^9.2.0",
     "react-resizable-panels": "^3.0.6",
     "react-stately": "^3.41.0"

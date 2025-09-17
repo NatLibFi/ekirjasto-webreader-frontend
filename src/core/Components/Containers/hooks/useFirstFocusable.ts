@@ -71,9 +71,17 @@ export const useFirstFocusable = (props?: UseFirstFocusableProps) => {
   const timeoutRef = useRef<number | null>(null);
 
   const previousUpdateState = usePrevious(updateState);
+  const previousTrackedState = usePrevious(trackedState);
 
   useEffect(() => {
-    if (!withinRef || (!trackedState && updateState === previousUpdateState)) return;
+    if (!withinRef) return;
+    
+    // If trackedState is false and updateState hasn't changed, do nothing
+    if (!trackedState && updateState === previousUpdateState) return;
+    
+    // Determine what triggered this effect
+    const isTrackedStateUpdate = trackedState && (previousTrackedState !== trackedState);
+    const isUpdateStateUpdate = updateState !== previousUpdateState;
 
     attemptsRef.current = 0;
 
@@ -150,18 +158,42 @@ export const useFirstFocusable = (props?: UseFirstFocusableProps) => {
       }
     };
 
-    requestAnimationFrame(() => {
-      tryFindAndHandle();
-    });
+    if (isTrackedStateUpdate) {
+      // Store the initial timeout ID
+      // We need this because of the bottom sheet animation
+      // requestAnimationFrame is not enough, and trackingState
+      // from onOpenEnd does not work either for some unknown reason…
+      const initialTimeoutId = window.setTimeout(() => {
+        tryFindAndHandle();
+      }, 100);
 
-    return () => {
-      if (timeoutRef.current !== null) {
-        window.clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
-      }
-      attemptsRef.current = 0;
-    };
-  }, [withinRef, fallbackRef, scrollerRef, trackedState, previousUpdateState, updateState]);
+      return () => {
+        // Clear the initial timeout
+        clearTimeout(initialTimeoutId);
+
+        // Clear any retry timeouts
+        if (timeoutRef.current !== null) {
+          window.clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
+        attemptsRef.current = 0;
+      };
+    } else if (isUpdateStateUpdate) {
+      // For updateState changes, run immediately in the next frame
+      const rafId = requestAnimationFrame(() => {
+        tryFindAndHandle();
+      });
+
+      return () => {
+        cancelAnimationFrame(rafId);
+        if (timeoutRef.current !== null) {
+          window.clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
+        attemptsRef.current = 0;
+      };
+    }
+  }, [withinRef, fallbackRef, scrollerRef, trackedState, previousUpdateState, updateState, previousTrackedState]);
 
   return focusableElement.current;
 };

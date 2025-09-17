@@ -8,7 +8,7 @@ import React, {
   useState 
 } from "react";
 
-import { ThBottomSheetDetent } from "@/preferences/preferences";
+import { HTMLAttributesWithRef } from "../../customTypes";
 
 import { OverlayTriggerState, useOverlayTriggerState } from "react-stately";
 
@@ -19,7 +19,7 @@ import { useFirstFocusable, UseFirstFocusableProps } from "../hooks/useFirstFocu
 
 import { ThDragIndicatorButton, ThDragIndicatorButtonProps } from "./ThDragIndicatorButton";
 
-import { Sheet, SheetRef } from "react-modal-sheet";
+import { Sheet, SheetDetent, SheetRef } from "react-modal-sheet";
 import { HeadingProps } from "react-aria-components";
 import { 
   AriaOverlayProps, 
@@ -42,8 +42,8 @@ export interface ThBottomSheetCompounds {
   container?: Omit<React.ComponentProps<typeof Sheet.Container>, "children">,
   header?: React.ComponentProps<typeof Sheet.Header>,
   dragIndicator?: ThDragIndicatorButtonProps,
+  scroller?: HTMLAttributesWithRef<HTMLDivElement>,
   content?: React.ComponentProps<typeof Sheet.Content>,
-  scroller?: React.ComponentProps<typeof Sheet.Scroller>,
   backdrop?: React.ComponentProps<typeof Sheet.Backdrop>
 }
 
@@ -69,7 +69,7 @@ const ThBottomSheetContainer = ({
   isDraggable?: boolean;
   isKeyboardDismissDisabled?: boolean;
   focusOptions?: UseFirstFocusableProps;
-  detent?: ThBottomSheetDetent;
+  detent?: SheetDetent;
   compounds?: ThBottomSheetCompounds;
   children: ThContainerProps["children"];
 }) => {
@@ -84,12 +84,20 @@ const ThBottomSheetContainer = ({
   }, containerRef);
   const [isFullHeight, setFullHeight] = useState<boolean>(false);
 
+  useEffect(() => {
+    if (!isDraggable || !scrollerRef.current) return;
+
+    // We need this so that scrolling into the scrollerRef does not shift Sheet.content
+    scrollerRef.current.style.overscrollBehavior = "contain";
+    scrollerRef.current.style.contain = "content";
+  }, [isDraggable, scrollerRef]);
+
   useModal();
 
   const fullHeightIntersectionCallback = useCallback((entries: IntersectionObserverEntry[]) => {
     entries.forEach( (entry) => {
       if (
-          detent === "full-height" &&
+          detent === "default" &&
           entry.isIntersecting && 
           entry.intersectionRatio === 1 && 
           // For some reason width is larger on mobile (and border-right is almost invisible)…
@@ -161,18 +169,11 @@ const ThBottomSheetContainer = ({
         { Header }
       </Sheet.Header>
       <Sheet.Content 
+        scrollRef={ scrollerRef }
         { ...compounds?.content }
-        // Motion being picky with style on bundling so we have to cast like this… 
-        { ...(isDraggable ? { style: { paddingBottom: (sheetRef.current as SheetRef)?.y }} as { [key: string]: any } : {} )}
+        { ...(isDraggable ? { style: { ...compounds?.content?.style, paddingBottom: (sheetRef.current as SheetRef)?.y } as { [key: string]: any }} : {})}
       >
-        <Sheet.Scroller 
-          ref={ scrollerRef }
-          { ...compounds?.scroller }
-          // This is enabled by default since 4.4 but breaks scroll on focus…
-          autoPadding={ false }
-        >
-          { Body }
-        </Sheet.Scroller>
+        { Body }
       </Sheet.Content>
     </Sheet.Container>
     <Sheet.Backdrop 
