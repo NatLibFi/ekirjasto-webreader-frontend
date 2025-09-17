@@ -48,10 +48,10 @@ importers:
         specifier: ^19.1.1
         version: 19.1.1
       react-aria:
-        specifier: ^3.42.0
+        specifier: 3.42.0
         version: 3.42.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       react-aria-components:
-        specifier: ^1.11.0
+        specifier: 1.11.0
         version: 1.11.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       react-dom:
         specifier: ^19.1.1
@@ -69,7 +69,7 @@ importers:
         specifier: ^3.0.4
         version: 3.0.4(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       react-stately:
-        specifier: ^3.40.0
+        specifier: 3.40.0
         version: 3.40.0(react@19.1.1)
     devDependencies:
       '@svgr/webpack':
