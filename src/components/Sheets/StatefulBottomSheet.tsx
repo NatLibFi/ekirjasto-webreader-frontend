@@ -309,6 +309,9 @@ export const StatefulBottomSheet = ({
             className: classNames(sheetStyles.bottomSheet, className),
             disableDrag: true
           },
+          scroller: {
+            className: sheetStyles.bottomSheetScroller
+          },
           backdrop: {
             className: classNames(sheetStyles.bottomSheetBackdrop, scrimClassName),
             style: { "--defaults-scrim": scrimPref.override }
