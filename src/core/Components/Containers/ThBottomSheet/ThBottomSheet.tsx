@@ -84,6 +84,16 @@ const ThBottomSheetContainer = ({
   }, containerRef);
   const [isFullHeight, setFullHeight] = useState<boolean>(false);
 
+  // Apply scroller styles from compounds
+  useEffect(() => {
+    if (!scrollerRef.current || !compounds?.scroller) return;
+    Object.entries(compounds.scroller).forEach(([key, value]) => {
+      if (value !== undefined && key in scrollerRef.current!) {
+        (scrollerRef.current as any)[key] = value;
+      }
+    });
+  }, [scrollerRef, compounds?.scroller]);
+
   useEffect(() => {
     if (!isDraggable || !scrollerRef.current) return;
 
