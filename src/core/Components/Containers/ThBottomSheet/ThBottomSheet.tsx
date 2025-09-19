@@ -8,8 +8,6 @@ import React, {
   useState 
 } from "react";
 
-import { HTMLAttributesWithRef } from "../../customTypes";
-
 import { OverlayTriggerState, useOverlayTriggerState } from "react-stately";
 
 import { ThContainerHeader, ThContainerHeaderProps } from "../ThContainerHeader";
@@ -42,7 +40,10 @@ export interface ThBottomSheetCompounds {
   container?: Omit<React.ComponentProps<typeof Sheet.Container>, "children">,
   header?: React.ComponentProps<typeof Sheet.Header>,
   dragIndicator?: ThDragIndicatorButtonProps,
-  scroller?: HTMLAttributesWithRef<HTMLDivElement>,
+  scroller?: { 
+    ref?: React.RefObject<HTMLDivElement>; 
+    className?: string; 
+  },
   content?: React.ComponentProps<typeof Sheet.Content>,
   backdrop?: React.ComponentProps<typeof Sheet.Backdrop>
 }
@@ -84,14 +85,10 @@ const ThBottomSheetContainer = ({
   }, containerRef);
   const [isFullHeight, setFullHeight] = useState<boolean>(false);
 
-  // Apply scroller styles from compounds
+  // Apply scroller className from compounds
   useEffect(() => {
-    if (!scrollerRef.current || !compounds?.scroller) return;
-    Object.entries(compounds.scroller).forEach(([key, value]) => {
-      if (value !== undefined && key in scrollerRef.current!) {
-        (scrollerRef.current as any)[key] = value;
-      }
-    });
+    if (!scrollerRef.current || !compounds?.scroller?.className) return;
+    scrollerRef.current.className = compounds.scroller.className;
   }, [scrollerRef, compounds?.scroller]);
 
   useEffect(() => {
