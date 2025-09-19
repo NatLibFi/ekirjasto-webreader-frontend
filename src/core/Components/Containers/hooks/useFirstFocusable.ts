@@ -51,6 +51,9 @@ const isInViewport = (element: Element, container: Element | null = null): boole
   );
 };
 
+// WARNING: This hook is not a general purpose hook, 
+// it is specifically designed to be used with React Aria Components
+// It is not recommended to use it with other libraries or components
 export const useFirstFocusable = (props?: UseFirstFocusableProps) => {
   const { 
     withinRef, 
@@ -87,29 +90,28 @@ export const useFirstFocusable = (props?: UseFirstFocusableProps) => {
 
     const tryFindAndHandle = () => {
       const targetElement = withinRef.current?.firstElementChild || withinRef.current;
-      const selectedEl = targetElement?.querySelector("[data-selected]");
-
       let firstFocusable: HTMLElement | null = null;
 
-      if (selectedEl === null) {
-        const inputs = targetElement?.querySelectorAll("input");
-        const input = inputs && Array.from(inputs).find(
-          (input: HTMLInputElement) => !input.disabled && input.tabIndex >= 0
+      if (targetElement?.getAttribute("role") === "radiogroup") {
+        const selectedEl = targetElement?.querySelector("[data-selected]");
+
+        if (selectedEl === null) {
+          const inputs = targetElement?.querySelectorAll("input");
+          const input = inputs && Array.from(inputs).find(
+            (input: HTMLInputElement) => !input.disabled && input.tabIndex >= 0
         );
-        firstFocusable = input as HTMLElement | null;
-      } else if (selectedEl instanceof HTMLElement) {
-        firstFocusable = selectedEl;
+          firstFocusable = input as HTMLElement | null;
+        } else if (selectedEl instanceof HTMLElement) {
+          firstFocusable = selectedEl;
+        }
       }
 
       if (!firstFocusable) {
-        firstFocusable = withinRef.current?.querySelector("[data-selected]") as HTMLElement | null;
-      }
-
-      if (!firstFocusable) {
-        const focusableElements = withinRef.current?.querySelectorAll("a, button, input, select");
+        const focusableElements = withinRef.current?.querySelectorAll("a, button, input, select, [data-selected]");
         const element = focusableElements && Array.from(focusableElements).find(el => {
           const htmlEl = el as HTMLAnchorElement | HTMLButtonElement | HTMLInputElement | HTMLSelectElement;
           if (htmlEl instanceof HTMLAnchorElement) return true;
+          if (htmlEl.getAttribute("data-selected") === "true") return true;
           return !htmlEl.disabled && htmlEl.tabIndex >= 0;
         });
         firstFocusable = element as HTMLElement | null;
