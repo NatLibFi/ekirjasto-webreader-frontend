@@ -1,9 +1,10 @@
 "use client";
 
-import { MANIFEST_CONFIG } from "@/config/manifest";
-
+import { useEffect, useState } from "react";
 import { PublicationGrid } from "@/components/PublicationGrid";
 import Image from "next/image";
+
+import { isManifestRouteEnabled } from "./ManifestRouteEnabled";
 
 import "./home.css";
 
@@ -56,6 +57,22 @@ const onlineBooks = [
 ];
 
 export default function Home() {
+  const [isManifestEnabled, setIsManifestEnabled] = useState<boolean>(true);
+
+  useEffect(() => {
+    const checkManifestRoute = async () => {
+      try {
+        const enabled = await isManifestRouteEnabled();
+        setIsManifestEnabled(enabled);
+      } catch (error) {
+        console.error("Error checking manifest route:", error);
+        setIsManifestEnabled(false);
+      }
+    };
+
+    checkManifestRoute();
+  }, []);
+
   return (
     <main id="home">
       <header className="header">
@@ -77,7 +94,7 @@ export default function Home() {
         ) }
       />
 
-      { MANIFEST_CONFIG.enabled && (
+      { isManifestEnabled && (
         <>
         <div className="dev-books">
           <p>In dev you can also use the <code>/manifest/</code> route to load any publication. For instance:</p>

@@ -6,13 +6,11 @@ import { HttpFetcher } from "@readium/shared";
 
 export interface UsePublicationOptions {
   url: string;
-  allowedDomains?: string[];
   onError?: (error: string) => void;
 }
 
 export const usePublication = ({ 
   url, 
-  allowedDomains, 
   onError = () => {} 
 }: UsePublicationOptions) => {
   const [error, setError] = useState("");
@@ -28,15 +26,6 @@ export const usePublication = ({
 
     // Decode URL if needed
     const decodedUrl = decodeURIComponent(url);
-    
-    const urlObj = new URL(decodedUrl);
-    const domain = urlObj.hostname;
-      
-    if (allowedDomains?.length && !allowedDomains.includes(domain)) {
-      const errorMsg = `Manifest from domain ${ domain } is not allowed`;
-      setError(errorMsg);
-      return;
-    }
     
     const manifestLink = new Link({ href: decodedUrl });
     const fetcher = new HttpFetcher(undefined);
@@ -60,7 +49,7 @@ export const usePublication = ({
       console.error("Error loading manifest:", error);
       setError(`Failed loading manifest ${ decodedUrl }: ${ error instanceof Error ? error.message : "Unknown error" }`);
     }
-  }, [url, allowedDomains]);
+  }, [url]);
 
   // Call onError callback when error changes
   useEffect(() => {

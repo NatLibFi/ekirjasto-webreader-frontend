@@ -8,30 +8,32 @@ Remember that you have to rebuild and restart the app for the changes to take ef
 
 By default, the `/read/manifest/[base64url-encoded-manifest]` route is disabled in production for security reasons. Environment variables are therefore provided to enable it, as well as to configure the allowed domains for fetching the publication.
 
-### NEXT_PUBLIC_MANIFEST_FORCE_ENABLE
+### MANIFEST_ROUTE_FORCE_ENABLE
 
 Set to true to enable manifest route in production.
 
 ```bash
-NEXT_PUBLIC_MANIFEST_FORCE_ENABLE=true
+MANIFEST_ROUTE_FORCE_ENABLE=true
 ```
 
-### NEXT_PUBLIC_MANIFEST_ALLOWED_DOMAINS
+### MANIFEST_ALLOWED_DOMAINS
 
 Comma-separated list of allowed domains for manifest URLs in production.
 
 ```bash
-NEXT_PUBLIC_MANIFEST_ALLOWED_DOMAINS="publication-server.readium.org"
+MANIFEST_ALLOWED_DOMAINS="publication-server.readium.org"
 ```
+
+You can also use `*` to allow all domains.
 
 ## Assets
 
 By default, the assets are fetched from the same domain as the application. An environment variable is therefore provided to configure the base path if needed.
 
-### NEXT_PUBLIC_ASSET_PREFIX
+### ASSET_PREFIX
 
 Set the base path for assets (e.g., CDN URL or subdirectory).
 
 ```bash
-NEXT_PUBLIC_ASSET_PREFIX="https://cdn.example.com"
+ASSET_PREFIX="https://cdn.example.com"
 ```
