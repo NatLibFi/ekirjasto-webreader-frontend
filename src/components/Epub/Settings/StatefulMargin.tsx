@@ -30,6 +30,7 @@ export const StatefulMargin = ({ standalone = true }: StatefulSettingsItemProps)
 
   // TODO: column count? In auto/null this does not work well because the logic will add columns based on the number of characters it can effectively fit in the container…
   // TODO: this is highly-dependent on the size of the container, because it may actually fit less characters than what we submit, with the setting having no visual effect at all…
+  // On the opposite side, pageGutter may not have any effect if the container can fit way more than what we request…
 
   const marginOptions = useRef({
     [ThMarginOptions.small]: (preferences.settings.keys?.[ThSettingsKeys.margin]?.[ThMarginOptions.small] ?? defaultMargins[ThMarginOptions.small]).toString(),
@@ -53,12 +54,6 @@ export const StatefulMargin = ({ standalone = true }: StatefulSettingsItemProps)
       }
       return (setting ?? fallback ?? def) * multiplier;
     };
-
-    console.log(
-      getLineLengthValue(lineLength?.min, preferences.typography.minimalLineLength, 35, numValue),
-      getLineLengthValue(lineLength?.optimal, preferences.typography.optimalLineLength, 60, numValue),
-      getLineLengthValue(lineLength?.max, preferences.typography.maximalLineLength, 70, numValue)
-    );
 
     await submitPreferences({
       minimalLineLength: getLineLengthValue(lineLength?.min, preferences.typography.minimalLineLength, 35, numValue),
