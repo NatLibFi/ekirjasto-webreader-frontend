@@ -2,7 +2,13 @@
 
 import fontStacks from "@readium/css/css/vars/fontStacks.json";
 
-import { ThLineHeightOptions, ThSettingsRangeVariant, ThSpacingSettingsKeys, ThTextSettingsKeys } from "./enums";
+import { 
+  ThLineHeightOptions, 
+  ThMarginOptions, 
+  ThSettingsRangeVariant, 
+  ThSpacingSettingsKeys, 
+  ThTextSettingsKeys 
+} from "./enums";
 import { ThActionsTokens, ThSettingsRangePref } from "../preferences";
 import { ThCollapsibilityVisibility } from "@/core/Components/Actions/hooks/useCollapsibility";
 
@@ -28,6 +34,7 @@ export const defaultSpacingSettingsMain = [
 export const defaultSpacingSettingsSubpanel = [
   ThSpacingSettingsKeys.publisherStyles,
   ThSpacingSettingsKeys.lineHeight,
+  ThSpacingSettingsKeys.margin,
   ThSpacingSettingsKeys.wordSpacing,
   ThSpacingSettingsKeys.letterSpacing,
   ThSpacingSettingsKeys.paragraphSpacing,
@@ -77,4 +84,10 @@ export const defaultLineHeights = {
   [ThLineHeightOptions.small]: 1.25,
   [ThLineHeightOptions.medium]: 1.5,
   [ThLineHeightOptions.large]: 1.75
+}
+
+export const defaultMargins = {
+  [ThMarginOptions.small]: 1.25,
+  [ThMarginOptions.medium]: 1,
+  [ThMarginOptions.large]: 0.75
 }

@@ -19,7 +19,8 @@ import {
   ThProgressionFormat,
   ThRunningHeadFormat,
   ThBreakpoints,
-  ThDocumentTitleFormat
+  ThDocumentTitleFormat,
+  ThMarginOptions
 } from "./models/enums";
 import { ThCollapsibility, ThCollapsibilityVisibility } from "@/core/Components/Actions/hooks/useCollapsibility";
 
@@ -147,6 +148,9 @@ export type ThSettingsKeyTypes = {
   [ThSettingsKeys.lineHeight]?: {
       [key in Exclude<ThLineHeightOptions, ThLineHeightOptions.publisher>]: number
     };
+  [ThSettingsKeys.margin]?: {
+    [key in ThMarginOptions]: number
+  };
   [ThSettingsKeys.paragraphIndent]?: ThSettingsRangePref;
   [ThSettingsKeys.paragraphSpacing]?: ThSettingsRangePref;
   [ThSettingsKeys.wordSpacing]?: ThSettingsRangePref;

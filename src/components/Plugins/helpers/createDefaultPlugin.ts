@@ -16,6 +16,7 @@ import { StatefulHyphens } from "../../Epub/Settings/StatefulHyphens";
 import { StatefulLayout } from "../../Epub/Settings/StatefulLayout";
 import { StatefulLetterSpacing } from "../../Epub/Settings/StatefulLetterSpacing";
 import { StatefulLineHeight } from "../../Epub/Settings/StatefulLineHeight";
+import { StatefulMargin } from "@/components/Epub/Settings/StatefulMargin";
 import { StatefulParagraphIndent } from "../../Epub/Settings/StatefulParagraphIndent";
 import { StatefulParagraphSpacing } from "../../Epub/Settings/StatefulParagraphSpacing";
 import { StatefulPublisherStyles } from "../../Epub/Settings/StatefulPublisherStyles";
@@ -32,7 +33,7 @@ export const createDefaultPlugin = (): ThPlugin => {
     id: "core",
     name: "Core Components",
     description: "Default components for Thorium Web StatefulReader",
-    version: "1.0.0",
+    version: "1.0.5",
     components: {
       actions: {
         [ThActionsKeys.fullscreen]: {
@@ -76,6 +77,10 @@ export const createDefaultPlugin = (): ThPlugin => {
         },
         [ThSettingsKeys.lineHeight]: {
           Comp: StatefulLineHeight,
+          type: "spacing"
+        },
+        [ThSettingsKeys.margin]: {
+          Comp: StatefulMargin,
           type: "spacing"
         },
         [ThSettingsKeys.paragraphIndent]: {

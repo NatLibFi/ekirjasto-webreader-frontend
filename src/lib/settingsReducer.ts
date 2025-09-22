@@ -4,6 +4,7 @@ import { ThLineHeightOptions, ThTextAlignOptions } from "@/preferences/models/en
 import { defaultFontFamilyOptions } from "@/preferences/models/const";
 
 export interface LineLengthStateObject {
+  multiplier?: number | null;
   optimal?: number | null;
   min?: {
     chars?: number | null;
@@ -116,6 +117,7 @@ export const settingsSlice = createSlice({
             }
           };
           break;
+        
         case "max":
           state.lineLength = {
             ...state.lineLength,
@@ -130,6 +132,13 @@ export const settingsSlice = createSlice({
           break;
         default:
           break;
+      }
+    },
+    setLineLengthMultiplier: (state, action) => {
+      state.lineLength = {
+        ...state.lineLength,
+        // Ensure multiplier is never 0, default to 1 if 0 is provided
+        multiplier: action.payload === 0 ? 1 : action.payload
       }
     },
     setParagraphIndent: (state, action) => {
@@ -166,6 +175,7 @@ export const {
   setLetterSpacing,
   setLineHeight,
   setLineLength,
+  setLineLengthMultiplier,
   setParagraphIndent,
   setParagraphSpacing,
   setPublisherStyles,

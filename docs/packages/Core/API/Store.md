@@ -158,6 +158,7 @@ interface SettingsReducerState {
 - `setLetterSpacing`: Set letter spacing
 - `setLineHeight`: Set line height
 - `setLineLength`: Set one or several line lengths (optimal, min, max)
+- `setLineLengthMultiplier`: Set line length multiplier
 - `setParagraphIndent`: Set paragraph indent
 - `setParagraphSpacing`: Set paragraph spacing
 - `setPublisherStyles`: Set publisher styles

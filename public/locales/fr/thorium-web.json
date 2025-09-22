@@ -201,6 +201,12 @@
         "medium": "Équilibré",
         "large": "Élargi"
       },
+      "margin": {
+        "title": "Marges",
+        "small": "Petite",
+        "normal": "Normale",
+        "large": "Large"
+      },
       "paraSpacing": {
         "title": "Espacement des paragraphes",
         "increase": "Augmenter l’espacement des paragraphes",

@@ -74,6 +74,7 @@ export enum ThSettingsKeys {
   layout = "layout",
   letterSpacing = "letterSpacing",
   lineHeight = "lineHeight",
+  margin = "margin",
   paragraphIndent = "paragraphIndent",
   paragraphSpacing = "paragraphSpacing",
   publisherStyles = "publisherStyles",
@@ -97,6 +98,7 @@ export enum ThTextSettingsKeys {
 export enum ThSpacingSettingsKeys {
   letterSpacing = "letterSpacing",
   lineHeight = "lineHeight",
+  margin = "margin",
   paragraphIndent = "paragraphIndent",
   paragraphSpacing = "paragraphSpacing",
   publisherStyles = "publisherStyles",
@@ -159,6 +161,12 @@ export enum ThTextAlignOptions {
 
 export enum ThLineHeightOptions {
   publisher = "publisher",
+  small = "small",
+  medium = "medium",
+  large = "large"
+}
+
+export enum ThMarginOptions {
   small = "small",
   medium = "medium",
   large = "large"
