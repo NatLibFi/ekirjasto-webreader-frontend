@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { verifyManifestUrlFromEnv } from "@/next-lib/helpers/verifyManifest";
 
+// Configure this route to use the Edge Runtime
+export const runtime = "edge";
+
 // This function runs on the server
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
