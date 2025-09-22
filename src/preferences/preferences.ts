@@ -71,6 +71,19 @@ export interface ThActionsTokens {
   snapped?: ThActionsSnappedPref;
 };
 
+export type ThSpacingTokens<K extends CustomizableKeys = DefaultKeys> = {
+  [ThSettingsKeys.letterSpacing]?: number;
+  [ThSettingsKeys.lineHeight]?: ThLineHeightOptions;
+  [ThSettingsKeys.margin]?: ThMarginOptions;
+  [ThSettingsKeys.paragraphIndent]?: number;
+  [ThSettingsKeys.paragraphSpacing]?: number;
+  [ThSettingsKeys.wordSpacing]?: number;
+} & (K extends { spacing: infer S } 
+  ? S extends string 
+    ? { [key in S]: any }
+    : {}
+  : {});
+
 export type CustomizableKeys = {
   action?: string;
   theme?: string;
@@ -143,19 +156,25 @@ export interface ThSettingsRangePref {
   step?: number;
 }
 
-export type ThSettingsKeyTypes = {
-  [ThSettingsKeys.letterSpacing]?: ThSettingsRangePref;
-  [ThSettingsKeys.lineHeight]?: {
-      [key in Exclude<ThLineHeightOptions, ThLineHeightOptions.publisher>]: number
-    };
-  [ThSettingsKeys.margin]?: {
-    [key in ThMarginOptions]: number
+export type ThSettingsKeyTypes<K extends CustomizableKeys = DefaultKeys> = {
+  [ThSettingsKeys.letterSpacing]: ThSettingsRangePref;
+  [ThSettingsKeys.lineHeight]: {
+    [key in Exclude<ThLineHeightOptions, ThLineHeightOptions.publisher>]: number;
   };
-  [ThSettingsKeys.paragraphIndent]?: ThSettingsRangePref;
-  [ThSettingsKeys.paragraphSpacing]?: ThSettingsRangePref;
-  [ThSettingsKeys.wordSpacing]?: ThSettingsRangePref;
-  [ThSettingsKeys.zoom]?: ThSettingsRangePref;
-}
+  [ThSettingsKeys.margin]: {
+    [key in ThMarginOptions]: number;
+  };
+  [ThSettingsKeys.paragraphIndent]: ThSettingsRangePref;
+  [ThSettingsKeys.paragraphSpacing]: ThSettingsRangePref;
+  [ThSettingsKeys.wordSpacing]: ThSettingsRangePref;
+  [ThSettingsKeys.zoom]: ThSettingsRangePref;
+} & (
+  K extends { settings: infer S } 
+    ? S extends string 
+      ? { [key in S]: any }
+      : {}
+    : {}
+);
 
 export type ThConstraintKeys = Extract<ThSheetTypes, ThSheetTypes.bottomSheet | ThSheetTypes.popover> | "pagination";
 
@@ -258,7 +277,7 @@ export interface ThPreferences<K extends CustomizableKeys = {}> {
   settings: {
     reflowOrder: Array<SettingsKey<K>>;
     fxlOrder: Array<SettingsKey<K>>;
-    keys?: ThSettingsKeyTypes;
+    keys: ThSettingsKeyTypes<K>;
     text?: ThSettingsGroupPref<TextSettingsKey<K>>;
     spacing?: ThSettingsGroupPref<SpacingSettingsKey<K>>;
   };

@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 
-import { defaultWordSpacing, ThSettingsKeys, ThSettingsRangeVariant } from "@/preferences";
+import { ThSettingsKeys, ThSettingsRangeVariant } from "@/preferences";
 
 import { StatefulSettingsItemProps } from "../../Settings/models/settings";
 
@@ -21,9 +21,9 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
   const { t } = useI18n();
   const wordSpacing = useAppSelector(state => state.settings.wordSpacing);
   const wordSpacingRangeConfig = {
-    variant: preferences.settings.keys?.[ThSettingsKeys.wordSpacing]?.variant ?? defaultWordSpacing.variant,
-    range: preferences.settings.keys?.[ThSettingsKeys.wordSpacing]?.range ?? defaultWordSpacing.range,
-    step: preferences.settings.keys?.[ThSettingsKeys.wordSpacing]?.step ?? defaultWordSpacing.step
+    variant: preferences.settings.keys[ThSettingsKeys.wordSpacing].variant,
+    range: preferences.settings.keys[ThSettingsKeys.wordSpacing].range,
+    step: preferences.settings.keys[ThSettingsKeys.wordSpacing].step
   };
   const dispatch = useAppDispatch();
 

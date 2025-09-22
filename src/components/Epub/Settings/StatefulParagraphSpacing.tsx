@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 
-import { defaultParagraphSpacing, ThSettingsKeys, ThSettingsRangeVariant } from "@/preferences";
+import { ThSettingsKeys, ThSettingsRangeVariant } from "@/preferences";
 
 import { StatefulSettingsItemProps } from "../../Settings/models/settings";
 
@@ -21,9 +21,9 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
   const { t } = useI18n();
   const paragraphSpacing = useAppSelector(state => state.settings.paragraphSpacing);
   const paragraphSpacingRangeConfig = {
-    variant: preferences.settings.keys?.[ThSettingsKeys.paragraphSpacing]?.variant ?? defaultParagraphSpacing.variant,
-    range: preferences.settings.keys?.[ThSettingsKeys.paragraphSpacing]?.range ?? defaultParagraphSpacing.range,
-    step: preferences.settings.keys?.[ThSettingsKeys.paragraphSpacing]?.step ?? defaultParagraphSpacing.step
+    variant: preferences.settings.keys[ThSettingsKeys.paragraphSpacing].variant,
+    range: preferences.settings.keys[ThSettingsKeys.paragraphSpacing].range,
+    step: preferences.settings.keys[ThSettingsKeys.paragraphSpacing].step
   };
   const dispatch = useAppDispatch();
 

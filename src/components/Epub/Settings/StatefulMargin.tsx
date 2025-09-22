@@ -6,7 +6,7 @@ import SmallMarginIcon from "./assets/icons/format_letter_spacing_standard.svg";
 import NormalMarginIcon from "./assets/icons/format_letter_spacing_wide.svg";
 import LargeMarginIcon from "./assets/icons/format_letter_spacing_wider.svg";
 
-import { defaultMargins, ThMarginOptions, ThSettingsKeys } from "@/preferences";
+import { ThMarginOptions, ThSettingsKeys } from "@/preferences";
 
 import { StatefulRadioGroup, StatefulSettingsItemProps } from "@/components/Settings";
 
@@ -33,9 +33,9 @@ export const StatefulMargin = ({ standalone = true }: StatefulSettingsItemProps)
   // On the opposite side, pageGutter may not have any effect if the container can fit way more than what we request…
 
   const marginOptions = useRef({
-    [ThMarginOptions.small]: (preferences.settings.keys?.[ThSettingsKeys.margin]?.[ThMarginOptions.small] ?? defaultMargins[ThMarginOptions.small]).toString(),
-    [ThMarginOptions.medium]: (preferences.settings.keys?.[ThSettingsKeys.margin]?.[ThMarginOptions.medium] ?? defaultMargins[ThMarginOptions.medium]).toString(),
-    [ThMarginOptions.large]: (preferences.settings.keys?.[ThSettingsKeys.margin]?.[ThMarginOptions.large] ?? defaultMargins[ThMarginOptions.large]).toString()
+    [ThMarginOptions.small]: preferences.settings.keys[ThSettingsKeys.margin][ThMarginOptions.small].toString(),
+    [ThMarginOptions.medium]: preferences.settings.keys[ThSettingsKeys.margin][ThMarginOptions.medium].toString(),
+    [ThMarginOptions.large]: preferences.settings.keys[ThSettingsKeys.margin][ThMarginOptions.large].toString()
   });
 
   const updatePreference = useCallback(async (value: string) => {

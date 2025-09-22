@@ -23,6 +23,7 @@ import {
 import { createPreferences, ThPreferences, DefaultKeys } from "./preferences";
 
 import ReadiumCSSColors from "@readium/css/css/vars/colors.json";
+import { defaultFontFamilyOptions, defaultLetterSpacing, defaultLineHeights, defaultMargins, defaultParagraphIndent, defaultParagraphSpacing, defaultWordSpacing, defaultZoom } from "./models/const";
 
 export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<DefaultKeys>({
 //  direction: ThLayoutDirection.ltr,
@@ -423,15 +424,13 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
       ThSettingsKeys.columns
     ],
     keys: {
-      [ThSettingsKeys.lineHeight]: {
-        [ThLineHeightOptions.small]: 1.3,
-        [ThLineHeightOptions.medium]: 1.5,
-        [ThLineHeightOptions.large]: 1.75
-      },
-      [ThSettingsKeys.zoom]: {
-        range: [0.7, 4],
-        step: 0.05
-      }
+      [ThSettingsKeys.letterSpacing]: defaultLetterSpacing,
+      [ThSettingsKeys.lineHeight]: defaultLineHeights,
+      [ThSettingsKeys.margin]: defaultMargins,
+      [ThSettingsKeys.paragraphIndent]: defaultParagraphIndent,
+      [ThSettingsKeys.paragraphSpacing]: defaultParagraphSpacing,
+      [ThSettingsKeys.wordSpacing]: defaultWordSpacing,
+      [ThSettingsKeys.zoom]: defaultZoom
     },
     text: {
       header: ThSheetHeaderVariant.previous,

@@ -91,3 +91,9 @@ export const defaultMargins = {
   [ThMarginOptions.medium]: 1,
   [ThMarginOptions.large]: 0.75
 }
+
+export const defaultZoom: Required<ThSettingsRangePref> = {
+  variant: ThSettingsRangeVariant.numberField,
+  range: [0.7, 4],
+  step: 0.05
+}

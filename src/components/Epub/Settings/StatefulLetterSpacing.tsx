@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 
-import { defaultLetterSpacing, ThSettingsKeys, ThSettingsRangeVariant } from "@/preferences";
+import { ThSettingsKeys, ThSettingsRangeVariant } from "@/preferences";
 
 import { StatefulSettingsItemProps } from "../../Settings/models/settings";
 
@@ -21,9 +21,9 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
   const { t } = useI18n();
   const letterSpacing = useAppSelector(state => state.settings.letterSpacing);
   const letterSpacingRangeConfig = {
-    variant: preferences.settings.keys?.[ThSettingsKeys.letterSpacing]?.variant ?? defaultLetterSpacing.variant,
-    range: preferences.settings.keys?.[ThSettingsKeys.letterSpacing]?.range ?? defaultLetterSpacing.range,
-    step: preferences.settings.keys?.[ThSettingsKeys.letterSpacing]?.step ?? defaultLetterSpacing.step
+    variant: preferences.settings.keys[ThSettingsKeys.letterSpacing].variant,
+    range: preferences.settings.keys[ThSettingsKeys.letterSpacing].range,
+    step: preferences.settings.keys[ThSettingsKeys.letterSpacing].step
   };
   const dispatch = useAppDispatch();
 

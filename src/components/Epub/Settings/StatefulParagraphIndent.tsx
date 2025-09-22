@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 
-import { defaultParagraphIndent, ThSettingsKeys, ThSettingsRangeVariant } from "@/preferences";
+import { ThSettingsKeys, ThSettingsRangeVariant } from "@/preferences";
 
 import { StatefulSettingsItemProps } from "../../Settings/models/settings";
 
@@ -21,9 +21,9 @@ export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsI
   const { t } = useI18n();
   const paragraphIndent = useAppSelector(state => state.settings.paragraphIndent);
   const paragraphIndentRangeConfig = {
-      variant: preferences.settings.keys?.[ThSettingsKeys.paragraphIndent]?.variant ?? defaultParagraphIndent.variant,
-      range: preferences.settings.keys?.[ThSettingsKeys.paragraphIndent]?.range ?? defaultParagraphIndent.range,
-      step: preferences.settings.keys?.[ThSettingsKeys.paragraphIndent]?.step ?? defaultParagraphIndent.step
+      variant: preferences.settings.keys[ThSettingsKeys.paragraphIndent].variant,
+      range: preferences.settings.keys[ThSettingsKeys.paragraphIndent].range,
+      step: preferences.settings.keys[ThSettingsKeys.paragraphIndent].step
     };
   const dispatch = useAppDispatch();
 
