@@ -58,16 +58,18 @@ export const StatefulMargin = ({ standalone = true }: StatefulSettingsItemProps)
     await submitPreferences({
       minimalLineLength: getLineLengthValue(lineLength?.min, preferences.typography.minimalLineLength, 35, numValue),
       optimalLineLength: getLineLengthValue(lineLength?.optimal, preferences.typography.optimalLineLength, 60, numValue),
-      maximalLineLength: getLineLengthValue(lineLength?.max, preferences.typography.maximalLineLength, 70, numValue)
+      maximalLineLength: getLineLengthValue(lineLength?.max, preferences.typography.maximalLineLength, 70, numValue),
+      pageGutter: preferences.typography.pageGutter / numValue
     });
 
     dispatch(setLineLengthMultiplier(value));
-  }, [submitPreferences, dispatch, lineLength, preferences]);
+  }, [submitPreferences, dispatch, lineLength, preferences.typography]);
 
   return (
     <>
     <StatefulRadioGroup
       standalone={ standalone }
+      isDisabled={ !preferences.typography.pageGutter }
       label={ t("reader.settings.margin.title") }
       orientation="horizontal"
       value={ lineLength?.multiplier?.toString() || "1" }

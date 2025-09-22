@@ -728,13 +728,23 @@ export const StatefulReader = ({
             : cache.current.settings.lineHeight === null 
               ? null 
               : lineHeightOptions[cache.current.settings.lineHeight],
-          optimalLineLength: cache.current.settings.lineLength?.optimal,
+          // Apply line length multiplier to line length values
+          optimalLineLength: cache.current.settings.lineLength?.optimal != null 
+            ? cache.current.settings.lineLength.optimal * (cache.current.settings.lineLength?.multiplier || 1) 
+            : undefined,
           maximalLineLength: cache.current.settings.lineLength?.max?.isDisabled 
             ? null 
-            : cache.current.settings.lineLength?.max?.chars,
+            : (cache.current.settings.lineLength?.max?.chars != null) 
+              ? cache.current.settings.lineLength.max.chars! * (cache.current.settings.lineLength?.multiplier || 1) 
+              : undefined,
           minimalLineLength: cache.current.settings.lineLength?.min?.isDisabled 
             ? null 
-            : cache.current.settings.lineLength?.min?.chars,
+            : (cache.current.settings.lineLength?.min?.chars != null) 
+              ? cache.current.settings.lineLength.min.chars! * (cache.current.settings.lineLength?.multiplier || 1) 
+              : undefined,
+          pageGutter: cache.current.settings.lineLength?.multiplier != null 
+            ? preferences.typography.pageGutter / (cache.current.settings.lineLength?.multiplier || 1)
+            : undefined,
           paragraphIndent: cache.current.settings.publisherStyles ? undefined :cache.current.settings.paragraphIndent,
           paragraphSpacing: cache.current.settings.publisherStyles ? undefined :cache.current.settings.paragraphSpacing,
           scroll: cache.current.settings.scroll,
@@ -744,11 +754,20 @@ export const StatefulReader = ({
           ...themeProps
         };
 
+        const multiplier = cache.current.settings.lineLength?.multiplier || 1;
         const defaults: IEpubDefaults = isFXL ? {} : {
-          maximalLineLength: preferences.typography.maximalLineLength, 
-          minimalLineLength: preferences.typography.minimalLineLength, 
-          optimalLineLength: preferences.typography.optimalLineLength,
-          pageGutter: preferences.typography.pageGutter,
+          maximalLineLength: preferences.typography.maximalLineLength != null 
+            ? preferences.typography.maximalLineLength * multiplier 
+            : undefined,
+          minimalLineLength: preferences.typography.minimalLineLength != null 
+            ? preferences.typography.minimalLineLength * multiplier 
+            : undefined,
+          optimalLineLength: preferences.typography.optimalLineLength != null 
+            ? preferences.typography.optimalLineLength * multiplier 
+            : undefined,
+          pageGutter: preferences.typography.pageGutter != null 
+            ? preferences.typography.pageGutter / multiplier 
+            : undefined,
           scrollPaddingTop: preferences.theming.layout.ui?.reflow === ThLayoutUI.layered 
             ? (preferences.theming.icon.size || 24) * 3 
             : (preferences.theming.icon.size || 24),
