@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { verifyManifestUrlFromEnv } from "@/next-lib/helpers/verifyManifest";
 
 // This function runs on the server
 export async function GET(request: Request) {
@@ -12,52 +13,17 @@ export async function GET(request: Request) {
     );
   }
 
-  try {
-    // Parse the URL to extract the domain
-    const url = new URL(manifestUrl);
-    
-    // Get allowed domains from environment
-    const allowedDomainsRaw = process.env.MANIFEST_ALLOWED_DOMAINS?.trim() || "";
-    const allowedDomains = allowedDomainsRaw
-      .split(",")
-      .map(d => d.trim())
-      .filter(Boolean);
-
-    // In development or if no domains are specified, allow all
-    const allowAllDomains = 
-      process.env.NODE_ENV !== "production" || 
-      allowedDomains.length === 0 ||
-      allowedDomains.includes("*");
-
-    const isAllowed = allowAllDomains || 
-      allowedDomains.some(domain => {
-        try {
-          const domainUrl = domain.startsWith("http") 
-            ? new URL(domain) 
-            : new URL(`https://${ domain }`);
-          return url.hostname === domainUrl.hostname;
-        } catch {
-          return false;
-        }
-      });
-    
-    if (!isAllowed) {
-      return NextResponse.json(
-        { error: "Domain not allowed" },
-        { status: 403 }
-      );
-    }
-    
-    // If domain is allowed, return success
-    return NextResponse.json({ 
-      allowed: true,
-      url: manifestUrl
-    });
-    
-  } catch (error) {
+  const result = verifyManifestUrlFromEnv(manifestUrl);
+  
+  if (!result.allowed) {
     return NextResponse.json(
-      { error: "Invalid URL" },
-      { status: 400 }
+      { error: result.error || "Domain not allowed" },
+      { status: result.error === "Invalid URL" ? 400 : 403 }
     );
   }
+  
+  return NextResponse.json({ 
+    allowed: true,
+    url: result.url
+  });
 }

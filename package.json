@@ -35,7 +35,8 @@
     "./core/i18n": "./dist/core/i18n/index.mjs",
     "./core/lib": "./dist/lib/index.mjs",
     "./core/preferences": "./dist/preferences/index.mjs",
-    "./epub": "./dist/components/Epub/index.mjs"
+    "./epub": "./dist/components/Epub/index.mjs",
+    "./next": "./dist/next-lib/index.mjs"
   },
   "scripts": {
     "dev": "next dev",
