@@ -72,7 +72,7 @@ export const StatefulMargin = ({ standalone = true }: StatefulSettingsItemProps)
       isDisabled={ !preferences.typography.pageGutter }
       label={ t("reader.settings.margin.title") }
       orientation="horizontal"
-      value={ lineLength?.multiplier?.toString() || "1" }
+      value={ lineLength?.multiplier?.toString() || marginOptions.current[ThMarginOptions.medium] }
       onChange={ async (val: string) => await updatePreference(val) }
       items={[
         { 
