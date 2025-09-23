@@ -52,7 +52,8 @@
                 "wrapper": "Dabartinė eiga",
                 "of": "{{ current }} iš {{ reference }}",
                 "referenceFallback": "dabartinis skyrius",
-                "pubFallback": "leidinys"
+                "pubFallback": "leidinys",
+                "positionsLeft": "{{ reference }} liko {{ count }}"
             }
         },
         "navigation": {
