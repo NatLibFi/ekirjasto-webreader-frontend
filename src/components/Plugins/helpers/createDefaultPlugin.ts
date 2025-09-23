@@ -21,6 +21,7 @@ import { StatefulParagraphIndent } from "../../Epub/Settings/StatefulParagraphIn
 import { StatefulParagraphSpacing } from "../../Epub/Settings/StatefulParagraphSpacing";
 import { StatefulPublisherStyles } from "../../Epub/Settings/StatefulPublisherStyles";
 import { StatefulSpacingGroup } from "../../Epub/Settings/StatefulSpacingGroup";
+import { StatefulSpacingPresets } from "@/components/Epub/Settings/StatefulSpacingPresets";
 import { StatefulTextAlign } from "../../Epub/Settings/StatefulTextAlign";
 import { StatefulTextGroup } from "../../Epub/Settings/StatefulTextGroup";
 import { StatefulTextNormalize } from "../../Epub/Settings/StatefulTextNormalize";
@@ -97,6 +98,10 @@ export const createDefaultPlugin = (): ThPlugin => {
         },
         [ThSettingsKeys.spacingGroup]: {
           Comp: StatefulSpacingGroup,
+        },
+        [ThSettingsKeys.spacingPresets]: {
+          Comp: StatefulSpacingPresets,
+          type: "spacing"
         },
         [ThSettingsKeys.textAlign]: {
           Comp: StatefulTextAlign,

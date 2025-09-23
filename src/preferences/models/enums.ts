@@ -79,6 +79,7 @@ export enum ThSettingsKeys {
   paragraphSpacing = "paragraphSpacing",
   publisherStyles = "publisherStyles",
   spacingGroup = "spacingGroup",
+  spacingPresets = "spacingPresets",
   textAlign = "textAlign",
   textGroup = "textGroup",
   textNormalize = "textNormalize",
@@ -102,6 +103,7 @@ export enum ThSpacingSettingsKeys {
   paragraphIndent = "paragraphIndent",
   paragraphSpacing = "paragraphSpacing",
   publisherStyles = "publisherStyles",
+  spacingPresets = "spacingPresets",
   wordSpacing = "wordSpacing"
 }
 
@@ -141,6 +143,15 @@ export enum ThThemeKeys {
   ekirjasto1 = "E-Kirjasto 1",
   ekirjasto2 = "E-Kirjasto 2",
   ekirjasto3 = "E-Kirjasto 3"
+}
+
+export enum ThSpacingKeys {
+  publisher = "publisher",
+  tight = "tight",
+  balanced = "balanced",
+  loose = "loose",
+  accessible = "accessible",
+  custom = "custom"
 }
 
 export enum ThLayoutDirection {

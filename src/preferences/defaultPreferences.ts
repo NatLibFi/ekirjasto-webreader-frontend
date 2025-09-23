@@ -18,12 +18,14 @@ import {
   ThBackLinkVariant,
   ThProgressionFormat,
   ThRunningHeadFormat,
-  ThDocumentTitleFormat
+  ThDocumentTitleFormat,
+  ThSpacingKeys,
+  ThMarginOptions
 } from "./models/enums";
 import { createPreferences, ThPreferences, DefaultKeys } from "./preferences";
 
 import ReadiumCSSColors from "@readium/css/css/vars/colors.json";
-import { defaultFontFamilyOptions, defaultLetterSpacing, defaultLineHeights, defaultMargins, defaultParagraphIndent, defaultParagraphSpacing, defaultWordSpacing, defaultZoom } from "./models/const";
+import { defaultLetterSpacing, defaultLineHeights, defaultMargins, defaultParagraphIndent, defaultParagraphSpacing, defaultWordSpacing, defaultZoom } from "./models/const";
 
 export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<DefaultKeys>({
 //  direction: ThLayoutDirection.ltr,
@@ -283,6 +285,33 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
           focus: "#004099",
           elevate: "0px 0px 2px #8c8c8c",
           immerse: "0.45"
+        }
+      }
+    },
+    spacing: {
+      keys: {
+        [ThSpacingKeys.tight]: {
+          [ThSettingsKeys.lineHeight]: ThLineHeightOptions.small,
+          [ThSettingsKeys.margin]: ThMarginOptions.small,
+          [ThSettingsKeys.paragraphSpacing]: 0,
+          [ThSettingsKeys.paragraphIndent]: 1
+        },
+        [ThSpacingKeys.balanced]: {
+          [ThSettingsKeys.lineHeight]: ThLineHeightOptions.medium,
+          [ThSettingsKeys.margin]: ThMarginOptions.medium,
+        },
+        [ThSpacingKeys.loose]: {
+          [ThSettingsKeys.lineHeight]: ThLineHeightOptions.large,
+          [ThSettingsKeys.margin]: ThMarginOptions.medium,
+          [ThSettingsKeys.paragraphSpacing]: 1.5
+        },
+        [ThSpacingKeys.accessible]: {
+          [ThSettingsKeys.lineHeight]: ThLineHeightOptions.large,
+          [ThSettingsKeys.margin]: ThMarginOptions.small,
+          [ThSettingsKeys.paragraphSpacing]: 3,
+          [ThSettingsKeys.paragraphIndent]: 0,
+          [ThSettingsKeys.letterSpacing]: 0.1,
+          [ThSettingsKeys.wordSpacing]: 0.3
         }
       }
     }

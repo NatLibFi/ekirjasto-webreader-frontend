@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 
-import { ThSettingsKeys, ThSettingsRangeVariant } from "@/preferences";
+import { ThSettingsKeys, ThSettingsRangeVariant, ThSpacingSettingsKeys } from "@/preferences";
 
 import { StatefulSettingsItemProps } from "../../Settings/models/settings";
 
@@ -12,14 +12,14 @@ import { StatefulSlider } from "../../Settings/StatefulSlider";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
+import { useSpacingPresets } from "./hooks/useSpacingPresets";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { setParagraphSpacing, setPublisherStyles } from "@/lib/settingsReducer";
+import { setPublisherStyles } from "@/lib/settingsReducer";
 
 export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { preferences } = usePreferences();
   const { t } = useI18n();
-  const paragraphSpacing = useAppSelector(state => state.settings.paragraphSpacing);
   const paragraphSpacingRangeConfig = {
     variant: preferences.settings.keys[ThSettingsKeys.paragraphSpacing].variant,
     range: preferences.settings.keys[ThSettingsKeys.paragraphSpacing].range,
@@ -29,14 +29,18 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
 
   const { getSetting, submitPreferences } = useEpubNavigator();
 
+  const { getEffectiveSpacingValue, setParagraphSpacing } = useSpacingPresets();
+
+  const paragraphSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.paragraphSpacing);
+
   const updatePreference = useCallback(async (value: number) => {
     await submitPreferences({
       paragraphSpacing: value
     });
 
-    dispatch(setParagraphSpacing(getSetting("paragraphSpacing")));
+    setParagraphSpacing(getSetting("paragraphSpacing"));
     dispatch(setPublisherStyles(false));
-  }, [submitPreferences, getSetting, dispatch]);
+  }, [submitPreferences, getSetting, dispatch, setParagraphSpacing]);
 
   return (
     <>

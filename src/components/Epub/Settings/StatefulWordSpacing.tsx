@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 
-import { ThSettingsKeys, ThSettingsRangeVariant } from "@/preferences";
+import { ThSettingsKeys, ThSettingsRangeVariant, ThSpacingSettingsKeys } from "@/preferences";
 
 import { StatefulSettingsItemProps } from "../../Settings/models/settings";
 
@@ -12,14 +12,14 @@ import { StatefulSlider } from "../../Settings/StatefulSlider";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
+import { useSpacingPresets } from "./hooks/useSpacingPresets";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { setPublisherStyles, setWordSpacing } from "@/lib/settingsReducer";
+import { setPublisherStyles } from "@/lib/settingsReducer";
 
 export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { preferences } = usePreferences();
   const { t } = useI18n();
-  const wordSpacing = useAppSelector(state => state.settings.wordSpacing);
   const wordSpacingRangeConfig = {
     variant: preferences.settings.keys[ThSettingsKeys.wordSpacing].variant,
     range: preferences.settings.keys[ThSettingsKeys.wordSpacing].range,
@@ -29,14 +29,18 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
 
   const { getSetting, submitPreferences } = useEpubNavigator();
 
+  const { getEffectiveSpacingValue, setWordSpacing } = useSpacingPresets();
+
+  const wordSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.wordSpacing);
+
   const updatePreference = useCallback(async (value: number) => {
     await submitPreferences({
       wordSpacing: value
     });
 
-    dispatch(setWordSpacing(getSetting("wordSpacing")));
+    setWordSpacing(getSetting("wordSpacing"));
     dispatch(setPublisherStyles(false));
-  }, [submitPreferences, getSetting, dispatch]);
+  }, [submitPreferences, getSetting, dispatch, setWordSpacing]);
 
   return (
     <>

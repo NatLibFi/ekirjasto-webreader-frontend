@@ -235,6 +235,15 @@
         "advanced": {
           "tooltip": "Options supplémentaires",
           "trigger": "Options d’espacement supplémentaires"
+        },
+        "presets": {
+          "title": "Préréglages",
+          "publisher": "Par défaut",
+          "tight": "Resserré",
+          "balanced": "Équilibré",
+          "loose": "Élargi",
+          "accessible": "Accessible",
+          "custom": "Personnalisé"
         }
       },
       "layout": {

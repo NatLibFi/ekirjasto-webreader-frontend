@@ -20,7 +20,8 @@ import {
   ThRunningHeadFormat,
   ThBreakpoints,
   ThDocumentTitleFormat,
-  ThMarginOptions
+  ThMarginOptions,
+  ThSpacingKeys
 } from "./models/enums";
 import { ThCollapsibility, ThCollapsibilityVisibility } from "@/core/Components/Actions/hooks/useCollapsibility";
 
@@ -71,7 +72,7 @@ export interface ThActionsTokens {
   snapped?: ThActionsSnappedPref;
 };
 
-export type ThSpacingTokens<K extends CustomizableKeys = DefaultKeys> = {
+export type ThSpacingPreset<K extends CustomizableKeys = DefaultKeys> = {
   [ThSettingsKeys.letterSpacing]?: number;
   [ThSettingsKeys.lineHeight]?: ThLineHeightOptions;
   [ThSettingsKeys.margin]?: ThMarginOptions;
@@ -80,7 +81,7 @@ export type ThSpacingTokens<K extends CustomizableKeys = DefaultKeys> = {
   [ThSettingsKeys.wordSpacing]?: number;
 } & (K extends { spacing: infer S } 
   ? S extends string 
-    ? { [key in S]: any }
+      ? { [key in S]?: number | ThLineHeightOptions | ThMarginOptions }
     : {}
   : {});
 
@@ -259,6 +260,13 @@ export interface ThPreferences<K extends CustomizableKeys = {}> {
       // keys never includes "auto"
       keys: Record<Exclude<ThemeKey<K>, "auto"> & string, ThemeTokens>;
     };
+    spacing?: {
+      // Not customizable as the component is static, unlike themes
+      // Publisher and custom are not included as they are special cases
+      keys?: {
+        [key in Exclude<ThSpacingKeys, "publisher" | "custom">]: ThSpacingPreset<K>;
+      };
+    };
   };
   affordances: {
     scroll: {
@@ -336,6 +344,100 @@ export const createPreferences = <K extends CustomizableKeys = {}>(
       "theming.themes",
       "auto" // Special case for themes
     );
+  }
+
+  // Validate spacing values in theming against settings
+  if (params.theming?.spacing?.keys && params.settings?.keys) {
+    const spacingSettings = params.settings.keys;
+    const spacingThemes = params.theming.spacing.keys;
+    
+    // Helper function to adjust a value to the nearest valid step or range boundary
+    const adjustSpacingValue = (key: string, value: number, context: string[]): number => {
+      // Type-safe way to get the setting
+      const settingKey = Object.values(ThSettingsKeys).find((k) => k === key);
+      if (!settingKey) {
+        return value; // Return as-is if no setting found
+      }
+      
+      const setting = (spacingSettings as any)[settingKey];
+      if (!setting) {
+        return value; // Return as-is if no setting found
+      }
+      
+      // Handle different setting types
+      let range: [number, number] | undefined;
+      let step: number | undefined;
+      
+      if (setting && typeof setting === "object" && "range" in setting) {
+        range = setting.range;
+        step = setting.step;
+      } else if (setting && typeof setting === "object") {
+        // Handle nested settings (like lineHeight and margin)
+        // These will be validated when their parent key is validated
+        return value;
+      }
+      
+      let adjustedValue = value;
+      
+      // Adjust to range boundaries if needed
+      if (range) {
+        const [min, max] = range;
+        if (adjustedValue < min) {
+          console.warn(`Adjusting value ${ value } for ${ context.join(".") } to minimum allowed value ${ min }`);
+          adjustedValue = min;
+        } else if (adjustedValue > max) {
+          console.warn(`Adjusting value ${ value } for ${ context.join(".") } to maximum allowed value ${ max }`);
+          adjustedValue = max;
+        }
+      }
+      
+      // Adjust to nearest step if needed
+      if (step && range) {
+        const [min] = range;
+        const steps = Math.round((adjustedValue - min) / step);
+        const steppedValue = parseFloat((min + (steps * step)).toFixed(10));
+        
+        // Ensure the stepped value is within range (in case of floating point precision issues)
+        const finalValue = Math.min(Math.max(steppedValue, range[0]), range[1]);
+        
+        if (Math.abs(finalValue - adjustedValue) > Number.EPSILON) {
+          console.warn(`Adjusting value ${ value } for ${ context.join(".") } to nearest step value ${ finalValue }`);
+          adjustedValue = finalValue;
+        }
+      }
+      
+      return adjustedValue;
+    };
+    
+    // Process each spacing theme to adjust values to valid steps/ranges
+    for (const [themeName, spacingTheme] of Object.entries(spacingThemes)) {
+      if (spacingTheme && typeof spacingTheme === "object") {
+        const adjustedTheme: Record<string, any> = {};
+        let hasAdjustedValues = false;
+        
+        // Process each value in the theme
+        for (const [key, value] of Object.entries(spacingTheme)) {
+          if (typeof value === "number") {
+            const context = ["theming", "spacing", "keys", themeName, key];
+            const adjustedValue = adjustSpacingValue(key, value, context);
+            adjustedTheme[key] = adjustedValue;
+            
+            if (adjustedValue !== value) {
+              hasAdjustedValues = true;
+            }
+          } else {
+            // Keep non-number values as-is
+            adjustedTheme[key] = value;
+          }
+        }
+        
+        // Replace the theme with adjusted values if any changes were made
+        if (hasAdjustedValues) {
+          // @ts-ignore - We know spacingThemes[themeName] is mutable
+          spacingThemes[themeName as keyof typeof spacingThemes] = adjustedTheme;
+        }
+      }
+    }
   }
   
   return params;

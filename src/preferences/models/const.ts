@@ -28,13 +28,13 @@ export const defaultTextSettingsSubpanel = [
 ]
 
 export const defaultSpacingSettingsMain = [
-  ThSpacingSettingsKeys.lineHeight
+  ThSpacingSettingsKeys.spacingPresets
 ];
 
 export const defaultSpacingSettingsSubpanel = [
-  ThSpacingSettingsKeys.publisherStyles,
-  ThSpacingSettingsKeys.lineHeight,
+  ThSpacingSettingsKeys.spacingPresets,
   ThSpacingSettingsKeys.margin,
+  ThSpacingSettingsKeys.lineHeight,
   ThSpacingSettingsKeys.wordSpacing,
   ThSpacingSettingsKeys.letterSpacing,
   ThSpacingSettingsKeys.paragraphSpacing,

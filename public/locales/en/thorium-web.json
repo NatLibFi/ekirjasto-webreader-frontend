@@ -211,6 +211,15 @@
         "advanced": {
           "tooltip": "More options",
           "trigger": "More spacing options"
+        },
+        "presets": {
+          "title": "Presets",
+          "publisher": "Default",
+          "tight": "Tight",
+          "balanced": "Balanced",
+          "loose": "Loose",
+          "accessible": "Accessible",
+          "custom": "Custom"
         }
       },
       "layout": {

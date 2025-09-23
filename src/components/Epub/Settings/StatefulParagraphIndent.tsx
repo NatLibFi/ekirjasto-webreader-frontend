@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 
-import { ThSettingsKeys, ThSettingsRangeVariant } from "@/preferences";
+import { ThSettingsKeys, ThSettingsRangeVariant, ThSpacingSettingsKeys } from "@/preferences";
 
 import { StatefulSettingsItemProps } from "../../Settings/models/settings";
 
@@ -12,14 +12,14 @@ import { StatefulSlider } from "../../Settings/StatefulSlider";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
+import { useSpacingPresets } from "./hooks/useSpacingPresets";
 
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { setParagraphIndent, setPublisherStyles } from "@/lib/settingsReducer";
+import { useAppDispatch } from "@/lib/hooks";
+import { setPublisherStyles } from "@/lib/settingsReducer";
 
 export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { preferences } = usePreferences();
   const { t } = useI18n();
-  const paragraphIndent = useAppSelector(state => state.settings.paragraphIndent);
   const paragraphIndentRangeConfig = {
       variant: preferences.settings.keys[ThSettingsKeys.paragraphIndent].variant,
       range: preferences.settings.keys[ThSettingsKeys.paragraphIndent].range,
@@ -29,14 +29,18 @@ export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsI
 
   const { getSetting, submitPreferences } = useEpubNavigator();
 
+  const { getEffectiveSpacingValue, setParagraphIndent } = useSpacingPresets();
+
+  const paragraphIndent = getEffectiveSpacingValue(ThSpacingSettingsKeys.paragraphIndent);
+
   const updatePreference = useCallback(async (value: number) => {
     await submitPreferences({
       paragraphIndent: value
     });
 
-    dispatch(setParagraphIndent(getSetting("paragraphIndent")));
+    setParagraphIndent(getSetting("paragraphIndent"));
     dispatch(setPublisherStyles(false));
-  }, [submitPreferences, getSetting, dispatch]);
+  }, [submitPreferences, getSetting, dispatch, setParagraphIndent]);
 
   return (
     <>

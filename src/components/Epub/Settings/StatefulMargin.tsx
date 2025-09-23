@@ -1,20 +1,21 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useRef } from "react";
 
 import SmallMarginIcon from "./assets/icons/format_letter_spacing_standard.svg";
 import NormalMarginIcon from "./assets/icons/format_letter_spacing_wide.svg";
 import LargeMarginIcon from "./assets/icons/format_letter_spacing_wider.svg";
 
-import { ThMarginOptions, ThSettingsKeys } from "@/preferences";
+import { ThMarginOptions, ThSettingsKeys, ThSpacingSettingsKeys } from "@/preferences";
 
 import { StatefulRadioGroup, StatefulSettingsItemProps } from "@/components/Settings";
 
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
+import { useSpacingPresets } from "./hooks/useSpacingPresets";
 
-import { setLineLengthMultiplier, useAppDispatch, useAppSelector } from "@/lib";
+import { useAppSelector } from "@/lib/hooks";
 
 // ReadiumCSS v2 does not provide a margin setting per se,
 // and we are relying on the line-length setting to achieve similar effects.
@@ -24,22 +25,19 @@ export const StatefulMargin = ({ standalone = true }: StatefulSettingsItemProps)
   const { preferences } = usePreferences();
   const { t } = useI18n();
   const lineLength = useAppSelector(state => state.settings.lineLength);
-  const dispatch = useAppDispatch();
 
   const { submitPreferences } = useEpubNavigator();
+
+  const { getEffectiveSpacingValue, setLineLengthMultiplier } = useSpacingPresets();
+
+  const multiplier = getEffectiveSpacingValue(ThSpacingSettingsKeys.margin);
 
   // TODO: column count? In auto/null this does not work well because the logic will add columns based on the number of characters it can effectively fit in the container…
   // TODO: this is highly-dependent on the size of the container, because it may actually fit less characters than what we submit, with the setting having no visual effect at all…
   // On the opposite side, pageGutter may not have any effect if the container can fit way more than what we request…
 
-  const marginOptions = useRef({
-    [ThMarginOptions.small]: preferences.settings.keys[ThSettingsKeys.margin][ThMarginOptions.small].toString(),
-    [ThMarginOptions.medium]: preferences.settings.keys[ThSettingsKeys.margin][ThMarginOptions.medium].toString(),
-    [ThMarginOptions.large]: preferences.settings.keys[ThSettingsKeys.margin][ThMarginOptions.large].toString()
-  });
-
   const updatePreference = useCallback(async (value: string) => {
-    const numValue = Number(value);
+    const numValue = preferences.settings.keys[ThSettingsKeys.margin][value];
 
     const getLineLengthValue = (
       setting: { chars?: number | null, isDisabled?: boolean } | number | null | undefined,
@@ -62,8 +60,8 @@ export const StatefulMargin = ({ standalone = true }: StatefulSettingsItemProps)
       pageGutter: preferences.typography.pageGutter / numValue
     });
 
-    dispatch(setLineLengthMultiplier(value));
-  }, [submitPreferences, dispatch, lineLength, preferences.typography]);
+    setLineLengthMultiplier(value as ThMarginOptions);
+  }, [submitPreferences, lineLength, preferences.typography, setLineLengthMultiplier]);
 
   return (
     <>
@@ -72,23 +70,23 @@ export const StatefulMargin = ({ standalone = true }: StatefulSettingsItemProps)
       isDisabled={ !preferences.typography.pageGutter }
       label={ t("reader.settings.margin.title") }
       orientation="horizontal"
-      value={ lineLength?.multiplier?.toString() || marginOptions.current[ThMarginOptions.medium] }
+      value={ multiplier }
       onChange={ async (val: string) => await updatePreference(val) }
       items={[
         { 
           icon: SmallMarginIcon,
           label: t("reader.settings.margin.small"), 
-          value: marginOptions.current[ThMarginOptions.small] 
+          value: ThMarginOptions.small 
         },
         { 
           icon: NormalMarginIcon,
           label: t("reader.settings.margin.normal"), 
-          value: marginOptions.current[ThMarginOptions.medium] 
+          value: ThMarginOptions.medium 
         },
         { 
           icon: LargeMarginIcon,
           label: t("reader.settings.margin.large"), 
-          value: marginOptions.current[ThMarginOptions.large] 
+          value: ThMarginOptions.large
         }
       ]}
     />

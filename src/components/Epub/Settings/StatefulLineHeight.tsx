@@ -2,7 +2,7 @@
 
 import React, { useCallback, useRef } from "react";
 
-import { ThLineHeightOptions, ThSettingsKeys } from "@/preferences";
+import { ThLineHeightOptions, ThSettingsKeys, ThSpacingSettingsKeys } from "@/preferences";
 
 import { StatefulSettingsItemProps } from "../../Settings/models/settings";
 
@@ -18,16 +18,20 @@ import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { setLineHeight, setPublisherStyles } from "@/lib/settingsReducer";
+import { setPublisherStyles } from "@/lib/settingsReducer";
+import { useSpacingPresets } from "./hooks/useSpacingPresets";
 
 export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { preferences } = usePreferences();
   const { t } = useI18n();
   const publisherStyles = useAppSelector(state => state.settings.publisherStyles);
-  const lineHeight = useAppSelector(state => state.settings.lineHeight);
   const dispatch = useAppDispatch();
 
   const { getSetting, submitPreferences } = useEpubNavigator();
+
+  const { getEffectiveSpacingValue, setLineHeight } = useSpacingPresets();
+
+  const lineHeight = getEffectiveSpacingValue(ThSpacingSettingsKeys.lineHeight);
 
   const lineHeightOptions = useRef({
     [ThLineHeightOptions.publisher]: null,
@@ -48,9 +52,9 @@ export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemPr
     const currentLineHeight = getSetting("lineHeight");
     const currentDisplayLineHeightOption = Object.entries(lineHeightOptions.current).find(([key, value]) => value === currentLineHeight)?.[0] as ThLineHeightOptions;
 
-    dispatch(setLineHeight(currentDisplayLineHeightOption));
+    setLineHeight(currentDisplayLineHeightOption);
     dispatch(setPublisherStyles(false));
-  }, [submitPreferences, getSetting, dispatch]);
+  }, [submitPreferences, getSetting, dispatch, setLineHeight]);
 
   return (
     <>

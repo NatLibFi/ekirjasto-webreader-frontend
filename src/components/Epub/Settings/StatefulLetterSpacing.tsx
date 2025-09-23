@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 
-import { ThSettingsKeys, ThSettingsRangeVariant } from "@/preferences";
+import { ThSettingsKeys, ThSettingsRangeVariant, ThSpacingSettingsKeys } from "@/preferences";
 
 import { StatefulSettingsItemProps } from "../../Settings/models/settings";
 
@@ -12,14 +12,14 @@ import { StatefulSlider } from "../../Settings/StatefulSlider";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
+import { useSpacingPresets } from "./hooks/useSpacingPresets";
 
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { setLetterSpacing, setPublisherStyles } from "@/lib/settingsReducer";
+import { useAppDispatch } from "@/lib/hooks";
+import { setPublisherStyles } from "@/lib/settingsReducer";
 
 export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { preferences } = usePreferences();
   const { t } = useI18n();
-  const letterSpacing = useAppSelector(state => state.settings.letterSpacing);
   const letterSpacingRangeConfig = {
     variant: preferences.settings.keys[ThSettingsKeys.letterSpacing].variant,
     range: preferences.settings.keys[ThSettingsKeys.letterSpacing].range,
@@ -29,14 +29,18 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
 
   const { getSetting, submitPreferences } = useEpubNavigator();
 
+  const { getEffectiveSpacingValue, setLetterSpacing } = useSpacingPresets();
+
+  const letterSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.letterSpacing);
+
   const updatePreference = useCallback(async (value: number) => {
     await submitPreferences({
       letterSpacing: value
     });
 
-    dispatch(setLetterSpacing(getSetting("letterSpacing")));
+    setLetterSpacing(getSetting("letterSpacing"));
     dispatch(setPublisherStyles(false));
-  }, [submitPreferences, getSetting, dispatch]);
+  }, [submitPreferences, getSetting, dispatch, setLetterSpacing]);
 
   return (
     <>
