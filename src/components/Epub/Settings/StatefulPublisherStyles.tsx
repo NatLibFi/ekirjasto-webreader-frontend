@@ -2,7 +2,7 @@
 
 import { useCallback, useRef } from "react";
 
-import { ThLineHeightOptions, ThSettingsKeys } from "@/preferences";
+import { ThLineHeightOptions, ThSettingsKeys, ThSpacingSettingsKeys } from "@/preferences";
 
 import { StatefulSettingsItemProps } from "../../Settings/models/settings";
 
@@ -11,6 +11,7 @@ import { StatefulSwitch } from "../../Settings/StatefulSwitch";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
+import { useSpacingPresets } from "./hooks/useSpacingPresets";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setPublisherStyles } from "@/lib/settingsReducer";
@@ -20,11 +21,13 @@ export const StatefulPublisherStyles = ({ standalone = true }: StatefulSettingsI
   const { t } = useI18n();
   const publisherStyles = useAppSelector(state => state.settings.publisherStyles);
 
-  const lineHeight = useAppSelector(state => state.settings.lineHeight);
-  const paragraphIndent = useAppSelector(state => state.settings.paragraphIndent);
-  const paragraphSpacing = useAppSelector(state => state.settings.paragraphSpacing);
-  const letterSpacing = useAppSelector(state => state.settings.letterSpacing);
-  const wordSpacing = useAppSelector(state => state.settings.wordSpacing);
+  const { getEffectiveSpacingValue } = useSpacingPresets();
+
+  const lineHeight = getEffectiveSpacingValue(ThSpacingSettingsKeys.lineHeight);
+  const paragraphIndent = getEffectiveSpacingValue(ThSpacingSettingsKeys.paragraphIndent);
+  const paragraphSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.paragraphSpacing);
+  const letterSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.letterSpacing);
+  const wordSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.wordSpacing);
 
   const dispatch = useAppDispatch();
 

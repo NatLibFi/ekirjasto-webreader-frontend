@@ -19,7 +19,8 @@ import {
   ThSettingsKeys, 
   ThTextAlignOptions, 
   ThLayoutUI,
-  ThDocumentTitleFormat
+  ThDocumentTitleFormat,
+  ThMarginOptions
 } from "../../preferences/models/enums";
 import { ThColorScheme } from "@/core/Hooks/useColorScheme";
 
@@ -714,6 +715,10 @@ export const StatefulReader = ({
           [ThLineHeightOptions.large]: preferences.settings.keys[ThSettingsKeys.lineHeight][ThLineHeightOptions.large],
         };
 
+        const multiplier = cache.current.settings.lineLength?.multiplier 
+          ? preferences.settings.keys[ThSettingsKeys.margin][cache.current.settings.lineLength?.multiplier as ThMarginOptions] ?? 1 
+          : 1;
+
         const epubPreferences: IEpubPreferences = isFXL ? {} : {
           columnCount: cache.current.settings.columnCount === "auto" ? null : Number(cache.current.settings.columnCount),
           constraint: initialConstraint,
@@ -729,20 +734,20 @@ export const StatefulReader = ({
               : lineHeightOptions[cache.current.settings.lineHeight],
           // Apply line length multiplier to line length values
           optimalLineLength: cache.current.settings.lineLength?.optimal != null 
-            ? cache.current.settings.lineLength.optimal * (cache.current.settings.lineLength?.multiplier || 1) 
+            ? cache.current.settings.lineLength.optimal * multiplier 
             : undefined,
           maximalLineLength: cache.current.settings.lineLength?.max?.isDisabled 
             ? null 
             : (cache.current.settings.lineLength?.max?.chars != null) 
-              ? cache.current.settings.lineLength.max.chars! * (cache.current.settings.lineLength?.multiplier || 1) 
+              ? cache.current.settings.lineLength.max.chars! * multiplier 
               : undefined,
           minimalLineLength: cache.current.settings.lineLength?.min?.isDisabled 
             ? null 
             : (cache.current.settings.lineLength?.min?.chars != null) 
-              ? cache.current.settings.lineLength.min.chars! * (cache.current.settings.lineLength?.multiplier || 1) 
+              ? cache.current.settings.lineLength.min.chars! * multiplier 
               : undefined,
           pageGutter: cache.current.settings.lineLength?.multiplier != null 
-            ? preferences.typography.pageGutter / (cache.current.settings.lineLength?.multiplier || 1)
+            ? preferences.typography.pageGutter / multiplier
             : undefined,
           paragraphIndent: cache.current.settings.publisherStyles ? undefined :cache.current.settings.paragraphIndent,
           paragraphSpacing: cache.current.settings.publisherStyles ? undefined :cache.current.settings.paragraphSpacing,
@@ -753,7 +758,6 @@ export const StatefulReader = ({
           ...themeProps
         };
 
-        const multiplier = cache.current.settings.lineLength?.multiplier || 1;
         const defaults: IEpubDefaults = isFXL ? {} : {
           maximalLineLength: preferences.typography.maximalLineLength != null 
             ? preferences.typography.maximalLineLength * multiplier 

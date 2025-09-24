@@ -21,6 +21,7 @@ import { StatefulRadioGroup } from "../../Settings/StatefulRadioGroup";
 import { useI18n } from "@/i18n/useI18n";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
+import { useMargin } from "./hooks/useMargin";
 
 import { useAppSelector, useAppDispatch } from "@/lib";
 import { setSpacingPreset, setPublisherStyles } from "@/lib/settingsReducer";
@@ -34,6 +35,8 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
   const settingsContainer = useAppSelector(state => state.reader.settingsContainer)
 
   const dispatch = useAppDispatch();
+
+  const { submitPreferencesWithMargin } = useMargin();
 
   const { submitPreferences } = useEpubNavigator();
 
@@ -82,30 +85,16 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
       preferencesToSubmit.paragraphSpacing = mergedSpacing.paragraphSpacing ?? null;
       preferencesToSubmit.wordSpacing = mergedSpacing.wordSpacing ?? null;
 
-      // Handle margin separately - convert ThMarginOptions to number
-      if (mergedSpacing.margin !== undefined) {
-        const marginValue = mergedSpacing.margin as ThMarginOptions;
-        const marginNumber = preferences.settings.keys[ThSettingsKeys.margin]?.[marginValue];
-        if (marginNumber !== undefined) {
-          // For margin, we need to handle line length settings
-          await submitPreferences({
-            minimalLineLength: lineLength?.min?.chars ? lineLength.min.chars * marginNumber : undefined,
-            optimalLineLength: lineLength?.optimal ? lineLength.optimal * marginNumber : undefined,
-            maximalLineLength: lineLength?.max?.chars ? lineLength.max.chars * marginNumber : undefined,
-            pageGutter: preferences.typography.pageGutter / marginNumber,
-            ...preferencesToSubmit
-          });
-        } else {
-          await submitPreferences(preferencesToSubmit);
-        }
-      } else {
-        await submitPreferences(preferencesToSubmit);
-      }
+      // Handle margin - convert ThMarginOptions to number, default to 1 if not found
+      const marginValue = mergedSpacing.margin as ThMarginOptions;
+      const marginNumber = preferences.settings.keys[ThSettingsKeys.margin]?.[marginValue] ?? 1;
+
+      await submitPreferencesWithMargin(submitPreferences, marginNumber, preferencesToSubmit);
 
       // Always set the spacing preset
       dispatch(setSpacingPreset(value));
     }
-  }, [dispatch, preferences, spacing, submitPreferences, settingsContainer, lineLength]);
+  }, [dispatch, preferences, spacing, submitPreferences, submitPreferencesWithMargin, settingsContainer, lineLength]);
 
   return (
     <>
