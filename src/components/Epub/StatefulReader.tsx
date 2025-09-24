@@ -173,7 +173,13 @@ export const StatefulReader = ({
     return null;
   }
 
-  return <StatefulReaderInner rawManifest={ rawManifest } selfHref={ selfHref } />;
+  return (
+    <>
+      <ThPluginProvider>
+        <StatefulReaderInner rawManifest={ rawManifest } selfHref={ selfHref } />
+      </ThPluginProvider>
+    </>
+  );
 };
 
 const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; selfHref: string }) => {
@@ -836,7 +842,6 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
   return (
     <>
     <I18nProvider locale={ preferences.locale }>
-    <ThPluginProvider>
       <main id="reader-main">
         <StatefulDockingWrapper>
           <div 
@@ -884,7 +889,6 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
         </div>
       </StatefulDockingWrapper>
     </main>
-  </ThPluginProvider>
   </I18nProvider>
   </>
 )};
