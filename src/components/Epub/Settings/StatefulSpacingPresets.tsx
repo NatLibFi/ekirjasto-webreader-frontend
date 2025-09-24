@@ -111,6 +111,16 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
           label: t("reader.settings.spacing.presets.publisher")
         },
         {
+          icon: AccessibleIcon,
+          value: ThSpacingKeys.accessible,
+          label: t("reader.settings.spacing.presets.accessible")
+        },
+        {
+          icon: TuneIcon,
+          value: ThSpacingKeys.custom,
+          label: t("reader.settings.spacing.presets.custom")
+        },
+        {
           icon: SmallIcon,
           value: ThSpacingKeys.tight,
           label: t("reader.settings.spacing.presets.tight")
@@ -125,16 +135,6 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
           value: ThSpacingKeys.loose,
           label: t("reader.settings.spacing.presets.loose")
         },
-        {
-          icon: AccessibleIcon,
-          value: ThSpacingKeys.accessible,
-          label: t("reader.settings.spacing.presets.accessible")
-        },
-        {
-          icon: TuneIcon,
-          value: ThSpacingKeys.custom,
-          label: t("reader.settings.spacing.presets.custom")
-        }
       ]}
     />
     </>
