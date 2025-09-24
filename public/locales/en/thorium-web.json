@@ -104,6 +104,7 @@
       }
     },
     "settings": {
+      "reset": "Reset",
       "tooltip": "Settings",
       "trigger": "Settings menu",
       "close": "Close settings menu",

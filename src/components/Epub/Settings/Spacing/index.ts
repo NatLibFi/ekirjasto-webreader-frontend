@@ -7,6 +7,7 @@ export * from "./StatefulParagraphIndent";
 export * from "./StatefulParagraphSpacing";
 export * from "./StatefulSpacingGroup";
 export * from "./StatefulSpacingPresets";
+export * from "./StatefulSpacingReset";
 export * from "./StatefulWordSpacing";
 
 export * from "./hooks";

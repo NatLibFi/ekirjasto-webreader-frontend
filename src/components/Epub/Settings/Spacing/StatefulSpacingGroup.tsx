@@ -10,6 +10,7 @@ import {
 } from "@/preferences";
 
 import { StatefulGroupWrapper } from "../../../Settings/StatefulGroupWrapper";
+import { StatefulSpacingReset } from "./StatefulSpacingReset";
 
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { usePlugins } from "../../../Plugins/PluginProvider";
@@ -48,6 +49,7 @@ export const StatefulSpacingGroup = () => {
 
 export const StatefulSpacingGroupContainer = () => {
   const { preferences } = usePreferences();
+
   const displayOrder = preferences.settings.spacing?.subPanel as ThSpacingSettingsKeys[] | null | undefined || defaultSpacingSettingsSubpanel;
   const { spacingSettingsComponentsMap } = usePlugins();
 
@@ -61,6 +63,8 @@ export const StatefulSpacingGroupContainer = () => {
       }
       return <match.Comp key={ key } standalone={ true } />;
     }) }
+
+    <StatefulSpacingReset />
     </>
   )
 }

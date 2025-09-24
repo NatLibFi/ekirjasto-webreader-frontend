@@ -243,9 +243,44 @@ export const settingsSlice = createSlice({
     },
     setWordSpacing: (state, action) => {
       handleSpacingSetting(state, action, ThSpacingSettingsKeys.wordSpacing);
+    },
+    resetSpacingSettings: (state, action) => {      
+      const { payload } = action;
+
+      // If a preset is specified, clear overrides for that preset
+      if (payload?.preset) {
+        // Use handleSpacingSetting pattern to clear all settings for this preset
+        const { preset } = payload;
+
+        // Reset all spacing settings for this preset by assigning empty object
+        state.spacing.overrides = {
+          ...state.spacing.overrides,
+          [preset as keyof typeof state.spacing.overrides]: {}
+        };
+        return;
+      }
+
+      // Otherwise, reset all spacing settings to initial state
+      state.publisherStyles = initialState.publisherStyles;
+
+      state.letterSpacing = initialState.letterSpacing;
+      state.lineHeight = initialState.lineHeight;
+      state.lineLength && (state.lineLength.multiplier = undefined);
+      state.paragraphIndent = initialState.paragraphIndent;
+      state.paragraphSpacing = initialState.paragraphSpacing;
+      state.wordSpacing = initialState.wordSpacing;
+    },
+    resetTextSettings: (state) => {
+      state.fontFamily = initialState.fontFamily;
+      state.fontWeight = initialState.fontWeight;
+      state.hyphens = initialState.hyphens;
+      state.textAlign = initialState.textAlign;
+      state.textNormalization = initialState.textNormalization;
     }
   }
-})
+});
+
+export const initialSettingsState = initialState;
 
 // Action creators are generated for each case reducer function
 export const { 
@@ -265,7 +300,9 @@ export const {
   setSpacingPreset,
   setTextAlign,
   setTextNormalization, 
-  setWordSpacing
+  setWordSpacing,
+  resetSpacingSettings,
+  resetTextSettings
 } = settingsSlice.actions;
 
 export default settingsSlice.reducer;

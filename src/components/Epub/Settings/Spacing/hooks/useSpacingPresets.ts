@@ -5,8 +5,11 @@ import { defaultPreferences } from "@/preferences/defaultPreferences";
 
 import { usePlugins } from "@/components/Plugins/PluginProvider";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
+
+import { initialSettingsState } from "@/lib/settingsReducer";
 import { useAppSelector, useAppDispatch } from "@/lib";
 import {
+  resetSpacingSettings,
   setLetterSpacing,
   setLineHeight,
   setLineLengthMultiplier,
@@ -128,6 +131,31 @@ export const useSpacingPresets = () => {
     wordSpacing
   ]);
 
+  const canGetReset = useCallback(() => {
+    if (shouldApplyPresets && spacing.preset) {
+      // Check if the preset has overrides that is not an empty object
+      const presetOverrides = spacing.overrides?.[spacing.preset];
+      return !!presetOverrides && Object.keys(presetOverrides).length > 0;
+    } else {
+      // Check if the state.settings.properties differ from the value in initialState of settingsReducer
+      const currentLetterSpacing = letterSpacing ?? null;
+      const currentLineHeight = lineHeight ?? initialSettingsState.lineHeight;
+      const currentLineLength = lineLength?.multiplier ?? null;
+      const currentParagraphIndent = paragraphIndent ?? null;
+      const currentParagraphSpacing = paragraphSpacing ?? null;
+      const currentWordSpacing = wordSpacing ?? null;
+
+      return (
+        currentLetterSpacing !== initialSettingsState.letterSpacing ||
+        currentLineHeight !== initialSettingsState.lineHeight ||
+        currentLineLength !== initialSettingsState.lineLength ||
+        currentParagraphIndent !== initialSettingsState.paragraphIndent ||
+        currentParagraphSpacing !== initialSettingsState.paragraphSpacing ||
+        currentWordSpacing !== initialSettingsState.wordSpacing
+      );
+    }
+  }, [shouldApplyPresets, spacing.preset, spacing.overrides, letterSpacing, lineHeight, lineLength?.multiplier, paragraphIndent, paragraphSpacing, wordSpacing]);
+
   // Spacing actions (automatically handle preset logic)
   const setLetterSpacingAction = useCallback((value: number | null) => {
     const payload: any = { value };
@@ -177,14 +205,24 @@ export const useSpacingPresets = () => {
     dispatch(setWordSpacing(payload));
   }, [dispatch, shouldApplyPresets, spacing.preset]);
 
+  const resetSpacingSettingsAction = useCallback(() => {    
+    const payload: any = { value: null };
+    if (shouldApplyPresets && spacing.preset) {
+      payload.preset = spacing.preset;
+    }
+    dispatch(resetSpacingSettings(payload));
+  }, [dispatch, shouldApplyPresets, spacing.preset]);
+
   return {
     currentPreset: spacing.preset,
     getEffectiveSpacingValue: getEffectiveSpacingValueCallback,
+    canGetReset: canGetReset,
     setLetterSpacing: setLetterSpacingAction,
     setLineHeight: setLineHeightAction,
     setLineLengthMultiplier: setLineLengthMultiplierAction,
     setParagraphIndent: setParagraphIndentAction,
     setParagraphSpacing: setParagraphSpacingAction,
     setWordSpacing: setWordSpacingAction,
+    resetSpacingSettings: resetSpacingSettingsAction
   };
 };
