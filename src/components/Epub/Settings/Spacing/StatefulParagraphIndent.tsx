@@ -4,10 +4,10 @@ import { useCallback } from "react";
 
 import { ThSettingsKeys, ThSettingsRangeVariant, ThSpacingSettingsKeys } from "@/preferences";
 
-import { StatefulSettingsItemProps } from "../../Settings/models/settings";
+import { StatefulSettingsItemProps } from "../../../Settings/models/settings";
 
-import { StatefulNumberField } from "../../Settings/StatefulNumberField";
-import { StatefulSlider } from "../../Settings/StatefulSlider";
+import { StatefulNumberField } from "../../../Settings/StatefulNumberField";
+import { StatefulSlider } from "../../../Settings/StatefulSlider";
 
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";

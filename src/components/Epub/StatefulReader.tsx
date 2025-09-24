@@ -65,7 +65,7 @@ import { useI18n } from "@/i18n/useI18n";
 import { useTimeline } from "@/core/Hooks/useTimeline";
 import { useLocalStorage } from "@/core/Hooks/useLocalStorage";
 import { useDocumentTitle } from "@/core/Hooks/useDocumentTitle";
-import { useSpacingPresets } from "./Settings/hooks/useSpacingPresets";
+import { useSpacingPresets } from "./Settings/Spacing/hooks/useSpacingPresets";
 
 import { toggleActionOpen } from "@/lib/actionsReducer";
 import { useAppSelector, useAppDispatch, useAppStore } from "@/lib/hooks";

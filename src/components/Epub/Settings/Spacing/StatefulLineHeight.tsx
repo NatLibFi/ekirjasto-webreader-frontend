@@ -4,14 +4,14 @@ import React, { useCallback, useRef } from "react";
 
 import { ThLineHeightOptions, ThSettingsKeys, ThSpacingSettingsKeys } from "@/preferences";
 
-import { StatefulSettingsItemProps } from "../../Settings/models/settings";
+import { StatefulSettingsItemProps } from "../../../Settings/models/settings";
 
-import BookIcon from "./assets/icons/book.svg";
+import BookIcon from "../assets/icons/book.svg";
 import SmallIcon from "./assets/icons/density_small.svg";
 import MediumIcon from "./assets/icons/density_medium.svg";
 import LargeIcon from "./assets/icons/density_large.svg";
 
-import { StatefulRadioGroup } from "../../Settings/StatefulRadioGroup";
+import { StatefulRadioGroup } from "../../../Settings/StatefulRadioGroup";
 
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";

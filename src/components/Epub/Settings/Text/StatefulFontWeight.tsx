@@ -2,10 +2,10 @@
 
 import { useCallback } from "react";
 
-import { StatefulSettingsItemProps } from "../../Settings/models/settings";
+import { StatefulSettingsItemProps } from "../../../Settings/models/settings";
 import { fontWeightRangeConfig } from "@readium/navigator";
 
-import { StatefulSlider } from "../../Settings/StatefulSlider";
+import { StatefulSlider } from "../../../Settings/StatefulSlider";
 
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";

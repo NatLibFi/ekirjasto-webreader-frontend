@@ -21,8 +21,8 @@ import settingsStyles from "../../Settings/assets/styles/settings.module.css";
 
 import { StatefulSheetWrapper } from "../../Sheets/StatefulSheetWrapper";
 
-import { StatefulSpacingGroupContainer } from "../../Epub/Settings/StatefulSpacingGroup";
-import { StatefulTextGroupContainer } from "../../Epub/Settings/StatefulTextGroup";
+import { StatefulSpacingGroupContainer } from "../../Epub/Settings/Spacing/StatefulSpacingGroup";
+import { StatefulTextGroupContainer } from "../../Epub/Settings/Text/StatefulTextGroup";
 
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { usePlugins } from "@/components/Plugins/PluginProvider";

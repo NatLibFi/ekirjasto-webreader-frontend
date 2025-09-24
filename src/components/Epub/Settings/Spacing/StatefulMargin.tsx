@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useCallback } from "react";
 
 import SmallMarginIcon from "./assets/icons/format_letter_spacing_standard.svg";
 import NormalMarginIcon from "./assets/icons/format_letter_spacing_wide.svg";
@@ -14,7 +14,7 @@ import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useSpacingPresets } from "./hooks/useSpacingPresets";
-import { useMargin } from "./hooks/useMargin";
+import { useMargin } from "../hooks/useMargin";
 
 import { useAppSelector } from "@/lib/hooks";
 
@@ -45,7 +45,7 @@ export const StatefulMargin = ({ standalone = true }: StatefulSettingsItemProps)
     await submitPreferencesWithMargin(submitPreferences, numValue);
 
     setLineLengthMultiplier(value as ThMarginOptions);
-  }, [submitPreferences, lineLength, preferences.typography, setLineLengthMultiplier]);
+  }, [submitPreferences, submitPreferencesWithMargin, setLineLengthMultiplier, preferences.settings.keys]);
 
   return (
     <>

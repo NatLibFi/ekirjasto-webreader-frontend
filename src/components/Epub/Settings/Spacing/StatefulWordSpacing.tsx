@@ -4,17 +4,17 @@ import { useCallback } from "react";
 
 import { ThSettingsKeys, ThSettingsRangeVariant, ThSpacingSettingsKeys } from "@/preferences";
 
-import { StatefulSettingsItemProps } from "../../Settings/models/settings";
+import { StatefulSettingsItemProps } from "../../../Settings/models/settings";
 
-import { StatefulNumberField } from "../../Settings/StatefulNumberField";
-import { StatefulSlider } from "../../Settings/StatefulSlider";
+import { StatefulNumberField } from "../../../Settings/StatefulNumberField";
+import { StatefulSlider } from "../../../Settings/StatefulSlider";
 
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
 import { useSpacingPresets } from "./hooks/useSpacingPresets";
 
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { useAppDispatch } from "@/lib/hooks";
 import { setPublisherStyles } from "@/lib/settingsReducer";
 
 export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemProps) => {

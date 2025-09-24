@@ -3,15 +3,15 @@
 import React, { useCallback } from "react";
 
 import { ThTextAlignOptions } from "@/preferences/models/enums";
-import { StatefulSettingsItemProps } from "../../Settings/models/settings";
+import { StatefulSettingsItemProps } from "../../../Settings/models/settings";
 import { TextAlignment } from "@readium/navigator";
 
-import BookIcon from "./assets/icons/book.svg";
+import BookIcon from "../assets/icons/book.svg";
 import LeftAlignIcon from "./assets/icons/format_align_left.svg";
 import RightAlignIcon from "./assets/icons/format_align_right.svg";
 import JustifyIcon from "./assets/icons/format_align_justify.svg";
 
-import { StatefulRadioGroup } from "../../Settings/StatefulRadioGroup";
+import { StatefulRadioGroup } from "../../../Settings/StatefulRadioGroup";
 
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";

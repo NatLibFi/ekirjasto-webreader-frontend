@@ -11,7 +11,7 @@ import { StatefulSwitch } from "../../Settings/StatefulSwitch";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
-import { useSpacingPresets } from "./hooks/useSpacingPresets";
+import { useSpacingPresets } from "./Spacing/hooks/useSpacingPresets";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setPublisherStyles } from "@/lib/settingsReducer";

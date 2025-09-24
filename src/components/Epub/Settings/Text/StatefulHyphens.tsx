@@ -2,10 +2,10 @@
 
 import { useCallback } from "react";
 
-import { StatefulSettingsItemProps } from "../../Settings/models/settings";
+import { StatefulSettingsItemProps } from "../../../Settings/models/settings";
 import { ThTextAlignOptions } from "@/preferences/models/enums";
 
-import { StatefulSwitch } from "../../Settings/StatefulSwitch";
+import { StatefulSwitch } from "../../../Settings/StatefulSwitch";
 
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";

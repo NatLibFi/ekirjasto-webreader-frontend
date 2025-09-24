@@ -2,9 +2,9 @@
 
 import { CSSProperties, Key, useCallback, useRef } from "react";
 
-import { StatefulSettingsItemProps } from "../../Settings/models/settings";
+import { StatefulSettingsItemProps } from "../../../Settings/models/settings";
 
-import settingsStyles from "../../Settings/assets/styles/settings.module.css";
+import settingsStyles from "../../../Settings/assets/styles/settings.module.css";
 
 import { ThDropdown } from "@/core/Components/Settings/ThDropdown";
 
