@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useRef } from "react";
+import { useCallback } from "react";
 
 import { ThLineHeightOptions, ThSettingsKeys, ThSpacingSettingsKeys } from "@/preferences";
 
@@ -19,6 +19,7 @@ import { useI18n } from "@/i18n/useI18n";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setPublisherStyles } from "@/lib/settingsReducer";
+import { useLineHeight } from "./hooks/useLineHeight";
 import { useSpacingPresets } from "./hooks/useSpacingPresets";
 
 export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemProps) => {
@@ -33,28 +34,23 @@ export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemPr
 
   const lineHeight = getEffectiveSpacingValue(ThSpacingSettingsKeys.lineHeight);
 
-  const lineHeightOptions = useRef({
-    [ThLineHeightOptions.publisher]: null,
-    [ThLineHeightOptions.small]: preferences.settings.keys[ThSettingsKeys.lineHeight][ThLineHeightOptions.small],
-    [ThLineHeightOptions.medium]: preferences.settings.keys[ThSettingsKeys.lineHeight][ThLineHeightOptions.medium],
-    [ThLineHeightOptions.large]: preferences.settings.keys[ThSettingsKeys.lineHeight][ThLineHeightOptions.large],
-  });
+  const lineHeightOptions = useLineHeight();
 
   const updatePreference = useCallback(async (value: string) => {
     const computedValue = value === ThLineHeightOptions.publisher
       ? null 
-      : lineHeightOptions.current[value as keyof typeof ThLineHeightOptions];
+      : lineHeightOptions[value as keyof typeof ThLineHeightOptions];
     
     await submitPreferences({
       lineHeight: computedValue
     });
 
     const currentLineHeight = getSetting("lineHeight");
-    const currentDisplayLineHeightOption = Object.entries(lineHeightOptions.current).find(([key, value]) => value === currentLineHeight)?.[0] as ThLineHeightOptions;
+    const currentDisplayLineHeightOption = Object.entries(lineHeightOptions).find(([key, value]) => value === currentLineHeight)?.[0] as ThLineHeightOptions;
 
     setLineHeight(currentDisplayLineHeightOption);
     dispatch(setPublisherStyles(false));
-  }, [submitPreferences, getSetting, dispatch, setLineHeight]);
+  }, [submitPreferences, getSetting, dispatch, setLineHeight, lineHeightOptions]);
 
   return (
     <>

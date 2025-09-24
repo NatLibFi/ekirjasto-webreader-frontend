@@ -14,7 +14,7 @@ import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useSpacingPresets } from "./hooks/useSpacingPresets";
-import { useMargin } from "../hooks/useMargin";
+import { useMargin } from "./hooks/useMargin";
 
 import { useAppSelector } from "@/lib/hooks";
 

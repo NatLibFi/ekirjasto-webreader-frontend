@@ -83,7 +83,7 @@ export const defaultLetterSpacing: Required<ThSettingsRangePref> = {
 }
 
 export const defaultLineHeights = {
-  [ThLineHeightOptions.small]: 1.25,
+  [ThLineHeightOptions.small]: 1.3,
   [ThLineHeightOptions.medium]: 1.5,
   [ThLineHeightOptions.large]: 1.75
 }

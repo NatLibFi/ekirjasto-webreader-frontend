@@ -4,7 +4,8 @@ import {
   ThSpacingKeys,
   ThSettingsContainerKeys,
   ThMarginOptions,
-  ThSettingsKeys
+  ThSettingsKeys,
+  ThLineHeightOptions
 } from "@/preferences/models/enums";
 
 import BookIcon from "../assets/icons/book.svg";
@@ -21,7 +22,8 @@ import { StatefulRadioGroup } from "../../../Settings/StatefulRadioGroup";
 import { useI18n } from "@/i18n/useI18n";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
-import { useMargin } from "../hooks/useMargin";
+import { useLineHeight } from "./hooks/useLineHeight";
+import { useMargin } from "./hooks/useMargin";
 
 import { useAppSelector, useAppDispatch } from "@/lib";
 import { setSpacingPreset, setPublisherStyles } from "@/lib/settingsReducer";
@@ -38,6 +40,8 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
   const { submitPreferencesWithMargin } = useMargin();
 
   const { submitPreferences } = useEpubNavigator();
+
+  const lineHeightOptions = useLineHeight();
 
   const updatePreference = useCallback(async (value: string) => {
     // Set publisherStyles to false for all presets
@@ -79,7 +83,13 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
 
       // Always include all spacing properties, even if undefined in preset
       preferencesToSubmit.letterSpacing = mergedSpacing.letterSpacing ?? null;
-      preferencesToSubmit.lineHeight = mergedSpacing.lineHeight ?? null;
+
+      // Handle lineHeight - convert enum to actual numeric value
+      const lineHeightEnum = mergedSpacing.lineHeight as ThLineHeightOptions;
+      preferencesToSubmit.lineHeight = lineHeightEnum === ThLineHeightOptions.publisher
+        ? null
+        : lineHeightOptions[lineHeightEnum];
+
       preferencesToSubmit.paragraphIndent = mergedSpacing.paragraphIndent ?? null;
       preferencesToSubmit.paragraphSpacing = mergedSpacing.paragraphSpacing ?? null;
       preferencesToSubmit.wordSpacing = mergedSpacing.wordSpacing ?? null;
@@ -93,7 +103,7 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
       // Always set the spacing preset
       dispatch(setSpacingPreset(value));
     }
-  }, [dispatch, preferences, spacing, submitPreferences, submitPreferencesWithMargin, settingsContainer]);
+  }, [dispatch, preferences, spacing, submitPreferences, submitPreferencesWithMargin, settingsContainer, lineHeightOptions]);
 
   return (
     <>

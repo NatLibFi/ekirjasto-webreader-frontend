@@ -66,6 +66,7 @@ import { useTimeline } from "@/core/Hooks/useTimeline";
 import { useLocalStorage } from "@/core/Hooks/useLocalStorage";
 import { useDocumentTitle } from "@/core/Hooks/useDocumentTitle";
 import { useSpacingPresets } from "./Settings/Spacing/hooks/useSpacingPresets";
+import { useLineHeight } from "./Settings";
 
 import { toggleActionOpen } from "@/lib/actionsReducer";
 import { useAppSelector, useAppDispatch, useAppStore } from "@/lib/hooks";
@@ -293,6 +294,8 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
       dispatch(setTimeline(timeline));
     }
   });
+
+  const lineHeightOptions = useLineHeight();
 
   const documentTitleFormat = preferences.metadata?.documentTitle?.format;
   
@@ -740,13 +743,6 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
           systemThemes: preferences.theming.themes.systemThemes,
           colorScheme: cache.current.colorScheme
         });
-
-        const lineHeightOptions = {
-          [ThLineHeightOptions.publisher]: null,
-          [ThLineHeightOptions.small]: preferences.settings.keys[ThSettingsKeys.lineHeight][ThLineHeightOptions.small],
-          [ThLineHeightOptions.medium]: preferences.settings.keys[ThSettingsKeys.lineHeight][ThLineHeightOptions.medium],
-          [ThLineHeightOptions.large]: preferences.settings.keys[ThSettingsKeys.lineHeight][ThLineHeightOptions.large],
-        };
 
         const multiplier = cache.current.settings.margin 
           ? preferences.settings.keys[ThSettingsKeys.margin][cache.current.settings.margin] ?? 1 

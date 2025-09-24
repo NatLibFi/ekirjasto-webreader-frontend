@@ -8,5 +8,3 @@ export * from "./StatefulZoom";
 
 export * from "./Spacing";
 export * from "./Text";
-
-export * from "./hooks";
