@@ -25,7 +25,7 @@ export const useSpacingPresets = () => {
   const dispatch = useAppDispatch();
   const { spacingSettingsComponentsMap } = usePlugins();
   const { preferences } = usePreferences();
-  const spacing = useAppSelector(state => state.settings?.spacing || {});
+  const spacing = useAppSelector(state => state.settings?.spacing) || {};
 
   // 1. Check if preset component is registered
   const isComponentRegistered = !!spacingSettingsComponentsMap?.[ThSettingsKeys.spacingPresets];
