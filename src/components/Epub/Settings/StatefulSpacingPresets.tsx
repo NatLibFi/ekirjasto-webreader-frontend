@@ -94,7 +94,7 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
       // Always set the spacing preset
       dispatch(setSpacingPreset(value));
     }
-  }, [dispatch, preferences, spacing, submitPreferences, submitPreferencesWithMargin, settingsContainer, lineLength]);
+  }, [dispatch, preferences, spacing, submitPreferences, submitPreferencesWithMargin, settingsContainer]);
 
   return (
     <>
