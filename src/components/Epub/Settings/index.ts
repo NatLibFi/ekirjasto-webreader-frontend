@@ -17,3 +17,5 @@ export * from "./StatefulTextNormalize";
 export * from "./StatefulTheme";
 export * from "./StatefulWordSpacing";
 export * from "./StatefulZoom";
+
+export * from "./hooks";
