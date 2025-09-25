@@ -14,8 +14,6 @@ import { useLineHeight } from "./hooks/useLineHeight";
 import { ThMarginOptions, ThSettingsKeys } from "@/preferences/models/enums";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 
-import { setPublisherStyles, useAppDispatch } from "@/lib";
-
 export const StatefulSpacingReset = () => {
   const { t } = useI18n();
   const { preferences } = usePreferences();
@@ -25,8 +23,6 @@ export const StatefulSpacingReset = () => {
   const { submitPreferencesWithMargin } = useMargin();
 
   const lineHeightOptions = useLineHeight();
-
-  const dispatch = useAppDispatch();
 
   const updatePreference = useCallback(async () => {
     const resetValues = getResetValues();
@@ -47,9 +43,7 @@ export const StatefulSpacingReset = () => {
       wordSpacing: resetValues.wordSpacing
     });
 
-    resetSpacingSettings();
-    
-    dispatch(setPublisherStyles(resetValues.publisherStyles));
+    resetSpacingSettings();    
   }, [resetSpacingSettings, submitPreferencesWithMargin, submitPreferences, getResetValues, lineHeightOptions, preferences.settings.keys]);
 
   return (

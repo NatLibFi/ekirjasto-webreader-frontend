@@ -39,6 +39,11 @@ export interface SetLineLengthMultiplierPayload {
   }
 }
 
+export interface SetSpacingPresetPayload {
+  type: string;
+  payload: ThSpacingKeys;
+}
+
 export interface SetSpacingOverridePayload {
   type: string;
   payload: {
@@ -225,14 +230,27 @@ export const settingsSlice = createSlice({
     setScroll: (state, action) => {
       state.scroll = action.payload
     },
-    setSpacingPreset: (state, action) => {
+    setSpacingPreset: (state, action: SetSpacingPresetPayload) => {
       if (!state.spacing) {
         state.spacing = {
           preset: action.payload,
           overrides: {}
         };
+        if (action.payload !== ThSpacingKeys.publisher && action.payload !== ThSpacingKeys.custom) {
+          state.publisherStyles = false;
+        }
       } else {
         state.spacing.preset = action.payload;
+
+        if (
+          (action.payload === ThSpacingKeys.publisher || action.payload === ThSpacingKeys.custom) && 
+          (!state.spacing.overrides[action.payload] || 
+            Object.keys(state.spacing.overrides[action.payload] || {}).length === 0)
+        ) {
+          state.publisherStyles = initialState.publisherStyles;
+        } else {
+          state.publisherStyles = false;
+        }
       }
     },
     setTextAlign: (state, action) => {
@@ -249,14 +267,17 @@ export const settingsSlice = createSlice({
 
       // If a preset is specified, clear overrides for that preset
       if (payload?.preset) {
-        // Use handleSpacingSetting pattern to clear all settings for this preset
         const { preset } = payload;
 
-        // Reset all spacing settings for this preset by assigning empty object
         state.spacing.overrides = {
           ...state.spacing.overrides,
           [preset as keyof typeof state.spacing.overrides]: {}
         };
+
+        if (preset === ThSpacingKeys.publisher) {
+          state.publisherStyles = initialState.publisherStyles;
+        }
+
         return;
       }
 

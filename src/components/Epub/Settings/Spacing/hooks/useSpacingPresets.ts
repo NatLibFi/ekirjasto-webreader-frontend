@@ -231,8 +231,7 @@ export const useSpacingPresets = () => {
       paragraphSpacing: null,
       letterSpacing: null,
       wordSpacing: null,
-      margin: ThMarginOptions.medium,
-      publisherStyles: !shouldApplyPresets || (spacing.preset === ThSpacingKeys.publisher || spacing.preset === ThSpacingKeys.custom)
+      margin: ThMarginOptions.medium
     };
 
     // If no preset or should not apply presets, return default values
@@ -259,8 +258,7 @@ export const useSpacingPresets = () => {
       paragraphSpacing: presetValues?.paragraphSpacing ?? null,
       letterSpacing: presetValues?.letterSpacing ?? null,
       wordSpacing: presetValues?.wordSpacing ?? null,
-      margin: presetValues?.margin ?? ThMarginOptions.medium,
-      publisherStyles: false
+      margin: presetValues?.margin ?? ThMarginOptions.medium
     };
   }, [shouldApplyPresets, spacing.preset, preferences.theming?.spacing]);
 

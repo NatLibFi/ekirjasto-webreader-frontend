@@ -56,14 +56,11 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
   const lineHeightOptions = useLineHeight();
 
   const updatePreference = useCallback(async (value: string) => {
-    // Set publisherStyles to false for all presets
-    dispatch(setPublisherStyles(false));
-
     // Handle different preset types
-    if (value === "custom" && settingsContainer === ThSettingsContainerKeys.initial) {
+    if (value === ThSpacingKeys.custom && settingsContainer === ThSettingsContainerKeys.initial) {
       // Custom preset: set container and preset, no theming logic
       dispatch(setSettingsContainer(ThSettingsContainerKeys.spacing));
-      dispatch(setSpacingPreset(value));
+      dispatch(setSpacingPreset(value as ThSpacingKeys));
     } else {
       // All other presets: do theming lookup and submission logic
       const spacingKey = value as ThSpacingKeys;
@@ -113,12 +110,7 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
       await submitPreferencesWithMargin(submitPreferences, marginNumber, preferencesToSubmit);
 
       // Always set the spacing preset
-      dispatch(setSpacingPreset(value));
-
-      // Set publisherStyles to true if using publisher preset with no overrides
-      if (value === ThSpacingKeys.publisher && Object.keys(settingsOverrides).length === 0) {
-        dispatch(setPublisherStyles(true));
-      }
+      dispatch(setSpacingPreset(value as ThSpacingKeys));
     }
   }, [dispatch, preferences, spacing, submitPreferences, submitPreferencesWithMargin, settingsContainer, lineHeightOptions]);
 
@@ -148,7 +140,7 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
       label={ t("reader.settings.spacing.presets.title") }
       orientation="horizontal"
       value={ spacing?.preset || ThSpacingKeys.publisher }
-      onChange={ async (val: string) => await updatePreference(val) }
+      onChange={ async (val: string) => await updatePreference(val as ThSpacingKeys) }
       items={ items }
     />
     </>
