@@ -114,6 +114,11 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
 
       // Always set the spacing preset
       dispatch(setSpacingPreset(value));
+
+      // Set publisherStyles to true if using publisher preset with no overrides
+      if (value === ThSpacingKeys.publisher && Object.keys(settingsOverrides).length === 0) {
+        dispatch(setPublisherStyles(true));
+      }
     }
   }, [dispatch, preferences, spacing, submitPreferences, submitPreferencesWithMargin, settingsContainer, lineHeightOptions]);
 
