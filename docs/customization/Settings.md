@@ -85,10 +85,80 @@ The `keys` object is used to configure range settings:
 - `wordSpacing`;
 - `zoom`.
 
-These ranges expect: 
+These ranges expect:
 
 - `variant` (optional): from enum `ThSettingsRangeVariant` (`slider`, `incrementedSlider` or `numberfield`)
 - `range` (optional): the min and max values, as `[number, number]`
 - `step` (optional): the step value, as `number`
 
 It also allows you to configure `lineHeight`, where the keys are `ThLineHeightKeys` and value is a number.
+
+It also allows you to configure `margin`, where the keys are `ThMarginOptions` and value is a number.
+
+## Configuration Example
+
+```typescript
+settings: {
+  reflowOrder: [
+    ThSettingsKeys.zoom,
+    ThSettingsKeys.textGroup,
+    ThSettingsKeys.theme,
+    ThSettingsKeys.spacingGroup,
+    ThSettingsKeys.layout,
+    ThSettingsKeys.columns
+  ],
+  fxlOrder: [
+    ThSettingsKeys.theme,
+    ThSettingsKeys.columns
+  ],
+  keys: {
+    [ThSettingsKeys.letterSpacing]: {
+      variant: ThSettingsRangeVariant.slider,
+      range: [0, 0.5],
+      step: 0.05
+    },
+    [ThSettingsKeys.wordSpacing]: {
+      variant: ThSettingsRangeVariant.numberField,
+      range: [0, 1],
+      step: 0.1
+    },
+    [ThSettingsKeys.zoom]: {
+      variant: ThSettingsRangeVariant.numberField,
+      range: [0.7, 4],
+      step: 0.05
+    },
+    [ThSettingsKeys.lineHeight]: {
+      [ThLineHeightOptions.small]: 1.3,
+      [ThLineHeightOptions.medium]: 1.5,
+      [ThLineHeightOptions.large]: 1.75
+    },
+    [ThSettingsKeys.margin]: {
+      [ThMarginOptions.small]: 1.25,
+      [ThMarginOptions.medium]: 1,
+      [ThMarginOptions.large]: 0.75
+    }
+  },
+  text: {
+    main: [ThTextSettingsKeys.fontFamily],
+    subPanel: [
+      ThTextSettingsKeys.fontFamily,
+      ThTextSettingsKeys.fontWeight,
+      ThTextSettingsKeys.textAlign,
+      ThTextSettingsKeys.hyphens,
+      ThTextSettingsKeys.textNormalize
+    ]
+  },
+  spacing: {
+    main: [ThSpacingSettingsKeys.spacingPresets],
+    subPanel: [
+      ThSpacingSettingsKeys.spacingPresets,
+      ThSpacingSettingsKeys.margin,
+      ThSpacingSettingsKeys.lineHeight,
+      ThSpacingSettingsKeys.wordSpacing,
+      ThSpacingSettingsKeys.letterSpacing,
+      ThSpacingSettingsKeys.paragraphSpacing,
+      ThSpacingSettingsKeys.paragraphIndent
+    ]
+  }
+}
+```

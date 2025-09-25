@@ -94,6 +94,29 @@ function MyComponent() {
 }
 ```
 
+## Updating Preferences
+
+The `updatePreferences` function allows you to update preferences values. It expects a complete preferences object.
+
+```typescript
+import { updatePreferences } from "@edrlab/thorium-web/preferences";
+
+function MyComponent() {
+  const { preferences } = usePreferences<MyKeys>();
+
+  const handleUpdate = () => {
+    updatePreferences({
+      ...preferences,
+      direction: "rtl"
+    });
+  };
+
+  return (
+    <button onClick={ handleUpdate }>Update Direction</button>
+  );
+}
+```
+
 ### Important Notes
 
 - The provider should be placed high in your component tree

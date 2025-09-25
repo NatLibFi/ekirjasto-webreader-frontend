@@ -185,7 +185,7 @@ export const MyCustomReader = ({
     id: "custom",
     name: "Custom Components",
     description: "Custom components for my Reader",
-    version: "0.10.0",
+    version: "1.0.0",
     components: {
       actions: {
         "my-custom-action-key": {

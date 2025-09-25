@@ -356,6 +356,7 @@ theming: {
     }
   }
 }
+```
 
 If you do not, the `auto` theme will not be rendered. In case it was previously selected, it will be set to the first theme in the `fxlOrder` array – excluding value `auto`.
 
@@ -376,3 +377,66 @@ The `keys` object contains the themes (key of `ThThemeKeys` enum as a property) 
 - `focus`: the color of the outline on `:focus-visible`
 - `elevate`: the drop shadow of containers
 - `immerse`: the opacity of immersive mode (value in the range `[0...1]` as a string)
+
+## Spacing
+
+The `spacing` object allows you to configure spacing presets that control all spacing settings. These presets can be selected by users in the settings panel, and overridden by each specific spacing setting available.
+
+For instance:
+
+```typescript
+spacing: {
+  reflowOrder: [
+    ThSpacingKeys.publisher,
+    ThSpacingKeys.accessible,
+    ThSpacingKeys.custom,
+    ThSpacingKeys.tight,
+    ThSpacingKeys.balanced,
+    ThSpacingKeys.loose
+  ],
+  keys: {
+    [ThSpacingKeys.tight]: {
+      [ThSettingsKeys.lineHeight]: ThLineHeightOptions.small,
+      [ThSettingsKeys.margin]: ThMarginOptions.small,
+      [ThSettingsKeys.paragraphSpacing]: 0,
+      [ThSettingsKeys.paragraphIndent]: 1
+    },
+    [ThSpacingKeys.balanced]: {
+      [ThSettingsKeys.lineHeight]: ThLineHeightOptions.medium,
+      [ThSettingsKeys.margin]: ThMarginOptions.medium
+    },
+    [ThSpacingKeys.loose]: {
+      [ThSettingsKeys.lineHeight]: ThLineHeightOptions.large,
+      [ThSettingsKeys.margin]: ThMarginOptions.medium,
+      [ThSettingsKeys.paragraphSpacing]: 1.5
+    },
+    [ThSpacingKeys.accessible]: {
+      [ThSettingsKeys.lineHeight]: ThLineHeightOptions.large,
+      [ThSettingsKeys.margin]: ThMarginOptions.large,
+      [ThSettingsKeys.paragraphSpacing]: 3,
+      [ThSettingsKeys.paragraphIndent]: 0,
+      [ThSettingsKeys.letterSpacing]: 0.1,
+      [ThSettingsKeys.wordSpacing]: 0.3
+    }
+  }
+}
+```
+
+### Display Order
+
+The `reflowOrder` array controls the display order of spacing presets in the settings panel. Presets not included in this array will not be available to users.
+
+Note that `ThSpacingKeys.publisher` and `ThSpacingKeys.custom` are special presets that do not accept configuration in the `keys` object:
+- `ThSpacingKeys.publisher` uses the original publisher's spacing settings
+- `ThSpacingKeys.custom` allows users to customize their own preset through the UI
+
+### Keys
+
+The `keys` object contains the spacing presets (excluding `ThSpacingKeys.publisher` and `ThSpacingKeys.custom`) and their configurations. Each preset can configure the following settings:
+
+- `ThSettingsKeys.lineHeight` - Controls line spacing using `ThLineHeightOptions` (small, medium, large)
+- `ThSettingsKeys.margin` - Page margins using `ThMarginOptions` (small, medium, large)
+- `ThSettingsKeys.paragraphSpacing` - Space between paragraphs (number value)
+- `ThSettingsKeys.paragraphIndent` - First line indentation (number value)
+- `ThSettingsKeys.letterSpacing` - Space between letters (number value)
+- `ThSettingsKeys.wordSpacing` - Space between words (number value)
