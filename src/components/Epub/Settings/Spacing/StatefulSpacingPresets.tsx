@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import {
   ThSpacingKeys,
@@ -21,6 +21,7 @@ import { StatefulRadioGroup } from "../../../Settings/StatefulRadioGroup";
 
 import { useI18n } from "@/i18n/useI18n";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
+import { usePreferenceKeys } from "@/preferences/hooks/usePreferenceKeys";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useLineHeight } from "./hooks/useLineHeight";
 import { useMargin } from "./hooks/useMargin";
@@ -29,11 +30,22 @@ import { useAppSelector, useAppDispatch } from "@/lib";
 import { setSpacingPreset, setPublisherStyles } from "@/lib/settingsReducer";
 import { setSettingsContainer } from "@/lib/readerReducer";
 
+const iconMap = {
+  [ThSpacingKeys.publisher]: BookIcon,
+  [ThSpacingKeys.accessible]: AccessibleIcon,
+  [ThSpacingKeys.custom]: TuneIcon,
+  [ThSpacingKeys.tight]: SmallIcon,
+  [ThSpacingKeys.balanced]: MediumIcon,
+  [ThSpacingKeys.loose]: LargeIcon,
+};
+
 export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps) => {
   const { t } = useI18n();
   const { preferences } = usePreferences();
+  const { reflowSpacingKeys, fxlSpacingKeys } = usePreferenceKeys();
   const spacing = useAppSelector(state => state.settings.spacing);
-  const settingsContainer = useAppSelector(state => state.reader.settingsContainer)
+  const settingsContainer = useAppSelector(state => state.reader.settingsContainer);
+  const isFXL = useAppSelector(state => state.publication.isFXL);
 
   const dispatch = useAppDispatch();
 
@@ -66,7 +78,7 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
 
       if (hasThemingDefinition(spacingKey)) {
         // Regular presets have theming definitions - now TypeScript knows spacingKey is a valid key
-        themingSpacing = preferences.theming.spacing?.keys?.[spacingKey] || {};
+        themingSpacing = preferences.theming.spacing?.keys[spacingKey] || {};
       }
       // For publisher and custom, themingSpacing remains {} (empty object)
 
@@ -105,6 +117,25 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
     }
   }, [dispatch, preferences, spacing, submitPreferences, submitPreferencesWithMargin, settingsContainer, lineHeightOptions]);
 
+  // Use appropriate spacing keys based on layout
+  const spacingKeys = useMemo(() => {
+    return isFXL ? fxlSpacingKeys : reflowSpacingKeys;
+  }, [isFXL, fxlSpacingKeys, reflowSpacingKeys]);
+
+  // Create dynamic items array based on spacing keys
+  const items = useMemo(() => {
+    return spacingKeys.map((key: ThSpacingKeys) => ({
+      icon: iconMap[key],
+      value: key,
+      label: t(`reader.settings.spacing.presets.${ key }`)
+    }));
+  }, [spacingKeys, t]);
+
+  // Return null if no items to display
+  if (items.length === 0) {
+    return null;
+  }
+
   return (
     <>
     <StatefulRadioGroup
@@ -113,38 +144,7 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
       orientation="horizontal"
       value={ spacing?.preset || ThSpacingKeys.publisher }
       onChange={ async (val: string) => await updatePreference(val) }
-      items={[
-        {
-          icon: BookIcon,
-          value: ThSpacingKeys.publisher,
-          label: t("reader.settings.spacing.presets.publisher")
-        },
-        {
-          icon: AccessibleIcon,
-          value: ThSpacingKeys.accessible,
-          label: t("reader.settings.spacing.presets.accessible")
-        },
-        {
-          icon: TuneIcon,
-          value: ThSpacingKeys.custom,
-          label: t("reader.settings.spacing.presets.custom")
-        },
-        {
-          icon: SmallIcon,
-          value: ThSpacingKeys.tight,
-          label: t("reader.settings.spacing.presets.tight")
-        },
-        {
-          icon: MediumIcon,
-          value: ThSpacingKeys.balanced,
-          label: t("reader.settings.spacing.presets.balanced")
-        },
-        {
-          icon: LargeIcon,
-          value: ThSpacingKeys.loose,
-          label: t("reader.settings.spacing.presets.loose")
-        },
-      ]}
+      items={ items }
     />
     </>
   )

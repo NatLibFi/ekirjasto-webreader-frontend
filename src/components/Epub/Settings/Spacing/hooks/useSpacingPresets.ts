@@ -1,10 +1,11 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { ThSettingsKeys, ThSpacingSettingsKeys, ThSpacingKeys, ThLineHeightOptions, ThMarginOptions } from "@/preferences/models/enums";
 import { defaultSpacingSettingsMain, defaultSpacingSettingsSubpanel } from "@/preferences/models/const";
 import { defaultPreferences } from "@/preferences/defaultPreferences";
 
 import { usePlugins } from "@/components/Plugins/PluginProvider";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
+import { usePreferenceKeys } from "@/preferences/hooks/usePreferenceKeys";
 
 import { initialSettingsState } from "@/lib/settingsReducer";
 import { useAppSelector, useAppDispatch } from "@/lib";
@@ -25,10 +26,19 @@ import {
  * and states for spacing components
  */
 export const useSpacingPresets = () => {
-  const dispatch = useAppDispatch();
-  const { spacingSettingsComponentsMap } = usePlugins();
-  const { preferences } = usePreferences();
+  const isFXL = useAppSelector(state => state.publication.isFXL);
   const spacing = useAppSelector(state => state.settings?.spacing) || {};
+
+  const { spacingSettingsComponentsMap } = usePlugins();
+  const { reflowSpacingKeys, fxlSpacingKeys } = usePreferenceKeys();
+
+  const { preferences } = usePreferences();
+
+  const dispatch = useAppDispatch();
+
+  const spacingKeys = useMemo(() => {
+    return isFXL ? fxlSpacingKeys : reflowSpacingKeys;
+  }, [isFXL, fxlSpacingKeys, reflowSpacingKeys]);
 
   // 1. Check if preset component is registered
   const isComponentRegistered = !!spacingSettingsComponentsMap?.[ThSettingsKeys.spacingPresets];
@@ -39,7 +49,7 @@ export const useSpacingPresets = () => {
 
   const isInMainPanel = mainDisplayOrder.includes(ThSpacingSettingsKeys.spacingPresets);
   const isInSubPanel = subPanelDisplayOrder.includes(ThSpacingSettingsKeys.spacingPresets);
-  const isDisplayed = isInMainPanel || isInSubPanel;
+  const isDisplayed = (isInMainPanel || isInSubPanel) && spacingKeys.length > 0;
 
   // 3. Only apply presets if component is both registered AND displayed
   const shouldApplyPresets = isComponentRegistered && isDisplayed;
@@ -74,7 +84,7 @@ export const useSpacingPresets = () => {
         // Preferences spacing presets exclude publisher and custom so we know we won’t find them
         if (spacing.preset !== ThSpacingKeys.publisher && spacing.preset !== ThSpacingKeys.custom) {
           const presetValues = spacingConfig.keys[spacing.preset as ThSpacingKeys.tight | ThSpacingKeys.balanced | ThSpacingKeys.loose | ThSpacingKeys.accessible];
-          const presetValue = presetValues[key as unknown as keyof typeof presetValues];
+          const presetValue = presetValues?.[key as unknown as keyof typeof presetValues];
 
           if (presetValue !== undefined) {
             return presetValue;
@@ -213,10 +223,50 @@ export const useSpacingPresets = () => {
     dispatch(resetSpacingSettings(payload));
   }, [dispatch, shouldApplyPresets, spacing.preset]);
 
+  const getResetValues = useCallback(() => {
+    // Default reset values when no preset is active
+    const defaultResetValues = {
+      lineHeight: ThLineHeightOptions.publisher,
+      paragraphIndent: null,
+      paragraphSpacing: null,
+      letterSpacing: null,
+      wordSpacing: null,
+      margin: ThMarginOptions.medium
+    };
+
+    // If no preset or should not apply presets, return default values
+    if (!shouldApplyPresets || !spacing.preset) {
+      return defaultResetValues;
+    }
+
+    // Get preset values if preset system is active
+    const spacingConfig = preferences.theming?.spacing || defaultPreferences.theming?.spacing;
+    if (!spacingConfig?.keys) {
+      return defaultResetValues;
+    }
+
+    // Preferences spacing presets exclude publisher and custom so we know we won't find them
+    if (spacing.preset === ThSpacingKeys.publisher || spacing.preset === ThSpacingKeys.custom) {
+      return defaultResetValues;
+    }
+
+    const presetValues = spacingConfig.keys[spacing.preset as ThSpacingKeys.tight | ThSpacingKeys.balanced | ThSpacingKeys.loose | ThSpacingKeys.accessible];
+
+    return {
+      lineHeight: presetValues?.lineHeight ?? ThLineHeightOptions.publisher,
+      paragraphIndent: presetValues?.paragraphIndent ?? null,
+      paragraphSpacing: presetValues?.paragraphSpacing ?? null,
+      letterSpacing: presetValues?.letterSpacing ?? null,
+      wordSpacing: presetValues?.wordSpacing ?? null,
+      margin: presetValues?.margin ?? ThMarginOptions.medium
+    };
+  }, [shouldApplyPresets, spacing.preset, preferences.theming?.spacing]);
+
   return {
     currentPreset: spacing.preset,
     getEffectiveSpacingValue: getEffectiveSpacingValueCallback,
     canGetReset: canGetReset,
+    getResetValues: getResetValues,
     setLetterSpacing: setLetterSpacingAction,
     setLineHeight: setLineHeightAction,
     setLineLengthMultiplier: setLineLengthMultiplierAction,

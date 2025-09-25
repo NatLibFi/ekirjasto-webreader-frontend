@@ -261,10 +261,11 @@ export interface ThPreferences<K extends CustomizableKeys = {}> {
       keys: Record<Exclude<ThemeKey<K>, "auto"> & string, ThemeTokens>;
     };
     spacing?: {
-      // Not customizable as the component is static, unlike themes
+      reflowOrder: Array<ThSpacingKeys>;
+      // Not customizable as the component is static radiogroup (icons), unlike themes
       // Publisher and custom are not included as they are special cases
-      keys?: {
-        [key in Exclude<ThSpacingKeys, "publisher" | "custom">]: ThSpacingPreset<K>;
+      keys: {
+        [key in Exclude<ThSpacingKeys, "publisher" | "custom">]?: ThSpacingPreset<K>;
       };
     };
   };
@@ -304,12 +305,21 @@ export const createPreferences = <K extends CustomizableKeys = {}>(
     orderArrays: K[][],
     keysObj: Record<string, V>,
     context: string,
-    specialCase?: string,
+    specialCase?: string | string[],
     fallback?: V
   ): void => {
     // Combine all arrays and filter out special cases if needed
     const allOrders = new Set<K>(
-      orderArrays.flatMap(arr => specialCase ? arr.filter(k => k !== specialCase) : arr)
+      orderArrays.flatMap(arr => {
+        if (!specialCase) return arr;
+        return arr.filter(k => {
+          if (Array.isArray(specialCase)) {
+            return !specialCase.includes(k);
+          } else {
+            return k !== specialCase;
+          }
+        });
+      })
     );
     
     // Get available keys
@@ -343,6 +353,16 @@ export const createPreferences = <K extends CustomizableKeys = {}>(
       params.theming.themes.keys as Record<string, ThemeTokens>,
       "theming.themes",
       "auto" // Special case for themes
+    );
+  }
+
+  // Validate spacing presets
+  if (params.theming?.spacing?.reflowOrder && params.theming.spacing.keys) {
+    validateObjectKeys<ThSpacingKeys, ThSpacingPreset<K>>(
+      [params.theming.spacing.reflowOrder as Array<ThSpacingKeys>],
+      params.theming.spacing.keys as Record<string, ThSpacingPreset<K>>,
+      "theming.spacing",
+      ["publisher", "custom"]
     );
   }
 

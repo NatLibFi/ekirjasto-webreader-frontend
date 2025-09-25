@@ -41,6 +41,15 @@ export const defaultSpacingSettingsSubpanel = [
   ThSpacingSettingsKeys.letterSpacing,
   ThSpacingSettingsKeys.paragraphSpacing,
   ThSpacingSettingsKeys.paragraphIndent
+];
+
+export const defaultSpacingPresetsOrder = [
+  ThSpacingKeys.publisher,
+  ThSpacingKeys.accessible,
+  ThSpacingKeys.custom,
+  ThSpacingKeys.tight,
+  ThSpacingKeys.balanced,
+  ThSpacingKeys.loose
 ]
 
 export const defaultFontFamilyOptions = {

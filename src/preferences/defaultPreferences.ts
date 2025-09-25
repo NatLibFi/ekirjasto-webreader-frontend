@@ -22,7 +22,17 @@ import {
 import { createPreferences, ThPreferences, DefaultKeys } from "./preferences";
 
 import ReadiumCSSColors from "@readium/css/css/vars/colors.json";
-import { defaultLetterSpacing, defaultLineHeights, defaultMargins, defaultParagraphIndent, defaultParagraphSpacing, defaultSpacingPresets, defaultWordSpacing, defaultZoom } from "./models/const";
+import { 
+  defaultLetterSpacing, 
+  defaultLineHeights, 
+  defaultMargins, 
+  defaultParagraphIndent, 
+  defaultParagraphSpacing, 
+  defaultSpacingPresets, 
+  defaultSpacingPresetsOrder, 
+  defaultWordSpacing, 
+  defaultZoom
+} from "./models/const";
 
 export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<DefaultKeys>({
 //  direction: ThLayoutDirection.ltr,
@@ -286,6 +296,7 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
       }
     },
     spacing: {
+      reflowOrder: defaultSpacingPresetsOrder,
       keys: defaultSpacingPresets
     }
   },
