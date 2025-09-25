@@ -72,6 +72,15 @@ export interface ThActionsTokens {
   snapped?: ThActionsSnappedPref;
 };
 
+export interface ThSettingsSpacingPresets<K extends CustomizableKeys = DefaultKeys> {
+  reflowOrder: Array<ThSpacingPresetKeys>;
+  // Not customizable as the component is static radiogroup (icons), unlike themes
+  // Publisher and custom are not included as they are special cases
+  keys: {
+    [key in Exclude<ThSpacingPresetKeys, "publisher" | "custom">]?: ThSpacingPreset<K>;
+  };
+}
+
 export type ThSpacingPreset<K extends CustomizableKeys = DefaultKeys> = {
   [ThSpacingSettingsKeys.letterSpacing]?: number;
   [ThSpacingSettingsKeys.lineHeight]?: ThLineHeightOptions;
@@ -260,14 +269,6 @@ export interface ThPreferences<K extends CustomizableKeys = {}> {
       // keys never includes "auto"
       keys: Record<Exclude<ThemeKey<K>, "auto"> & string, ThemeTokens>;
     };
-    spacing?: {
-      reflowOrder: Array<ThSpacingPresetKeys>;
-      // Not customizable as the component is static radiogroup (icons), unlike themes
-      // Publisher and custom are not included as they are special cases
-      keys: {
-        [key in Exclude<ThSpacingPresetKeys, "publisher" | "custom">]?: ThSpacingPreset<K>;
-      };
-    };
   };
   affordances: {
     scroll: {
@@ -288,7 +289,7 @@ export interface ThPreferences<K extends CustomizableKeys = {}> {
     fxlOrder: Array<SettingsKey<K>>;
     keys: ThSettingsKeyTypes<K>;
     text?: ThSettingsGroupPref<TextSettingsKey<K>>;
-    spacing?: ThSettingsGroupPref<SpacingSettingsKey<K>>;
+    spacing?: ThSettingsGroupPref<SpacingSettingsKey<K>> & { presets?: ThSettingsSpacingPresets<K> };
   };
 }
 
@@ -357,19 +358,19 @@ export const createPreferences = <K extends CustomizableKeys = {}>(
   }
 
   // Validate spacing presets
-  if (params.theming?.spacing?.reflowOrder && params.theming.spacing.keys) {
+  if (params.settings.spacing?.presets) {
     validateObjectKeys<ThSpacingPresetKeys, ThSpacingPreset<K>>(
-      [params.theming.spacing.reflowOrder as Array<ThSpacingPresetKeys>],
-      params.theming.spacing.keys as Record<string, ThSpacingPreset<K>>,
-      "theming.spacing",
+      [params.settings.spacing.presets.reflowOrder],
+      params.settings.spacing.presets.keys as Record<string, ThSpacingPreset<K>>,
+      "settings.spacing.presets",
       ["publisher", "custom"]
     );
   }
 
   // Validate spacing values in theming against settings
-  if (params.theming?.spacing?.keys && params.settings?.keys) {
-    const spacingSettings = params.settings.keys;
-    const spacingThemes = params.theming.spacing.keys;
+  if (params.settings?.spacing?.presets?.keys && params.settings?.keys) {
+    const spacingSettings = params.settings.spacing.presets.keys;
+    const spacingThemes = params.settings.spacing.presets.keys;
     
     // Helper function to adjust a value to the nearest valid step or range boundary
     const adjustSpacingValue = (key: string, value: number, context: string[]): number => {

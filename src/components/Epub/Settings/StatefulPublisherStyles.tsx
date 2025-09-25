@@ -55,7 +55,7 @@ export const StatefulPublisherStyles = ({ standalone = true }: StatefulSettingsI
     await submitPreferences(values);
 
     dispatch(setPublisherStyles(isSelected ? true : false));
-  }, [submitPreferences, dispatch, lineHeight, paragraphIndent, paragraphSpacing, letterSpacing, wordSpacing]);
+  }, [submitPreferences, dispatch, lineHeight, paragraphIndent, paragraphSpacing, letterSpacing, wordSpacing, lineHeightOptions]);
 
   return(
     <>

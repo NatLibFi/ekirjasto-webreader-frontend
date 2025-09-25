@@ -43,37 +43,6 @@ Enums `ThTextSettingsKeys` and `ThSpacingSettingsKeys` list which components can
 
 When used, a button will be added to access the nested components.
 
-## Zoom (optional)
-
-The zoom object is responsible for the zoom/font-size Component. It accepts a `variant` from enum `ThSettingsRangeVariant`.
-
-## Text (optional)
-
-The text object is responsible for the advanced Text Component, which provides an extra container to display more options.
-
-### Main (optional)
-
-The `main` property accepts an array of `ThTextSettingsKeys`. These components will be displayed in the SettingsPanel, with a button to access the components in `displayOrder`.
-
-If all nestable components are listed in `main`, then the Text component behaves as if all its nested components are standalone, and will not create a button to access them – as they are already accessible.
-
-### SubPanel (optional)
-
-The `subPanel` property accepts and array of the keys for components to display in the “sub-panel”, and their order. Note components listed in `main` will not automatically be added to this array.
-
-## Spacing (optional)
-
-The spacing object is responsible for the advanced Spacing Component, which provides an extra container to display more options.
-
-### Main (optional)
-
-The `main` property accepts an array of `ThSpacingSettingsKeys`. These components will be displayed in the SettingsPanel, with a button to access the components in `displayOrder`.
-
-If all nestable components are listed in `main`, then the Spacing component behaves as if all its nested components are standalone, and will not create a button to access them – as they are already accessible.
-
-### SubPanel (optional)
-
-The `subPanel` property accepts and array of the keys for components to display in the “sub-panel”, and their order. Note components listed in `main` will not automatically be added to this array.
 
 ## Keys
 
@@ -162,3 +131,109 @@ settings: {
   }
 }
 ```
+
+## Text (optional)
+
+The text object is responsible for the advanced Text Component, which provides an extra container to display more options.
+
+### Main (optional)
+
+The `main` property accepts an array of `ThTextSettingsKeys`. These components will be displayed in the SettingsPanel, with a button to access the components in `displayOrder`.
+
+If all nestable components are listed in `main`, then the Text component behaves as if all its nested components are standalone, and will not create a button to access them – as they are already accessible.
+
+### SubPanel (optional)
+
+The `subPanel` property accepts and array of the keys for components to display in the “sub-panel”, and their order. Note components listed in `main` will not automatically be added to this array.
+
+### Header (optional)
+
+The `header` property accepts a `ThSheetHeaderVariant` to display a header in the SettingsPanel.
+
+## Spacing (optional)
+
+The spacing object is responsible for the advanced Spacing Component, which provides an extra container to display more options.
+
+### Main (optional)
+
+The `main` property accepts an array of `ThSpacingSettingsKeys`. These components will be displayed in the SettingsPanel, with a button to access the components in `displayOrder`.
+
+If all nestable components are listed in `main`, then the Spacing component behaves as if all its nested components are standalone, and will not create a button to access them – as they are already accessible.
+
+### SubPanel (optional)
+
+The `subPanel` property accepts and array of the keys for components to display in the “sub-panel”, and their order. Note components listed in `main` will not automatically be added to this array.
+
+### Header (optional)
+
+The `header` property accepts a `ThSheetHeaderVariant` to display a header in the SettingsPanel.
+
+### Presets (optional)
+
+The `presets` property accepts an object with the following properties:
+
+- `reflowOrder`: an array of `ThSpacingPresetKeys` to display in the SettingsPanel, in the order they are listed;
+- `keys`: an object with the presets and their configurations.
+
+For instance:
+
+```typescript
+...
+spacing:
+  ...
+  presets: {
+    reflowOrder: [
+      ThSpacingPresetKeys.publisher,
+      ThSpacingPresetKeys.accessible,
+      ThSpacingPresetKeys.custom,
+      ThSpacingPresetKeys.tight,
+      ThSpacingPresetKeys.balanced,
+      ThSpacingPresetKeys.loose
+    ],
+    keys: {
+      [ThSpacingPresetKeys.tight]: {
+        [ThSettingsKeys.lineHeight]: ThLineHeightOptions.small,
+        [ThSettingsKeys.margin]: ThMarginOptions.small,
+        [ThSettingsKeys.paragraphSpacing]: 0,
+        [ThSettingsKeys.paragraphIndent]: 1
+      },
+      [ThSpacingPresetKeys.balanced]: {
+        [ThSettingsKeys.lineHeight]: ThLineHeightOptions.medium,
+        [ThSettingsKeys.margin]: ThMarginOptions.medium
+      },
+      [ThSpacingPresetKeys.loose]: {
+        [ThSettingsKeys.lineHeight]: ThLineHeightOptions.large,
+        [ThSettingsKeys.margin]: ThMarginOptions.medium,
+        [ThSettingsKeys.paragraphSpacing]: 1.5
+      },
+      [ThSpacingPresetKeys.accessible]: {
+        [ThSettingsKeys.lineHeight]: ThLineHeightOptions.large,
+        [ThSettingsKeys.margin]: ThMarginOptions.large,
+        [ThSettingsKeys.paragraphSpacing]: 3,
+        [ThSettingsKeys.paragraphIndent]: 0,
+        [ThSettingsKeys.letterSpacing]: 0.1,
+        [ThSettingsKeys.wordSpacing]: 0.3
+      }
+    }
+  }
+}
+```
+
+#### Display Order
+
+The `reflowOrder` array controls the display order of spacing presets in the settings panel. Presets not included in this array will not be available to users.
+
+Note that `ThSpacingPresetKeys.publisher` and `ThSpacingPresetKeys.custom` are special presets that do not accept configuration in the `keys` object:
+- `ThSpacingPresetKeys.publisher` uses the original publisher's spacing settings
+- `ThSpacingPresetKeys.custom` allows users to customize their own preset through the UI
+
+#### Keys
+
+The `keys` object contains the spacing presets (excluding `ThSpacingPresetKeys.publisher` and `ThSpacingPresetKeys.custom`) and their configurations. Each preset can configure the following settings:
+
+- `ThSettingsKeys.lineHeight` - Controls line spacing using `ThLineHeightOptions` (small, medium, large)
+- `ThSettingsKeys.margin` - Page margins using `ThMarginOptions` (small, medium, large)
+- `ThSettingsKeys.paragraphSpacing` - Space between paragraphs (number value)
+- `ThSettingsKeys.paragraphIndent` - First line indentation (number value)
+- `ThSettingsKeys.letterSpacing` - Space between letters (number value)
+- `ThSettingsKeys.wordSpacing` - Space between words (number value)

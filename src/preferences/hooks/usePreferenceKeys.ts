@@ -21,7 +21,7 @@ export const usePreferenceKeys = () => {
   const mainSpacingSettingsKeys = preferences.settings.spacing?.main ?? [];
   const subPanelSpacingSettingsKeys = preferences.settings.spacing?.subPanel ?? [];
 
-  const reflowSpacingPresetKeys = preferences.theming.spacing?.reflowOrder ?? [];
+  const reflowSpacingPresetKeys = preferences.settings.spacing?.presets?.reflowOrder ?? [];
   const fxlSpacingPresetKeys: ThSpacingPresetKeys[] = [];
 
   return {

@@ -85,7 +85,7 @@ export const useSpacingPresets = () => {
 
     // Get preset values if preset system is active
     if (shouldApplyPresets && spacing.preset) {
-      const spacingConfig = preferences.theming?.spacing;
+      const spacingConfig = preferences.settings?.spacing?.presets;
       if (spacingConfig?.keys) {
         // Preferences spacing presets exclude publisher and custom so we know we won’t find them
         if (spacing.preset !== ThSpacingPresetKeys.publisher && spacing.preset !== ThSpacingPresetKeys.custom) {
@@ -138,7 +138,7 @@ export const useSpacingPresets = () => {
     shouldApplyPresets, 
     spacing.preset, 
     spacing.overrides, 
-    preferences.theming?.spacing, 
+    preferences.settings?.spacing?.presets, 
     letterSpacing, 
     lineHeight, 
     lineLength, 
@@ -246,7 +246,7 @@ export const useSpacingPresets = () => {
     }
 
     // Get preset values if preset system is active
-    const spacingConfig = preferences.theming?.spacing;
+    const spacingConfig = preferences.settings?.spacing?.presets;
     if (!spacingConfig?.keys) {
       return defaultResetValues;
     }
@@ -266,7 +266,7 @@ export const useSpacingPresets = () => {
       wordSpacing: presetValues?.wordSpacing ?? null,
       margin: presetValues?.margin ?? ThMarginOptions.medium
     };
-  }, [shouldApplyPresets, spacing.preset, preferences.theming?.spacing]);
+  }, [shouldApplyPresets, spacing.preset, preferences.settings?.spacing?.presets]);
 
   return {
     currentPreset: spacing.preset,

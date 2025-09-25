@@ -295,10 +295,6 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
         }
       }
     },
-    spacing: {
-      reflowOrder: defaultSpacingPresetsOrder,
-      keys: defaultSpacingPresets
-    }
   },
   affordances: { 
     scroll: {
@@ -457,6 +453,10 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
     },
     spacing: {
       header: ThSheetHeaderVariant.previous,
+      presets: {
+        reflowOrder: defaultSpacingPresetsOrder,
+        keys: defaultSpacingPresets
+      }
     }
   }
 })

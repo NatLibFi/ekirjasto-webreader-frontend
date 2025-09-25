@@ -75,7 +75,7 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
 
       if (hasThemingDefinition(spacingKey)) {
         // Regular presets have theming definitions - now TypeScript knows spacingKey is a valid key
-        themingSpacing = preferences.theming.spacing?.keys[spacingKey] || {};
+        themingSpacing = preferences.settings.spacing?.presets?.keys[spacingKey] || {};
       }
       // For publisher and custom, themingSpacing remains {} (empty object)
 
