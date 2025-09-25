@@ -2,6 +2,8 @@
 
 import { useCallback } from "react";
 
+import { ThMarginOptions, ThSettingsKeys } from "@/preferences/models/enums";
+
 import settingsStyles from "../../../Settings/assets/styles/settings.module.css";
 
 import { Button } from "react-aria-components";
@@ -11,12 +13,11 @@ import { useSpacingPresets } from "./hooks/useSpacingPresets";
 import { useEpubNavigator } from "@/core/Hooks";
 import { useMargin } from "./hooks/useMargin";
 import { useLineHeight } from "./hooks/useLineHeight";
-import { ThMarginOptions, ThSettingsKeys } from "@/preferences/models/enums";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 
 export const StatefulSpacingReset = () => {
-  const { t } = useI18n();
   const { preferences } = usePreferences();
+  const { t } = useI18n();
 
   const { resetSpacingSettings, canGetReset, getResetValues } = useSpacingPresets();
   const { submitPreferences } = useEpubNavigator();

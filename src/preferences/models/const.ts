@@ -7,7 +7,7 @@ import {
   ThMarginOptions, 
   ThSettingsKeys, 
   ThSettingsRangeVariant, 
-  ThSpacingKeys, 
+  ThSpacingPresetKeys, 
   ThSpacingSettingsKeys, 
   ThTextSettingsKeys 
 } from "./enums";
@@ -44,12 +44,12 @@ export const defaultSpacingSettingsSubpanel = [
 ];
 
 export const defaultSpacingPresetsOrder = [
-  ThSpacingKeys.publisher,
-  ThSpacingKeys.accessible,
-  ThSpacingKeys.custom,
-  ThSpacingKeys.tight,
-  ThSpacingKeys.balanced,
-  ThSpacingKeys.loose
+  ThSpacingPresetKeys.publisher,
+  ThSpacingPresetKeys.accessible,
+  ThSpacingPresetKeys.custom,
+  ThSpacingPresetKeys.tight,
+  ThSpacingPresetKeys.balanced,
+  ThSpacingPresetKeys.loose
 ]
 
 export const defaultFontFamilyOptions = {
@@ -110,27 +110,27 @@ export const defaultZoom: Required<ThSettingsRangePref> = {
 }
 
 export const defaultSpacingPresets = {
-  [ThSpacingKeys.tight]: {
-    [ThSettingsKeys.lineHeight]: ThLineHeightOptions.small,
-    [ThSettingsKeys.margin]: ThMarginOptions.small,
-    [ThSettingsKeys.paragraphSpacing]: 0,
-    [ThSettingsKeys.paragraphIndent]: 1
+  [ThSpacingPresetKeys.tight]: {
+    [ThSpacingSettingsKeys.lineHeight]: ThLineHeightOptions.small,
+    [ThSpacingSettingsKeys.margin]: ThMarginOptions.small,
+    [ThSpacingSettingsKeys.paragraphSpacing]: 0,
+    [ThSpacingSettingsKeys.paragraphIndent]: 1
   },
-  [ThSpacingKeys.balanced]: {
-    [ThSettingsKeys.lineHeight]: ThLineHeightOptions.medium,
-    [ThSettingsKeys.margin]: ThMarginOptions.medium,
+  [ThSpacingPresetKeys.balanced]: {
+    [ThSpacingSettingsKeys.lineHeight]: ThLineHeightOptions.medium,
+    [ThSpacingSettingsKeys.margin]: ThMarginOptions.medium,
   },
-  [ThSpacingKeys.loose]: {
-    [ThSettingsKeys.lineHeight]: ThLineHeightOptions.large,
-    [ThSettingsKeys.margin]: ThMarginOptions.medium,
-    [ThSettingsKeys.paragraphSpacing]: 1.5
+  [ThSpacingPresetKeys.loose]: {
+    [ThSpacingSettingsKeys.lineHeight]: ThLineHeightOptions.large,
+    [ThSpacingSettingsKeys.margin]: ThMarginOptions.medium,
+    [ThSpacingSettingsKeys.paragraphSpacing]: 1.5
   },
-  [ThSpacingKeys.accessible]: {
-    [ThSettingsKeys.lineHeight]: ThLineHeightOptions.large,
-    [ThSettingsKeys.margin]: ThMarginOptions.large,
-    [ThSettingsKeys.paragraphSpacing]: 3,
-    [ThSettingsKeys.paragraphIndent]: 0,
-    [ThSettingsKeys.letterSpacing]: 0.1,
-    [ThSettingsKeys.wordSpacing]: 0.3
+  [ThSpacingPresetKeys.accessible]: {
+    [ThSpacingSettingsKeys.lineHeight]: ThLineHeightOptions.large,
+    [ThSpacingSettingsKeys.margin]: ThMarginOptions.large,
+    [ThSpacingSettingsKeys.paragraphSpacing]: 3,
+    [ThSpacingSettingsKeys.paragraphIndent]: 0,
+    [ThSpacingSettingsKeys.letterSpacing]: 0.1,
+    [ThSpacingSettingsKeys.wordSpacing]: 0.3
   }
 }

@@ -145,7 +145,7 @@ export enum ThThemeKeys {
   ekirjasto3 = "E-Kirjasto 3"
 }
 
-export enum ThSpacingKeys {
+export enum ThSpacingPresetKeys {
   publisher = "publisher",
   tight = "tight",
   balanced = "balanced",

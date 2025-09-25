@@ -1,7 +1,13 @@
 import { useCallback, useMemo } from "react";
-import { ThSettingsKeys, ThSpacingSettingsKeys, ThSpacingKeys, ThLineHeightOptions, ThMarginOptions } from "@/preferences/models/enums";
+
+import { 
+  ThSettingsKeys, 
+  ThSpacingSettingsKeys, 
+  ThSpacingPresetKeys, 
+  ThLineHeightOptions, 
+  ThMarginOptions } from "@/preferences/models/enums";
+
 import { defaultSpacingSettingsMain, defaultSpacingSettingsSubpanel } from "@/preferences/models/const";
-import { defaultPreferences } from "@/preferences/defaultPreferences";
 
 import { usePlugins } from "@/components/Plugins/PluginProvider";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
@@ -30,15 +36,15 @@ export const useSpacingPresets = () => {
   const spacing = useAppSelector(state => state.settings?.spacing) || {};
 
   const { spacingSettingsComponentsMap } = usePlugins();
-  const { reflowSpacingKeys, fxlSpacingKeys } = usePreferenceKeys();
+  const { reflowSpacingPresetKeys, fxlSpacingPresetKeys } = usePreferenceKeys();
 
   const { preferences } = usePreferences();
 
   const dispatch = useAppDispatch();
 
   const spacingKeys = useMemo(() => {
-    return isFXL ? fxlSpacingKeys : reflowSpacingKeys;
-  }, [isFXL, fxlSpacingKeys, reflowSpacingKeys]);
+    return isFXL ? fxlSpacingPresetKeys : reflowSpacingPresetKeys;
+  }, [isFXL, fxlSpacingPresetKeys, reflowSpacingPresetKeys]);
 
   // 1. Check if preset component is registered
   const isComponentRegistered = !!spacingSettingsComponentsMap?.[ThSettingsKeys.spacingPresets];
@@ -79,11 +85,11 @@ export const useSpacingPresets = () => {
 
     // Get preset values if preset system is active
     if (shouldApplyPresets && spacing.preset) {
-      const spacingConfig = preferences.theming?.spacing || defaultPreferences.theming?.spacing;
+      const spacingConfig = preferences.theming?.spacing;
       if (spacingConfig?.keys) {
         // Preferences spacing presets exclude publisher and custom so we know we won’t find them
-        if (spacing.preset !== ThSpacingKeys.publisher && spacing.preset !== ThSpacingKeys.custom) {
-          const presetValues = spacingConfig.keys[spacing.preset as ThSpacingKeys.tight | ThSpacingKeys.balanced | ThSpacingKeys.loose | ThSpacingKeys.accessible];
+        if (spacing.preset !== ThSpacingPresetKeys.publisher && spacing.preset !== ThSpacingPresetKeys.custom) {
+          const presetValues = spacingConfig.keys[spacing.preset as ThSpacingPresetKeys.tight | ThSpacingPresetKeys.balanced | ThSpacingPresetKeys.loose | ThSpacingPresetKeys.accessible];
           const presetValue = presetValues?.[key as unknown as keyof typeof presetValues];
 
           if (presetValue !== undefined) {
@@ -240,17 +246,17 @@ export const useSpacingPresets = () => {
     }
 
     // Get preset values if preset system is active
-    const spacingConfig = preferences.theming?.spacing || defaultPreferences.theming?.spacing;
+    const spacingConfig = preferences.theming?.spacing;
     if (!spacingConfig?.keys) {
       return defaultResetValues;
     }
 
     // Preferences spacing presets exclude publisher and custom so we know we won't find them
-    if (spacing.preset === ThSpacingKeys.publisher || spacing.preset === ThSpacingKeys.custom) {
+    if (spacing.preset === ThSpacingPresetKeys.publisher || spacing.preset === ThSpacingPresetKeys.custom) {
       return defaultResetValues;
     }
 
-    const presetValues = spacingConfig.keys[spacing.preset as ThSpacingKeys.tight | ThSpacingKeys.balanced | ThSpacingKeys.loose | ThSpacingKeys.accessible];
+    const presetValues = spacingConfig.keys[spacing.preset as ThSpacingPresetKeys.tight | ThSpacingPresetKeys.balanced | ThSpacingPresetKeys.loose | ThSpacingPresetKeys.accessible];
 
     return {
       lineHeight: presetValues?.lineHeight ?? ThLineHeightOptions.publisher,

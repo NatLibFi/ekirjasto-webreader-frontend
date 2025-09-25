@@ -1,23 +1,22 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useCallback } from "react";
 
-import { ThLineHeightOptions, ThSettingsKeys, ThSpacingSettingsKeys } from "@/preferences";
+import { ThLineHeightOptions, ThSpacingSettingsKeys } from "@/preferences";
 
 import { StatefulSettingsItemProps } from "../../Settings/models/settings";
 
 import { StatefulSwitch } from "../../Settings/StatefulSwitch";
 
-import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
 import { useSpacingPresets } from "./Spacing/hooks/useSpacingPresets";
+import { useLineHeight } from "./Spacing/hooks/useLineHeight";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setPublisherStyles } from "@/lib/settingsReducer";
 
 export const StatefulPublisherStyles = ({ standalone = true }: StatefulSettingsItemProps) => {
-  const { preferences } = usePreferences();
   const { t } = useI18n();
   const publisherStyles = useAppSelector(state => state.settings.publisherStyles);
 
@@ -31,12 +30,7 @@ export const StatefulPublisherStyles = ({ standalone = true }: StatefulSettingsI
 
   const dispatch = useAppDispatch();
 
-  const lineHeightOptions = useRef({
-    [ThLineHeightOptions.publisher]: null,
-    [ThLineHeightOptions.small]: preferences.settings.keys[ThSettingsKeys.lineHeight][ThLineHeightOptions.small],
-    [ThLineHeightOptions.medium]: preferences.settings.keys[ThSettingsKeys.lineHeight][ThLineHeightOptions.medium],
-    [ThLineHeightOptions.large]: preferences.settings.keys[ThSettingsKeys.lineHeight][ThLineHeightOptions.large],
-  });
+  const lineHeightOptions = useLineHeight();
 
   const { submitPreferences } = useEpubNavigator();
 
@@ -52,7 +46,7 @@ export const StatefulPublisherStyles = ({ standalone = true }: StatefulSettingsI
     {
       lineHeight: lineHeight === ThLineHeightOptions.publisher 
         ? null 
-        : lineHeightOptions.current[lineHeight as keyof typeof ThLineHeightOptions],
+        : lineHeightOptions[lineHeight as keyof typeof ThLineHeightOptions],
       paragraphIndent: paragraphIndent || 0,
       paragraphSpacing: paragraphSpacing || 0,
       letterSpacing: letterSpacing || 0,

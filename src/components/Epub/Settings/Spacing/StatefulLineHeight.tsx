@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 
-import { ThLineHeightOptions, ThSettingsKeys, ThSpacingSettingsKeys } from "@/preferences";
+import { ThLineHeightOptions, ThSpacingSettingsKeys } from "@/preferences";
 
 import { StatefulSettingsItemProps } from "../../../Settings/models/settings";
 
@@ -13,7 +13,6 @@ import LargeIcon from "./assets/icons/density_large.svg";
 
 import { StatefulRadioGroup } from "../../../Settings/StatefulRadioGroup";
 
-import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
 
@@ -23,7 +22,6 @@ import { useLineHeight } from "./hooks/useLineHeight";
 import { useSpacingPresets } from "./hooks/useSpacingPresets";
 
 export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemProps) => {
-  const { preferences } = usePreferences();
   const { t } = useI18n();
   const publisherStyles = useAppSelector(state => state.settings.publisherStyles);
   const dispatch = useAppDispatch();

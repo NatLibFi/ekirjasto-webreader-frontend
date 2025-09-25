@@ -16,8 +16,6 @@ import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useSpacingPresets } from "./hooks/useSpacingPresets";
 import { useMargin } from "./hooks/useMargin";
 
-import { useAppSelector } from "@/lib/hooks";
-
 // ReadiumCSS v2 does not provide a margin setting per se,
 // and we are relying on the line-length setting to achieve similar effects.
 // In other words, we are applying a factor to the line-length setting since
@@ -25,7 +23,6 @@ import { useAppSelector } from "@/lib/hooks";
 export const StatefulMargin = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { preferences } = usePreferences();
   const { t } = useI18n();
-  const lineLength = useAppSelector(state => state.settings.lineLength);
 
   const { submitPreferences } = useEpubNavigator();
 

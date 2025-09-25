@@ -16,7 +16,6 @@ import {
   ThActionsKeys, 
   ThBreakpoints, 
   ThLineHeightOptions, 
-  ThSettingsKeys, 
   ThTextAlignOptions, 
   ThLayoutUI,
   ThDocumentTitleFormat,
@@ -745,7 +744,7 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
         });
 
         const multiplier = cache.current.settings.margin 
-          ? preferences.settings.keys[ThSettingsKeys.margin][cache.current.settings.margin] ?? 1 
+          ? preferences.settings.keys[ThSpacingSettingsKeys.margin][cache.current.settings.margin] ?? 1 
           : 1;
 
         const epubPreferences: IEpubPreferences = isFXL ? {} : {

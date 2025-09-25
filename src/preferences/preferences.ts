@@ -21,7 +21,7 @@ import {
   ThBreakpoints,
   ThDocumentTitleFormat,
   ThMarginOptions,
-  ThSpacingKeys
+  ThSpacingPresetKeys
 } from "./models/enums";
 import { ThCollapsibility, ThCollapsibilityVisibility } from "@/core/Components/Actions/hooks/useCollapsibility";
 
@@ -73,12 +73,12 @@ export interface ThActionsTokens {
 };
 
 export type ThSpacingPreset<K extends CustomizableKeys = DefaultKeys> = {
-  [ThSettingsKeys.letterSpacing]?: number;
-  [ThSettingsKeys.lineHeight]?: ThLineHeightOptions;
-  [ThSettingsKeys.margin]?: ThMarginOptions;
-  [ThSettingsKeys.paragraphIndent]?: number;
-  [ThSettingsKeys.paragraphSpacing]?: number;
-  [ThSettingsKeys.wordSpacing]?: number;
+  [ThSpacingSettingsKeys.letterSpacing]?: number;
+  [ThSpacingSettingsKeys.lineHeight]?: ThLineHeightOptions;
+  [ThSpacingSettingsKeys.margin]?: ThMarginOptions;
+  [ThSpacingSettingsKeys.paragraphIndent]?: number;
+  [ThSpacingSettingsKeys.paragraphSpacing]?: number;
+  [ThSpacingSettingsKeys.wordSpacing]?: number;
 } & (K extends { spacing: infer S } 
   ? S extends string 
       ? { [key in S]?: number | ThLineHeightOptions | ThMarginOptions }
@@ -261,11 +261,11 @@ export interface ThPreferences<K extends CustomizableKeys = {}> {
       keys: Record<Exclude<ThemeKey<K>, "auto"> & string, ThemeTokens>;
     };
     spacing?: {
-      reflowOrder: Array<ThSpacingKeys>;
+      reflowOrder: Array<ThSpacingPresetKeys>;
       // Not customizable as the component is static radiogroup (icons), unlike themes
       // Publisher and custom are not included as they are special cases
       keys: {
-        [key in Exclude<ThSpacingKeys, "publisher" | "custom">]?: ThSpacingPreset<K>;
+        [key in Exclude<ThSpacingPresetKeys, "publisher" | "custom">]?: ThSpacingPreset<K>;
       };
     };
   };
@@ -358,8 +358,8 @@ export const createPreferences = <K extends CustomizableKeys = {}>(
 
   // Validate spacing presets
   if (params.theming?.spacing?.reflowOrder && params.theming.spacing.keys) {
-    validateObjectKeys<ThSpacingKeys, ThSpacingPreset<K>>(
-      [params.theming.spacing.reflowOrder as Array<ThSpacingKeys>],
+    validateObjectKeys<ThSpacingPresetKeys, ThSpacingPreset<K>>(
+      [params.theming.spacing.reflowOrder as Array<ThSpacingPresetKeys>],
       params.theming.spacing.keys as Record<string, ThSpacingPreset<K>>,
       "theming.spacing",
       ["publisher", "custom"]

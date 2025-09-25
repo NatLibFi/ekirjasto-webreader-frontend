@@ -1,6 +1,6 @@
 "use client";
 
-import { ThSpacingKeys } from "@/preferences/models/enums";
+import { ThSpacingPresetKeys } from "@/preferences/models/enums";
 
 import { usePreferences } from "./usePreferences";
 
@@ -21,8 +21,8 @@ export const usePreferenceKeys = () => {
   const mainSpacingSettingsKeys = preferences.settings.spacing?.main ?? [];
   const subPanelSpacingSettingsKeys = preferences.settings.spacing?.subPanel ?? [];
 
-  const reflowSpacingKeys = preferences.theming.spacing?.reflowOrder ?? [];
-  const fxlSpacingKeys: ThSpacingKeys[] = [];
+  const reflowSpacingPresetKeys = preferences.theming.spacing?.reflowOrder ?? [];
+  const fxlSpacingPresetKeys: ThSpacingPresetKeys[] = [];
 
   return {
     reflowActionKeys,
@@ -35,7 +35,7 @@ export const usePreferenceKeys = () => {
     subPanelTextSettingsKeys,
     mainSpacingSettingsKeys,
     subPanelSpacingSettingsKeys,
-    reflowSpacingKeys,
-    fxlSpacingKeys
+    reflowSpacingPresetKeys,
+    fxlSpacingPresetKeys
   };
 }

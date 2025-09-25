@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { 
   ThLineHeightOptions, 
   ThMarginOptions, 
-  ThSpacingKeys, 
+  ThSpacingPresetKeys, 
   ThSpacingSettingsKeys, 
   ThTextAlignOptions 
 } from "@/preferences/models/enums";
@@ -35,19 +35,19 @@ export interface SetLineLengthMultiplierPayload {
   type: string;
   payload: {
     value: ThMarginOptions;
-    preset?: ThSpacingKeys;
+    preset?: ThSpacingPresetKeys;
   }
 }
 
 export interface SetSpacingPresetPayload {
   type: string;
-  payload: ThSpacingKeys;
+  payload: ThSpacingPresetKeys;
 }
 
 export interface SetSpacingOverridePayload {
   type: string;
   payload: {
-    key: ThSpacingKeys;
+    key: ThSpacingPresetKeys;
     value: {
       [key in ThSpacingSettingsKeys]?: string | number | ThMarginOptions;
     }
@@ -55,9 +55,9 @@ export interface SetSpacingOverridePayload {
 }
 
 export interface SpacingStateObject {
-  preset: ThSpacingKeys;
+  preset: ThSpacingPresetKeys;
   overrides: {
-    [key in ThSpacingKeys]?: {
+    [key in ThSpacingPresetKeys]?: {
       [key in ThSpacingSettingsKeys]?: string | number;
     }
   }
@@ -96,7 +96,7 @@ const initialState: SettingsReducerState = {
   publisherStyles: true,
   scroll: false,
   spacing: {
-    preset: ThSpacingKeys.publisher,
+    preset: ThSpacingPresetKeys.publisher,
     overrides: {}
   },
   textAlign: ThTextAlignOptions.publisher,
@@ -107,7 +107,7 @@ const initialState: SettingsReducerState = {
 const handleSpacingSetting = (state: any, action: any, settingKey: ThSpacingSettingsKeys) => {
   if (!state.spacing) {
     state.spacing = {
-      preset: action.payload?.preset || ThSpacingKeys.publisher,
+      preset: action.payload?.preset || ThSpacingPresetKeys.publisher,
       overrides: {}
     };
   }
@@ -236,14 +236,14 @@ export const settingsSlice = createSlice({
           preset: action.payload,
           overrides: {}
         };
-        if (action.payload !== ThSpacingKeys.publisher && action.payload !== ThSpacingKeys.custom) {
+        if (action.payload !== ThSpacingPresetKeys.publisher && action.payload !== ThSpacingPresetKeys.custom) {
           state.publisherStyles = false;
         }
       } else {
         state.spacing.preset = action.payload;
 
         if (
-          (action.payload === ThSpacingKeys.publisher || action.payload === ThSpacingKeys.custom) && 
+          (action.payload === ThSpacingPresetKeys.publisher || action.payload === ThSpacingPresetKeys.custom) && 
           (!state.spacing.overrides[action.payload] || 
             Object.keys(state.spacing.overrides[action.payload] || {}).length === 0)
         ) {
@@ -274,7 +274,7 @@ export const settingsSlice = createSlice({
           [preset as keyof typeof state.spacing.overrides]: {}
         };
 
-        if (preset === ThSpacingKeys.publisher) {
+        if (preset === ThSpacingPresetKeys.publisher) {
           state.publisherStyles = initialState.publisherStyles;
         }
 

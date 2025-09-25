@@ -387,30 +387,30 @@ For instance:
 ```typescript
 spacing: {
   reflowOrder: [
-    ThSpacingKeys.publisher,
-    ThSpacingKeys.accessible,
-    ThSpacingKeys.custom,
-    ThSpacingKeys.tight,
-    ThSpacingKeys.balanced,
-    ThSpacingKeys.loose
+    ThSpacingPresetKeys.publisher,
+    ThSpacingPresetKeys.accessible,
+    ThSpacingPresetKeys.custom,
+    ThSpacingPresetKeys.tight,
+    ThSpacingPresetKeys.balanced,
+    ThSpacingPresetKeys.loose
   ],
   keys: {
-    [ThSpacingKeys.tight]: {
+    [ThSpacingPresetKeys.tight]: {
       [ThSettingsKeys.lineHeight]: ThLineHeightOptions.small,
       [ThSettingsKeys.margin]: ThMarginOptions.small,
       [ThSettingsKeys.paragraphSpacing]: 0,
       [ThSettingsKeys.paragraphIndent]: 1
     },
-    [ThSpacingKeys.balanced]: {
+    [ThSpacingPresetKeys.balanced]: {
       [ThSettingsKeys.lineHeight]: ThLineHeightOptions.medium,
       [ThSettingsKeys.margin]: ThMarginOptions.medium
     },
-    [ThSpacingKeys.loose]: {
+    [ThSpacingPresetKeys.loose]: {
       [ThSettingsKeys.lineHeight]: ThLineHeightOptions.large,
       [ThSettingsKeys.margin]: ThMarginOptions.medium,
       [ThSettingsKeys.paragraphSpacing]: 1.5
     },
-    [ThSpacingKeys.accessible]: {
+    [ThSpacingPresetKeys.accessible]: {
       [ThSettingsKeys.lineHeight]: ThLineHeightOptions.large,
       [ThSettingsKeys.margin]: ThMarginOptions.large,
       [ThSettingsKeys.paragraphSpacing]: 3,
@@ -426,13 +426,13 @@ spacing: {
 
 The `reflowOrder` array controls the display order of spacing presets in the settings panel. Presets not included in this array will not be available to users.
 
-Note that `ThSpacingKeys.publisher` and `ThSpacingKeys.custom` are special presets that do not accept configuration in the `keys` object:
-- `ThSpacingKeys.publisher` uses the original publisher's spacing settings
-- `ThSpacingKeys.custom` allows users to customize their own preset through the UI
+Note that `ThSpacingPresetKeys.publisher` and `ThSpacingPresetKeys.custom` are special presets that do not accept configuration in the `keys` object:
+- `ThSpacingPresetKeys.publisher` uses the original publisher's spacing settings
+- `ThSpacingPresetKeys.custom` allows users to customize their own preset through the UI
 
 ### Keys
 
-The `keys` object contains the spacing presets (excluding `ThSpacingKeys.publisher` and `ThSpacingKeys.custom`) and their configurations. Each preset can configure the following settings:
+The `keys` object contains the spacing presets (excluding `ThSpacingPresetKeys.publisher` and `ThSpacingPresetKeys.custom`) and their configurations. Each preset can configure the following settings:
 
 - `ThSettingsKeys.lineHeight` - Controls line spacing using `ThLineHeightOptions` (small, medium, large)
 - `ThSettingsKeys.margin` - Page margins using `ThMarginOptions` (small, medium, large)

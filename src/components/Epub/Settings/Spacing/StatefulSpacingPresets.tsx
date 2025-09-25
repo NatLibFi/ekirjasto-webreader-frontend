@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 
 import {
-  ThSpacingKeys,
+  ThSpacingPresetKeys,
   ThSettingsContainerKeys,
   ThMarginOptions,
   ThSettingsKeys,
@@ -31,18 +31,18 @@ import { setSpacingPreset, setPublisherStyles } from "@/lib/settingsReducer";
 import { setSettingsContainer } from "@/lib/readerReducer";
 
 const iconMap = {
-  [ThSpacingKeys.publisher]: BookIcon,
-  [ThSpacingKeys.accessible]: AccessibleIcon,
-  [ThSpacingKeys.custom]: TuneIcon,
-  [ThSpacingKeys.tight]: SmallIcon,
-  [ThSpacingKeys.balanced]: MediumIcon,
-  [ThSpacingKeys.loose]: LargeIcon,
+  [ThSpacingPresetKeys.publisher]: BookIcon,
+  [ThSpacingPresetKeys.accessible]: AccessibleIcon,
+  [ThSpacingPresetKeys.custom]: TuneIcon,
+  [ThSpacingPresetKeys.tight]: SmallIcon,
+  [ThSpacingPresetKeys.balanced]: MediumIcon,
+  [ThSpacingPresetKeys.loose]: LargeIcon,
 };
 
 export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps) => {
   const { t } = useI18n();
   const { preferences } = usePreferences();
-  const { reflowSpacingKeys, fxlSpacingKeys } = usePreferenceKeys();
+  const { reflowSpacingPresetKeys, fxlSpacingPresetKeys } = usePreferenceKeys();
   const spacing = useAppSelector(state => state.settings.spacing);
   const settingsContainer = useAppSelector(state => state.reader.settingsContainer);
   const isFXL = useAppSelector(state => state.publication.isFXL);
@@ -57,20 +57,20 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
 
   const updatePreference = useCallback(async (value: string) => {
     // Handle different preset types
-    if (value === ThSpacingKeys.custom && settingsContainer === ThSettingsContainerKeys.initial) {
+    if (value === ThSpacingPresetKeys.custom && settingsContainer === ThSettingsContainerKeys.initial) {
       // Custom preset: set container and preset, no theming logic
       dispatch(setSettingsContainer(ThSettingsContainerKeys.spacing));
-      dispatch(setSpacingPreset(value as ThSpacingKeys));
+      dispatch(setSpacingPreset(value as ThSpacingPresetKeys));
     } else {
       // All other presets: do theming lookup and submission logic
-      const spacingKey = value as ThSpacingKeys;
+      const spacingKey = value as ThSpacingPresetKeys;
 
       // Handle theming spacing based on preset type
       let themingSpacing: any = {};
 
       // Type guard to check if preset has theming definition
-      const hasThemingDefinition = (preset: ThSpacingKeys): preset is ThSpacingKeys.tight | ThSpacingKeys.balanced | ThSpacingKeys.loose | ThSpacingKeys.accessible => {
-        return [ThSpacingKeys.tight, ThSpacingKeys.balanced, ThSpacingKeys.loose, ThSpacingKeys.accessible].includes(preset);
+      const hasThemingDefinition = (preset: ThSpacingPresetKeys): preset is ThSpacingPresetKeys.tight | ThSpacingPresetKeys.balanced | ThSpacingPresetKeys.loose | ThSpacingPresetKeys.accessible => {
+        return [ThSpacingPresetKeys.tight, ThSpacingPresetKeys.balanced, ThSpacingPresetKeys.loose, ThSpacingPresetKeys.accessible].includes(preset);
       };
 
       if (hasThemingDefinition(spacingKey)) {
@@ -110,18 +110,18 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
       await submitPreferencesWithMargin(submitPreferences, marginNumber, preferencesToSubmit);
 
       // Always set the spacing preset
-      dispatch(setSpacingPreset(value as ThSpacingKeys));
+      dispatch(setSpacingPreset(value as ThSpacingPresetKeys));
     }
   }, [dispatch, preferences, spacing, submitPreferences, submitPreferencesWithMargin, settingsContainer, lineHeightOptions]);
 
   // Use appropriate spacing keys based on layout
   const spacingKeys = useMemo(() => {
-    return isFXL ? fxlSpacingKeys : reflowSpacingKeys;
-  }, [isFXL, fxlSpacingKeys, reflowSpacingKeys]);
+    return isFXL ? fxlSpacingPresetKeys : reflowSpacingPresetKeys;
+  }, [isFXL, fxlSpacingPresetKeys, reflowSpacingPresetKeys]);
 
   // Create dynamic items array based on spacing keys
   const items = useMemo(() => {
-    return spacingKeys.map((key: ThSpacingKeys) => ({
+    return spacingKeys.map((key: ThSpacingPresetKeys) => ({
       icon: iconMap[key],
       value: key,
       label: t(`reader.settings.spacing.presets.${ key }`)
@@ -139,8 +139,8 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
       standalone={ standalone }
       label={ t("reader.settings.spacing.presets.title") }
       orientation="horizontal"
-      value={ spacing?.preset || ThSpacingKeys.publisher }
-      onChange={ async (val: string) => await updatePreference(val as ThSpacingKeys) }
+      value={ spacing?.preset || ThSpacingPresetKeys.publisher }
+      onChange={ async (val: string) => await updatePreference(val as ThSpacingPresetKeys) }
       items={ items }
     />
     </>
