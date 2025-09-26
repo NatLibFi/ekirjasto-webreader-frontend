@@ -118,6 +118,7 @@ export const defaultSpacingPresets = {
   [ThSpacingPresetKeys.balanced]: {
     [ThSpacingSettingsKeys.lineHeight]: ThLineHeightOptions.medium,
     [ThSpacingSettingsKeys.margin]: ThMarginOptions.medium,
+    [ThSpacingSettingsKeys.paragraphSpacing]: 0.5
   },
   [ThSpacingPresetKeys.loose]: {
     [ThSpacingSettingsKeys.lineHeight]: ThLineHeightOptions.large,
