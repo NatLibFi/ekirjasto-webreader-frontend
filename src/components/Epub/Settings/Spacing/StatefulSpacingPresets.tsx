@@ -86,11 +86,10 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
     // Always include all spacing properties, even if undefined in preset
     preferencesToSubmit.letterSpacing = mergedSpacing.letterSpacing ?? null;
 
-    // Handle lineHeight - convert enum to actual numeric value
-    const lineHeightEnum = mergedSpacing.lineHeight as ThLineHeightOptions;
-    preferencesToSubmit.lineHeight = lineHeightEnum === ThLineHeightOptions.publisher
+    // Handle lineHeight - convert enum to actual numeric value, null if undefined or publisher
+    preferencesToSubmit.lineHeight = !mergedSpacing.lineHeight || mergedSpacing.lineHeight === ThLineHeightOptions.publisher
       ? null
-      : lineHeightOptions[lineHeightEnum];
+      : lineHeightOptions[mergedSpacing.lineHeight as ThLineHeightOptions];
 
     preferencesToSubmit.paragraphIndent = mergedSpacing.paragraphIndent ?? null;
     preferencesToSubmit.paragraphSpacing = mergedSpacing.paragraphSpacing ?? null;
