@@ -49,16 +49,18 @@ export interface SetSpacingOverridePayload {
   payload: {
     key: ThSpacingPresetKeys;
     value: {
-      [key in ThSpacingSettingsKeys]?: string | number | ThMarginOptions;
+      [key in ThSpacingSettingsKeys]?: string | number | ThMarginOptions | ThLineHeightOptions;
     }
   }
 }
+
+export type SpacingStateKey = Exclude<ThSpacingSettingsKeys, ThSpacingSettingsKeys.spacingPresets | ThSpacingSettingsKeys.publisherStyles>;
 
 export interface SpacingStateObject {
   preset: ThSpacingPresetKeys;
   overrides: {
     [key in ThSpacingPresetKeys]?: {
-      [key in ThSpacingSettingsKeys]?: string | number;
+      [key in SpacingStateKey]?: string | number | ThMarginOptions | ThLineHeightOptions;
     }
   }
 }

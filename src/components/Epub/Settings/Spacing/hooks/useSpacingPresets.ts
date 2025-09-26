@@ -13,7 +13,7 @@ import { usePlugins } from "@/components/Plugins/PluginProvider";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { usePreferenceKeys } from "@/preferences/hooks/usePreferenceKeys";
 
-import { initialSettingsState } from "@/lib/settingsReducer";
+import { initialSettingsState, SpacingStateKey } from "@/lib/settingsReducer";
 import { useAppSelector, useAppDispatch } from "@/lib";
 import {
   resetSpacingSettings,
@@ -78,7 +78,7 @@ export const useSpacingPresets = () => {
   function getEffectiveSpacingValue(key: ThSpacingSettingsKeys.wordSpacing): number | null;
   function getEffectiveSpacingValue(key: ThSpacingSettingsKeys): any {
     // Check for override values first
-    const overrideValue = spacing.overrides?.[spacing.preset]?.[key];
+    const overrideValue = spacing.overrides?.[spacing.preset]?.[key as SpacingStateKey];
     if (overrideValue !== undefined) {
       return overrideValue;
     }
