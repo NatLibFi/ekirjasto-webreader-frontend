@@ -5,7 +5,6 @@ import fontStacks from "@readium/css/css/vars/fontStacks.json";
 import { 
   ThLineHeightOptions, 
   ThMarginOptions, 
-  ThSettingsKeys, 
   ThSettingsRangeVariant, 
   ThSpacingPresetKeys, 
   ThSpacingSettingsKeys, 

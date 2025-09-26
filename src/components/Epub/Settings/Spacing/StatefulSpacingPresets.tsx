@@ -5,7 +5,8 @@ import {
   ThSettingsContainerKeys,
   ThMarginOptions,
   ThSettingsKeys,
-  ThLineHeightOptions
+  ThLineHeightOptions,
+  ThSpacingSettingsKeys
 } from "@/preferences/models/enums";
 
 import BookIcon from "../assets/icons/book.svg";
@@ -27,8 +28,10 @@ import { useLineHeight } from "./hooks/useLineHeight";
 import { useMargin } from "./hooks/useMargin";
 
 import { useAppSelector, useAppDispatch } from "@/lib";
-import { setSpacingPreset, setPublisherStyles } from "@/lib/settingsReducer";
+import { setSpacingPreset } from "@/lib/settingsReducer";
 import { setSettingsContainer } from "@/lib/readerReducer";
+
+import { hasCustomizableSpacingSettings } from "./helpers/spacingSettings";
 
 const iconMap = {
   [ThSpacingPresetKeys.publisher]: BookIcon,
@@ -42,7 +45,7 @@ const iconMap = {
 export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps) => {
   const { t } = useI18n();
   const { preferences } = usePreferences();
-  const { reflowSpacingPresetKeys, fxlSpacingPresetKeys } = usePreferenceKeys();
+  const { reflowSpacingPresetKeys, fxlSpacingPresetKeys, subPanelSpacingSettingsKeys } = usePreferenceKeys();
   const spacing = useAppSelector(state => state.settings.spacing);
   const settingsContainer = useAppSelector(state => state.reader.settingsContainer);
   const isFXL = useAppSelector(state => state.publication.isFXL);
@@ -116,8 +119,18 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
 
   // Use appropriate spacing keys based on layout
   const spacingKeys = useMemo(() => {
-    return isFXL ? fxlSpacingPresetKeys : reflowSpacingPresetKeys;
-  }, [isFXL, fxlSpacingPresetKeys, reflowSpacingPresetKeys]);
+    const baseKeys = isFXL ? fxlSpacingPresetKeys : reflowSpacingPresetKeys;
+    const subPanelKeys = subPanelSpacingSettingsKeys || [];
+
+    const hasCustomizableSettings = hasCustomizableSpacingSettings(subPanelKeys);
+
+    if (hasCustomizableSettings) {
+      return baseKeys;
+    } else {
+      // Exclude "custom" if no spacing settings are available for customization
+      return baseKeys.filter(key => key !== ThSpacingPresetKeys.custom);
+    }
+  }, [isFXL, fxlSpacingPresetKeys, reflowSpacingPresetKeys, subPanelSpacingSettingsKeys]);
 
   // Create dynamic items array based on spacing keys
   const items = useMemo(() => {

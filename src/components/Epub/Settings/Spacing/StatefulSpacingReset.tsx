@@ -14,10 +14,14 @@ import { useEpubNavigator } from "@/core/Hooks";
 import { useMargin } from "./hooks/useMargin";
 import { useLineHeight } from "./hooks/useLineHeight";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
+import { usePreferenceKeys } from "@/preferences/hooks/usePreferenceKeys";
+
+import { hasCustomizableSpacingSettings } from "./helpers/spacingSettings";
 
 export const StatefulSpacingReset = () => {
   const { preferences } = usePreferences();
   const { t } = useI18n();
+  const { subPanelSpacingSettingsKeys } = usePreferenceKeys();
 
   const { resetSpacingSettings, canGetReset, getResetValues } = useSpacingPresets();
   const { submitPreferences } = useEpubNavigator();
@@ -46,6 +50,15 @@ export const StatefulSpacingReset = () => {
 
     resetSpacingSettings();    
   }, [resetSpacingSettings, submitPreferencesWithMargin, submitPreferences, getResetValues, lineHeightOptions, preferences.settings.keys]);
+
+  // Check if there are spacing settings available for customization
+  const subPanelKeys = subPanelSpacingSettingsKeys || [];
+  const hasCustomizableSettings = hasCustomizableSpacingSettings(subPanelKeys);
+  
+  // Return null if no spacing settings are available for customization
+  if (!hasCustomizableSettings) {
+    return null;
+  }
 
   return (
     <>
