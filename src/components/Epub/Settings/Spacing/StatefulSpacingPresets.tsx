@@ -2,11 +2,9 @@ import { useCallback, useMemo } from "react";
 
 import {
   ThSpacingPresetKeys,
-  ThSettingsContainerKeys,
   ThMarginOptions,
   ThSettingsKeys,
   ThLineHeightOptions,
-  ThSpacingSettingsKeys
 } from "@/preferences/models/enums";
 
 import BookIcon from "../assets/icons/book.svg";
@@ -29,7 +27,6 @@ import { useMargin } from "./hooks/useMargin";
 
 import { useAppSelector, useAppDispatch } from "@/lib";
 import { setSpacingPreset } from "@/lib/settingsReducer";
-import { setSettingsContainer } from "@/lib/readerReducer";
 
 import { hasCustomizableSpacingSettings } from "./helpers/spacingSettings";
 
@@ -59,63 +56,55 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
   const lineHeightOptions = useLineHeight();
 
   const updatePreference = useCallback(async (value: string) => {
-    // Handle different preset types
-    if (value === ThSpacingPresetKeys.custom && settingsContainer === ThSettingsContainerKeys.initial) {
-      // Custom preset: set container and preset, no theming logic
-      dispatch(setSettingsContainer(ThSettingsContainerKeys.spacing));
-      dispatch(setSpacingPreset(value as ThSpacingPresetKeys));
-    } else {
-      // All other presets: do theming lookup and submission logic
-      const spacingKey = value as ThSpacingPresetKeys;
+    const spacingKey = value as ThSpacingPresetKeys;
 
-      // Handle theming spacing based on preset type
-      let themingSpacing: any = {};
+    // Handle theming spacing based on preset type
+    let themingSpacing: any = {};
 
-      // Type guard to check if preset has theming definition
-      const hasThemingDefinition = (preset: ThSpacingPresetKeys): preset is ThSpacingPresetKeys.tight | ThSpacingPresetKeys.balanced | ThSpacingPresetKeys.loose | ThSpacingPresetKeys.accessible => {
-        return [ThSpacingPresetKeys.tight, ThSpacingPresetKeys.balanced, ThSpacingPresetKeys.loose, ThSpacingPresetKeys.accessible].includes(preset);
-      };
+    // Type guard to check if preset has theming definition
+    const hasThemingDefinition = (preset: ThSpacingPresetKeys): preset is ThSpacingPresetKeys.tight | ThSpacingPresetKeys.balanced | ThSpacingPresetKeys.loose | ThSpacingPresetKeys.accessible => {
+      return [ThSpacingPresetKeys.tight, ThSpacingPresetKeys.balanced, ThSpacingPresetKeys.loose, ThSpacingPresetKeys.accessible].includes(preset);
+    };
 
-      if (hasThemingDefinition(spacingKey)) {
-        // Regular presets have theming definitions - now TypeScript knows spacingKey is a valid key
-        themingSpacing = preferences.settings.spacing?.presets?.keys[spacingKey] || {};
-      }
-      // For publisher and custom, themingSpacing remains {} (empty object)
-
-      const settingsOverrides = spacing?.overrides?.[spacingKey] || {};
-
-      // Merge the preferences - settings overrides take precedence over theming
-      const mergedSpacing = {
-        ...themingSpacing,
-        ...settingsOverrides
-      };
-
-      // Submit the merged values to the navigator
-      const preferencesToSubmit: any = {};
-
-      // Always include all spacing properties, even if undefined in preset
-      preferencesToSubmit.letterSpacing = mergedSpacing.letterSpacing ?? null;
-
-      // Handle lineHeight - convert enum to actual numeric value
-      const lineHeightEnum = mergedSpacing.lineHeight as ThLineHeightOptions;
-      preferencesToSubmit.lineHeight = lineHeightEnum === ThLineHeightOptions.publisher
-        ? null
-        : lineHeightOptions[lineHeightEnum];
-
-      preferencesToSubmit.paragraphIndent = mergedSpacing.paragraphIndent ?? null;
-      preferencesToSubmit.paragraphSpacing = mergedSpacing.paragraphSpacing ?? null;
-      preferencesToSubmit.wordSpacing = mergedSpacing.wordSpacing ?? null;
-
-      // Handle margin - convert ThMarginOptions to number, default to 1 if not found
-      const marginValue = mergedSpacing.margin as ThMarginOptions;
-      const marginNumber = preferences.settings.keys[ThSettingsKeys.margin]?.[marginValue] ?? 1;
-
-      await submitPreferencesWithMargin(submitPreferences, marginNumber, preferencesToSubmit);
-
-      // Always set the spacing preset
-      dispatch(setSpacingPreset(value as ThSpacingPresetKeys));
+    if (hasThemingDefinition(spacingKey)) {
+      // Regular presets have theming definitions - now TypeScript knows spacingKey is a valid key
+      themingSpacing = preferences.settings.spacing?.presets?.keys[spacingKey] || {};
     }
-  }, [dispatch, preferences, spacing, submitPreferences, submitPreferencesWithMargin, settingsContainer, lineHeightOptions]);
+    // For publisher and custom, themingSpacing remains {} (empty object)
+
+    const settingsOverrides = spacing?.overrides?.[spacingKey] || {};
+
+    // Merge the preferences - settings overrides take precedence over theming
+    const mergedSpacing = {
+      ...themingSpacing,
+      ...settingsOverrides
+    };
+
+    // Submit the merged values to the navigator
+    const preferencesToSubmit: any = {};
+
+    // Always include all spacing properties, even if undefined in preset
+    preferencesToSubmit.letterSpacing = mergedSpacing.letterSpacing ?? null;
+
+    // Handle lineHeight - convert enum to actual numeric value
+    const lineHeightEnum = mergedSpacing.lineHeight as ThLineHeightOptions;
+    preferencesToSubmit.lineHeight = lineHeightEnum === ThLineHeightOptions.publisher
+      ? null
+      : lineHeightOptions[lineHeightEnum];
+
+    preferencesToSubmit.paragraphIndent = mergedSpacing.paragraphIndent ?? null;
+    preferencesToSubmit.paragraphSpacing = mergedSpacing.paragraphSpacing ?? null;
+    preferencesToSubmit.wordSpacing = mergedSpacing.wordSpacing ?? null;
+
+    // Handle margin - convert ThMarginOptions to number, default to 1 if not found
+    const marginValue = mergedSpacing.margin as ThMarginOptions;
+    const marginNumber = preferences.settings.keys[ThSettingsKeys.margin]?.[marginValue] ?? 1;
+
+    await submitPreferencesWithMargin(submitPreferences, marginNumber, preferencesToSubmit);
+
+    // Always set the spacing preset
+    dispatch(setSpacingPreset(value as ThSpacingPresetKeys));
+  }, [dispatch, preferences, spacing, submitPreferences, submitPreferencesWithMargin, lineHeightOptions]);
 
   // Use appropriate spacing keys based on layout
   const spacingKeys = useMemo(() => {
