@@ -43,8 +43,8 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
     }
   },
   typography: {
-    minimalLineLength: 35, // undefined | null | number of characters. If 2 cols will switch to 1 based on this
-    optimalLineLength: 60, // number of characters. If auto layout, picks colCount based on this
+    minimalLineLength: 40, // undefined | null | number of characters. If 2 cols will switch to 1 based on this
+    optimalLineLength: 55, // number of characters. If auto layout, picks colCount based on this
     maximalLineLength: 70, // undefined | null | number of characters.
     pageGutter: 20
   },
