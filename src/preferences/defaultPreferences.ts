@@ -25,7 +25,6 @@ import ReadiumCSSColors from "@readium/css/css/vars/colors.json";
 import { 
   defaultLetterSpacing, 
   defaultLineHeights, 
-  defaultMargins, 
   defaultParagraphIndent, 
   defaultParagraphSpacing, 
   defaultSpacingPresets, 
@@ -435,7 +434,6 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
     keys: {
       [ThSettingsKeys.letterSpacing]: defaultLetterSpacing,
       [ThSettingsKeys.lineHeight]: defaultLineHeights,
-      [ThSettingsKeys.margin]: defaultMargins,
       [ThSettingsKeys.paragraphIndent]: defaultParagraphIndent,
       [ThSettingsKeys.paragraphSpacing]: defaultParagraphSpacing,
       [ThSettingsKeys.wordSpacing]: defaultWordSpacing,

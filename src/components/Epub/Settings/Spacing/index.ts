@@ -2,7 +2,6 @@
 
 export * from "./StatefulLetterSpacing";
 export * from "./StatefulLineHeight";
-export * from "./StatefulMargin";
 export * from "./StatefulParagraphIndent";
 export * from "./StatefulParagraphSpacing";
 export * from "./StatefulSpacingGroup";

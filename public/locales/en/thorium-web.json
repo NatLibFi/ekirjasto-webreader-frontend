@@ -178,12 +178,6 @@
         "medium": "Balanced",
         "large": "Loose"
       },
-      "margin": {
-        "title": "Margins",
-        "small": "Small",
-        "normal": "Normal",
-        "large": "Large"
-      },
       "paraSpacing": {
         "title": "Paragraph spacing",
         "increase": "Increase paragraph spacing",

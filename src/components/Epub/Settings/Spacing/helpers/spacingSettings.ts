@@ -8,7 +8,6 @@ export const hasCustomizableSpacingSettings = (subPanelKeys: ThSpacingSettingsKe
   const spacingSettingsKeys = [
     ThSpacingSettingsKeys.letterSpacing,
     ThSpacingSettingsKeys.lineHeight,
-    ThSpacingSettingsKeys.margin,
     ThSpacingSettingsKeys.paragraphIndent,
     ThSpacingSettingsKeys.paragraphSpacing,
     ThSpacingSettingsKeys.wordSpacing

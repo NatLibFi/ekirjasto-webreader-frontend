@@ -20,7 +20,6 @@ import {
   ThRunningHeadFormat,
   ThBreakpoints,
   ThDocumentTitleFormat,
-  ThMarginOptions,
   ThSpacingPresetKeys
 } from "./models/enums";
 import { ThCollapsibility, ThCollapsibilityVisibility } from "@/core/Components/Actions/hooks/useCollapsibility";
@@ -84,13 +83,12 @@ export interface ThSettingsSpacingPresets<K extends CustomizableKeys = DefaultKe
 export type ThSpacingPreset<K extends CustomizableKeys = DefaultKeys> = {
   [ThSpacingSettingsKeys.letterSpacing]?: number;
   [ThSpacingSettingsKeys.lineHeight]?: ThLineHeightOptions;
-  [ThSpacingSettingsKeys.margin]?: ThMarginOptions;
   [ThSpacingSettingsKeys.paragraphIndent]?: number;
   [ThSpacingSettingsKeys.paragraphSpacing]?: number;
   [ThSpacingSettingsKeys.wordSpacing]?: number;
 } & (K extends { spacing: infer S } 
   ? S extends string 
-      ? { [key in S]?: number | ThLineHeightOptions | ThMarginOptions }
+      ? { [key in S]?: number | ThLineHeightOptions }
     : {}
   : {});
 
@@ -170,9 +168,6 @@ export type ThSettingsKeyTypes<K extends CustomizableKeys = DefaultKeys> = {
   [ThSettingsKeys.letterSpacing]: ThSettingsRangePref;
   [ThSettingsKeys.lineHeight]: {
     [key in Exclude<ThLineHeightOptions, ThLineHeightOptions.publisher>]: number;
-  };
-  [ThSettingsKeys.margin]: {
-    [key in ThMarginOptions]: number;
   };
   [ThSettingsKeys.paragraphIndent]: ThSettingsRangePref;
   [ThSettingsKeys.paragraphSpacing]: ThSettingsRangePref;

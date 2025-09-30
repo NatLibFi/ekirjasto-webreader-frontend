@@ -5,7 +5,7 @@ import {
   ThSpacingSettingsKeys, 
   ThSpacingPresetKeys, 
   ThLineHeightOptions, 
-  ThMarginOptions } from "@/preferences/models/enums";
+} from "@/preferences/models/enums";
 
 import { defaultSpacingSettingsMain, defaultSpacingSettingsSubpanel } from "@/preferences/models/const";
 
@@ -19,7 +19,6 @@ import {
   resetSpacingSettings,
   setLetterSpacing,
   setLineHeight,
-  setLineLengthMultiplier,
   setParagraphIndent,
   setParagraphSpacing,
   setWordSpacing
@@ -72,7 +71,6 @@ export const useSpacingPresets = () => {
   // Function overloads for proper typing
   function getEffectiveSpacingValue(key: ThSpacingSettingsKeys.letterSpacing): number | null;
   function getEffectiveSpacingValue(key: ThSpacingSettingsKeys.lineHeight): ThLineHeightOptions | null;
-  function getEffectiveSpacingValue(key: ThSpacingSettingsKeys.margin): ThMarginOptions | null;
   function getEffectiveSpacingValue(key: ThSpacingSettingsKeys.paragraphIndent): number | null;
   function getEffectiveSpacingValue(key: ThSpacingSettingsKeys.paragraphSpacing): number | null;
   function getEffectiveSpacingValue(key: ThSpacingSettingsKeys.wordSpacing): number | null;
@@ -102,8 +100,6 @@ export const useSpacingPresets = () => {
       switch (key) {
         case ThSpacingSettingsKeys.lineHeight:
           return ThLineHeightOptions.publisher;
-        case ThSpacingSettingsKeys.margin:
-          return ThMarginOptions.medium;
         case ThSpacingSettingsKeys.letterSpacing:
         case ThSpacingSettingsKeys.paragraphIndent:
         case ThSpacingSettingsKeys.paragraphSpacing:
@@ -126,8 +122,6 @@ export const useSpacingPresets = () => {
         return paragraphSpacing;
       case ThSpacingSettingsKeys.wordSpacing:
         return wordSpacing;
-      case ThSpacingSettingsKeys.margin:
-        return lineLength?.multiplier || ThMarginOptions.medium;
       default:
         return undefined;
     }
@@ -156,7 +150,6 @@ export const useSpacingPresets = () => {
       // Check if the state.settings.properties differ from the value in initialState of settingsReducer
       const currentLetterSpacing = letterSpacing ?? null;
       const currentLineHeight = lineHeight ?? initialSettingsState.lineHeight;
-      const currentLineLength = lineLength?.multiplier ?? null;
       const currentParagraphIndent = paragraphIndent ?? null;
       const currentParagraphSpacing = paragraphSpacing ?? null;
       const currentWordSpacing = wordSpacing ?? null;
@@ -164,13 +157,12 @@ export const useSpacingPresets = () => {
       return (
         currentLetterSpacing !== initialSettingsState.letterSpacing ||
         currentLineHeight !== initialSettingsState.lineHeight ||
-        currentLineLength !== initialSettingsState.lineLength ||
         currentParagraphIndent !== initialSettingsState.paragraphIndent ||
         currentParagraphSpacing !== initialSettingsState.paragraphSpacing ||
         currentWordSpacing !== initialSettingsState.wordSpacing
       );
     }
-  }, [shouldApplyPresets, spacing.preset, spacing.overrides, letterSpacing, lineHeight, lineLength?.multiplier, paragraphIndent, paragraphSpacing, wordSpacing]);
+  }, [shouldApplyPresets, spacing.preset, spacing.overrides, letterSpacing, lineHeight, paragraphIndent, paragraphSpacing, wordSpacing]);
 
   // Spacing actions (automatically handle preset logic)
   const setLetterSpacingAction = useCallback((value: number | null) => {
@@ -187,14 +179,6 @@ export const useSpacingPresets = () => {
       payload.preset = spacing.preset;
     }
     dispatch(setLineHeight(payload));
-  }, [dispatch, shouldApplyPresets, spacing.preset]);
-
-  const setLineLengthMultiplierAction = useCallback((value: ThMarginOptions | null | undefined) => {
-    const payload: any = { value };
-    if (shouldApplyPresets && spacing.preset) {
-      payload.preset = spacing.preset;
-    }
-    dispatch(setLineLengthMultiplier(payload));
   }, [dispatch, shouldApplyPresets, spacing.preset]);
 
   const setParagraphIndentAction = useCallback((value: number | null) => {
@@ -236,8 +220,7 @@ export const useSpacingPresets = () => {
       paragraphIndent: null,
       paragraphSpacing: null,
       letterSpacing: null,
-      wordSpacing: null,
-      margin: ThMarginOptions.medium
+      wordSpacing: null
     };
 
     // If no preset or should not apply presets, return default values
@@ -263,8 +246,7 @@ export const useSpacingPresets = () => {
       paragraphIndent: presetValues?.paragraphIndent ?? null,
       paragraphSpacing: presetValues?.paragraphSpacing ?? null,
       letterSpacing: presetValues?.letterSpacing ?? null,
-      wordSpacing: presetValues?.wordSpacing ?? null,
-      margin: presetValues?.margin ?? ThMarginOptions.medium
+      wordSpacing: presetValues?.wordSpacing ?? null
     };
   }, [shouldApplyPresets, spacing.preset, preferences.settings?.spacing?.presets]);
 
@@ -275,7 +257,6 @@ export const useSpacingPresets = () => {
     getResetValues: getResetValues,
     setLetterSpacing: setLetterSpacingAction,
     setLineHeight: setLineHeightAction,
-    setLineLengthMultiplier: setLineLengthMultiplierAction,
     setParagraphIndent: setParagraphIndentAction,
     setParagraphSpacing: setParagraphSpacingAction,
     setWordSpacing: setWordSpacingAction,

@@ -2,8 +2,6 @@ import { useCallback, useMemo } from "react";
 
 import {
   ThSpacingPresetKeys,
-  ThMarginOptions,
-  ThSettingsKeys,
   ThLineHeightOptions,
 } from "@/preferences/models/enums";
 
@@ -23,7 +21,6 @@ import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { usePreferenceKeys } from "@/preferences/hooks/usePreferenceKeys";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useLineHeight } from "./hooks/useLineHeight";
-import { useMargin } from "./hooks/useMargin";
 
 import { useAppSelector, useAppDispatch } from "@/lib";
 import { setSpacingPreset } from "@/lib/settingsReducer";
@@ -44,12 +41,9 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
   const { preferences } = usePreferences();
   const { reflowSpacingPresetKeys, fxlSpacingPresetKeys, subPanelSpacingSettingsKeys } = usePreferenceKeys();
   const spacing = useAppSelector(state => state.settings.spacing);
-  const settingsContainer = useAppSelector(state => state.reader.settingsContainer);
   const isFXL = useAppSelector(state => state.publication.isFXL);
 
   const dispatch = useAppDispatch();
-
-  const { submitPreferencesWithMargin } = useMargin();
 
   const { submitPreferences } = useEpubNavigator();
 
@@ -95,15 +89,11 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
     preferencesToSubmit.paragraphSpacing = mergedSpacing.paragraphSpacing ?? null;
     preferencesToSubmit.wordSpacing = mergedSpacing.wordSpacing ?? null;
 
-    // Handle margin - convert ThMarginOptions to number, default to 1 if not found
-    const marginValue = mergedSpacing.margin as ThMarginOptions;
-    const marginNumber = preferences.settings.keys[ThSettingsKeys.margin]?.[marginValue] ?? 1;
-
-    await submitPreferencesWithMargin(submitPreferences, marginNumber, preferencesToSubmit);
+    await submitPreferences(preferencesToSubmit);
 
     // Always set the spacing preset
     dispatch(setSpacingPreset(value as ThSpacingPresetKeys));
-  }, [dispatch, preferences, spacing, submitPreferences, submitPreferencesWithMargin, lineHeightOptions]);
+  }, [dispatch, preferences, spacing, submitPreferences, lineHeightOptions]);
 
   // Use appropriate spacing keys based on layout
   const spacingKeys = useMemo(() => {

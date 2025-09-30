@@ -19,7 +19,6 @@ import {
   ThTextAlignOptions, 
   ThLayoutUI,
   ThDocumentTitleFormat,
-  ThMarginOptions,
   ThSpacingSettingsKeys
 } from "../../preferences/models/enums";
 import { ThColorScheme } from "@/core/Hooks/useColorScheme";
@@ -118,7 +117,6 @@ export interface ReadiumCSSSettings {
   hyphens: boolean | null;
   letterSpacing: number | null;
   lineLength: LineLengthStateObject | null;
-  margin: ThMarginOptions | null;
   lineHeight: ThLineHeightOptions | null;
   paragraphIndent: number | null;
   paragraphSpacing: number | null;
@@ -206,7 +204,6 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
   const letterSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.letterSpacing);
   const lineLength = useAppSelector(state => state.settings.lineLength);
   const lineHeight = getEffectiveSpacingValue(ThSpacingSettingsKeys.lineHeight);
-  const margin = getEffectiveSpacingValue(ThSpacingSettingsKeys.margin);
   const paragraphIndent = getEffectiveSpacingValue(ThSpacingSettingsKeys.paragraphIndent);
   const paragraphSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.paragraphSpacing);
   const publisherStyles = useAppSelector(state => state.settings.publisherStyles);
@@ -341,7 +338,6 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
       letterSpacing: letterSpacing,
       lineHeight: lineHeight,
       lineLength: lineLength,
-      margin: margin,
       paragraphIndent: paragraphIndent,
       paragraphSpacing: paragraphSpacing,
       publisherStyles: publisherStyles,
@@ -616,10 +612,6 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
   }, [lineLength]);
 
   useEffect(() => {
-    cache.current.settings.margin = margin;
-  }, [margin]);
-
-  useEffect(() => {
     cache.current.settings.paragraphIndent = paragraphIndent;
   }, [paragraphIndent]);
 
@@ -743,10 +735,6 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
           colorScheme: cache.current.colorScheme
         });
 
-        const multiplier = cache.current.settings.margin 
-          ? preferences.settings.keys[ThSpacingSettingsKeys.margin][cache.current.settings.margin] ?? 1 
-          : 1;
-
         const epubPreferences: IEpubPreferences = isFXL ? {} : {
           columnCount: cache.current.settings.columnCount === "auto" ? null : Number(cache.current.settings.columnCount),
           constraint: initialConstraint,
@@ -760,23 +748,19 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
             : cache.current.settings.lineHeight === null 
               ? null 
               : lineHeightOptions[cache.current.settings.lineHeight],
-          // Apply line length multiplier to line length values
           optimalLineLength: cache.current.settings.lineLength?.optimal != null 
-            ? cache.current.settings.lineLength.optimal * multiplier 
+            ? cache.current.settings.lineLength.optimal 
             : undefined,
           maximalLineLength: cache.current.settings.lineLength?.max?.isDisabled 
             ? null 
             : (cache.current.settings.lineLength?.max?.chars != null) 
-              ? cache.current.settings.lineLength.max.chars! * multiplier 
+              ? cache.current.settings.lineLength.max.chars 
               : undefined,
           minimalLineLength: cache.current.settings.lineLength?.min?.isDisabled 
             ? null 
             : (cache.current.settings.lineLength?.min?.chars != null) 
-              ? cache.current.settings.lineLength.min.chars! * multiplier 
+              ? cache.current.settings.lineLength.min.chars 
               : undefined,
-          pageGutter: cache.current.settings.lineLength?.multiplier != null 
-            ? preferences.typography.pageGutter / multiplier
-            : undefined,
           paragraphIndent: cache.current.settings.publisherStyles ? undefined :cache.current.settings.paragraphIndent,
           paragraphSpacing: cache.current.settings.publisherStyles ? undefined :cache.current.settings.paragraphSpacing,
           scroll: cache.current.settings.scroll,
@@ -787,18 +771,10 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
         };
 
         const defaults: IEpubDefaults = isFXL ? {} : {
-          maximalLineLength: preferences.typography.maximalLineLength != null 
-            ? preferences.typography.maximalLineLength * multiplier 
-            : undefined,
-          minimalLineLength: preferences.typography.minimalLineLength != null 
-            ? preferences.typography.minimalLineLength * multiplier 
-            : undefined,
-          optimalLineLength: preferences.typography.optimalLineLength != null 
-            ? preferences.typography.optimalLineLength * multiplier 
-            : undefined,
-          pageGutter: preferences.typography.pageGutter != null 
-            ? preferences.typography.pageGutter / multiplier 
-            : undefined,
+          maximalLineLength: preferences.typography.maximalLineLength,
+          minimalLineLength: preferences.typography.minimalLineLength,
+          optimalLineLength: preferences.typography.optimalLineLength,
+          pageGutter: preferences.typography.pageGutter,
           scrollPaddingTop: preferences.theming.layout.ui?.reflow === ThLayoutUI.layered 
             ? (preferences.theming.icon.size || 24) * 3 
             : (preferences.theming.icon.size || 24),

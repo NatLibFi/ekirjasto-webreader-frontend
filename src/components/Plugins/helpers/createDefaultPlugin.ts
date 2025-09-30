@@ -16,7 +16,6 @@ import { StatefulHyphens } from "../../Epub/Settings/Text/StatefulHyphens";
 import { StatefulLayout } from "../../Epub/Settings/StatefulLayout";
 import { StatefulLetterSpacing } from "../../Epub/Settings/Spacing/StatefulLetterSpacing";
 import { StatefulLineHeight } from "../../Epub/Settings/Spacing/StatefulLineHeight";
-import { StatefulMargin } from "@/components/Epub/Settings/Spacing/StatefulMargin";
 import { StatefulParagraphIndent } from "../../Epub/Settings/Spacing/StatefulParagraphIndent";
 import { StatefulParagraphSpacing } from "../../Epub/Settings/Spacing/StatefulParagraphSpacing";
 import { StatefulPublisherStyles } from "../../Epub/Settings/StatefulPublisherStyles";
@@ -78,10 +77,6 @@ export const createDefaultPlugin = (): ThPlugin => {
         },
         [ThSettingsKeys.lineHeight]: {
           Comp: StatefulLineHeight,
-          type: "spacing"
-        },
-        [ThSettingsKeys.margin]: {
-          Comp: StatefulMargin,
           type: "spacing"
         },
         [ThSettingsKeys.paragraphIndent]: {

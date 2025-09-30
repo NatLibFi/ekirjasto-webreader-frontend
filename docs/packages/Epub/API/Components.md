@@ -61,7 +61,6 @@ Settings components provide user configuration options:
 ### Spacing Settings
 - `StatefulLetterSpacing`: Letter spacing control
 - `StatefulLineHeight`: Line height adjustment
-- `StatefulMargin`: Margins control
 - `StatefulParagraphIndent`: Paragraph indentation
 - `StatefulParagraphSpacing`: Spacing between paragraphs
 - `StatefulSpacingGroup`: Spacing-related settings group

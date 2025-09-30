@@ -4,7 +4,6 @@ import fontStacks from "@readium/css/css/vars/fontStacks.json";
 
 import { 
   ThLineHeightOptions, 
-  ThMarginOptions, 
   ThSettingsRangeVariant, 
   ThSpacingPresetKeys, 
   ThSpacingSettingsKeys, 
@@ -34,7 +33,6 @@ export const defaultSpacingSettingsMain = [
 
 export const defaultSpacingSettingsSubpanel = [
   ThSpacingSettingsKeys.spacingPresets,
-  ThSpacingSettingsKeys.margin,
   ThSpacingSettingsKeys.lineHeight,
   ThSpacingSettingsKeys.wordSpacing,
   ThSpacingSettingsKeys.letterSpacing,
@@ -96,12 +94,6 @@ export const defaultLineHeights = {
   [ThLineHeightOptions.large]: 1.75
 }
 
-export const defaultMargins = {
-  [ThMarginOptions.small]: 1.25,
-  [ThMarginOptions.medium]: 1,
-  [ThMarginOptions.large]: 0.75
-}
-
 export const defaultZoom: Required<ThSettingsRangePref> = {
   variant: ThSettingsRangeVariant.numberField,
   range: [0.7, 4],
@@ -111,23 +103,19 @@ export const defaultZoom: Required<ThSettingsRangePref> = {
 export const defaultSpacingPresets = {
   [ThSpacingPresetKeys.tight]: {
     [ThSpacingSettingsKeys.lineHeight]: ThLineHeightOptions.small,
-    [ThSpacingSettingsKeys.margin]: ThMarginOptions.small,
     [ThSpacingSettingsKeys.paragraphSpacing]: 0,
     [ThSpacingSettingsKeys.paragraphIndent]: 1
   },
   [ThSpacingPresetKeys.balanced]: {
     [ThSpacingSettingsKeys.lineHeight]: ThLineHeightOptions.medium,
-    [ThSpacingSettingsKeys.margin]: ThMarginOptions.medium,
     [ThSpacingSettingsKeys.paragraphSpacing]: 0.5
   },
   [ThSpacingPresetKeys.loose]: {
     [ThSpacingSettingsKeys.lineHeight]: ThLineHeightOptions.large,
-    [ThSpacingSettingsKeys.margin]: ThMarginOptions.medium,
     [ThSpacingSettingsKeys.paragraphSpacing]: 1.5
   },
   [ThSpacingPresetKeys.accessible]: {
     [ThSpacingSettingsKeys.lineHeight]: ThLineHeightOptions.large,
-    [ThSpacingSettingsKeys.margin]: ThMarginOptions.large,
     [ThSpacingSettingsKeys.paragraphSpacing]: 3,
     [ThSpacingSettingsKeys.paragraphIndent]: 0,
     [ThSpacingSettingsKeys.letterSpacing]: 0.1,

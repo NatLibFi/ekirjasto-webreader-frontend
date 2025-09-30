@@ -62,8 +62,6 @@ These ranges expect:
 
 It also allows you to configure `lineHeight`, where the keys are `ThLineHeightKeys` and value is a number.
 
-It also allows you to configure `margin`, where the keys are `ThMarginOptions` and value is a number.
-
 ## Configuration Example
 
 ```typescript
@@ -100,11 +98,6 @@ settings: {
       [ThLineHeightOptions.small]: 1.3,
       [ThLineHeightOptions.medium]: 1.5,
       [ThLineHeightOptions.large]: 1.75
-    },
-    [ThSettingsKeys.margin]: {
-      [ThMarginOptions.small]: 1.25,
-      [ThMarginOptions.medium]: 1,
-      [ThMarginOptions.large]: 0.75
     }
   },
   text: {
@@ -121,7 +114,6 @@ settings: {
     main: [ThSpacingSettingsKeys.spacingPresets],
     subPanel: [
       ThSpacingSettingsKeys.spacingPresets,
-      ThSpacingSettingsKeys.margin,
       ThSpacingSettingsKeys.lineHeight,
       ThSpacingSettingsKeys.wordSpacing,
       ThSpacingSettingsKeys.letterSpacing,
@@ -193,22 +185,18 @@ spacing:
     keys: {
       [ThSpacingPresetKeys.tight]: {
         [ThSettingsKeys.lineHeight]: ThLineHeightOptions.small,
-        [ThSettingsKeys.margin]: ThMarginOptions.small,
         [ThSettingsKeys.paragraphSpacing]: 0,
         [ThSettingsKeys.paragraphIndent]: 1
       },
       [ThSpacingPresetKeys.balanced]: {
         [ThSettingsKeys.lineHeight]: ThLineHeightOptions.medium,
-        [ThSettingsKeys.margin]: ThMarginOptions.medium
       },
       [ThSpacingPresetKeys.loose]: {
         [ThSettingsKeys.lineHeight]: ThLineHeightOptions.large,
-        [ThSettingsKeys.margin]: ThMarginOptions.medium,
         [ThSettingsKeys.paragraphSpacing]: 1.5
       },
       [ThSpacingPresetKeys.accessible]: {
         [ThSettingsKeys.lineHeight]: ThLineHeightOptions.large,
-        [ThSettingsKeys.margin]: ThMarginOptions.large,
         [ThSettingsKeys.paragraphSpacing]: 3,
         [ThSettingsKeys.paragraphIndent]: 0,
         [ThSettingsKeys.letterSpacing]: 0.1,
@@ -232,7 +220,6 @@ Note that `ThSpacingPresetKeys.publisher` and `ThSpacingPresetKeys.custom` are s
 The `keys` object contains the spacing presets (excluding `ThSpacingPresetKeys.publisher` and `ThSpacingPresetKeys.custom`) and their configurations. Each preset can configure the following settings:
 
 - `ThSettingsKeys.lineHeight` - Controls line spacing using `ThLineHeightOptions` (small, medium, large)
-- `ThSettingsKeys.margin` - Page margins using `ThMarginOptions` (small, medium, large)
 - `ThSettingsKeys.paragraphSpacing` - Space between paragraphs (number value)
 - `ThSettingsKeys.paragraphIndent` - First line indentation (number value)
 - `ThSettingsKeys.letterSpacing` - Space between letters (number value)

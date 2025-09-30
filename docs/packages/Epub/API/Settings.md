@@ -319,22 +319,6 @@ interface StatefulLineHeightProps extends StatefulSettingsItemProps {
 <StatefulLineHeight />
 ```
 
-#### StatefulMargin
-
-```typescript
-interface StatefulMarginProps extends StatefulSettingsItemProps {
-  standalone?: boolean;
-}
-```
-
-**Features:**
-- Margin control (radio group)
-
-**Example:**
-```typescript
-<StatefulMargin />
-```
-
 #### StatefulLetterSpacing
 
 ```typescript

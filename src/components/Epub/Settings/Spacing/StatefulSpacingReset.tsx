@@ -2,8 +2,6 @@
 
 import { useCallback } from "react";
 
-import { ThMarginOptions, ThSettingsKeys } from "@/preferences/models/enums";
-
 import settingsStyles from "../../../Settings/assets/styles/settings.module.css";
 
 import { Button } from "react-aria-components";
@@ -11,36 +9,28 @@ import { Button } from "react-aria-components";
 import { useI18n } from "@/i18n/useI18n";
 import { useSpacingPresets } from "./hooks/useSpacingPresets";
 import { useEpubNavigator } from "@/core/Hooks";
-import { useMargin } from "./hooks/useMargin";
 import { useLineHeight } from "./hooks/useLineHeight";
-import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { usePreferenceKeys } from "@/preferences/hooks/usePreferenceKeys";
 
 import { hasCustomizableSpacingSettings } from "./helpers/spacingSettings";
 
 export const StatefulSpacingReset = () => {
-  const { preferences } = usePreferences();
   const { t } = useI18n();
   const { subPanelSpacingSettingsKeys } = usePreferenceKeys();
 
   const { resetSpacingSettings, canGetReset, getResetValues } = useSpacingPresets();
   const { submitPreferences } = useEpubNavigator();
-  const { submitPreferencesWithMargin } = useMargin();
 
   const lineHeightOptions = useLineHeight();
 
   const updatePreference = useCallback(async () => {
     const resetValues = getResetValues();
 
-    // Convert enum values to actual numeric values using existing logic
-    const marginValue = resetValues.margin as ThMarginOptions;
-    const marginNumber = preferences.settings.keys[ThSettingsKeys.margin][marginValue] ?? 1;
-
     const lineHeightValue = resetValues.lineHeight === "publisher" 
       ? null 
       : lineHeightOptions[resetValues.lineHeight as keyof typeof lineHeightOptions];
 
-    await submitPreferencesWithMargin(submitPreferences, marginNumber, {
+    await submitPreferences({
       lineHeight: lineHeightValue,
       paragraphIndent: resetValues.paragraphIndent,
       paragraphSpacing: resetValues.paragraphSpacing,
@@ -49,7 +39,7 @@ export const StatefulSpacingReset = () => {
     });
 
     resetSpacingSettings();    
-  }, [resetSpacingSettings, submitPreferencesWithMargin, submitPreferences, getResetValues, lineHeightOptions, preferences.settings.keys]);
+  }, [resetSpacingSettings, submitPreferences, getResetValues, lineHeightOptions]);
 
   // Check if there are spacing settings available for customization
   const subPanelKeys = subPanelSpacingSettingsKeys || [];

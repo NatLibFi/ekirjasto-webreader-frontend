@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import { 
   ThLineHeightOptions, 
-  ThMarginOptions, 
   ThSpacingPresetKeys, 
   ThSpacingSettingsKeys, 
   ThTextAlignOptions 
@@ -10,7 +9,6 @@ import {
 import { defaultFontFamilyOptions } from "@/preferences/models/const";
 
 export interface LineLengthStateObject {
-  multiplier?: ThMarginOptions | null;
   optimal?: number | null;
   min?: {
     chars?: number | null;
@@ -31,14 +29,6 @@ export interface SetLineLengthPayload {
   }
 }
 
-export interface SetLineLengthMultiplierPayload {
-  type: string;
-  payload: {
-    value: ThMarginOptions;
-    preset?: ThSpacingPresetKeys;
-  }
-}
-
 export interface SetSpacingPresetPayload {
   type: string;
   payload: ThSpacingPresetKeys;
@@ -49,7 +39,7 @@ export interface SetSpacingOverridePayload {
   payload: {
     key: ThSpacingPresetKeys;
     value: {
-      [key in ThSpacingSettingsKeys]?: string | number | ThMarginOptions | ThLineHeightOptions;
+      [key in ThSpacingSettingsKeys]?: string | number | ThLineHeightOptions;
     }
   }
 }
@@ -60,7 +50,7 @@ export interface SpacingStateObject {
   preset: ThSpacingPresetKeys;
   overrides: {
     [key in ThSpacingPresetKeys]?: {
-      [key in SpacingStateKey]?: string | number | ThMarginOptions | ThLineHeightOptions;
+      [key in SpacingStateKey]?: string | number | ThLineHeightOptions;
     }
   }
 }
@@ -202,24 +192,6 @@ export const settingsSlice = createSlice({
           break;
       }
     },
-    setLineLengthMultiplier: (state, action: SetLineLengthMultiplierPayload) => {
-      const { value, preset } = action.payload;
-      if (preset) {
-        const currentOverrides = state.spacing.overrides[preset] || {};
-        state.spacing.overrides = {
-          ...state.spacing.overrides,
-          [preset]: {
-            ...currentOverrides,
-            margin: value
-          }
-        };
-      } else {
-        state.lineLength = {
-          ...state.lineLength,
-          multiplier: value
-        };
-      }
-    },
     setParagraphIndent: (state, action) => {
       handleSpacingSetting(state, action, ThSpacingSettingsKeys.paragraphIndent);
     },
@@ -288,7 +260,6 @@ export const settingsSlice = createSlice({
 
       state.letterSpacing = initialState.letterSpacing;
       state.lineHeight = initialState.lineHeight;
-      state.lineLength && (state.lineLength.multiplier = undefined);
       state.paragraphIndent = initialState.paragraphIndent;
       state.paragraphSpacing = initialState.paragraphSpacing;
       state.wordSpacing = initialState.wordSpacing;
@@ -315,7 +286,6 @@ export const {
   setLetterSpacing,
   setLineHeight,
   setLineLength,
-  setLineLengthMultiplier,
   setParagraphIndent,
   setParagraphSpacing,
   setPublisherStyles,
