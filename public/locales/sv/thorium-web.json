@@ -1,1 +1,11 @@
-{}
+{
+    "reader": {
+        "settings": {
+            "column": {
+                "one": "1 kolumn",
+                "title": "Kolumner",
+                "two": "2 kolumner"
+            }
+        }
+    }
+}
