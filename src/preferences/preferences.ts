@@ -161,7 +161,7 @@ export interface ThSettingsGroupPref<T> {
 
 export interface ThSettingsRangePref {
   variant?: ThSettingsRangeVariant;
-  placeholder?: ThSettingsRangePlaceholder | string;
+  placeholder?: ThSettingsRangePlaceholder | { key: string; fallback?: string };
   range?: [number, number];
   step?: number;
 }

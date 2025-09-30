@@ -15,11 +15,11 @@ import { StatefulNumberField } from "../../Settings/StatefulNumberField";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
+import { usePlaceholder } from "./hooks/usePlaceholder";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setFontSize } from "@/lib/settingsReducer";
 
-import { getPlaceholder } from "./helpers/getPlaceholder";
 
 export const StatefulZoom = () => {
   const { preferences } = usePreferences();
@@ -63,6 +63,8 @@ export const StatefulZoom = () => {
     step: preferences.settings.keys[ThSettingsKeys.zoom].step || preferencesEditor?.fontSize.step
   }
 
+  const placeholderText = usePlaceholder(zoomRangeConfig.placeholder, zoomRangeConfig.range);
+
   return (
     <>
     { zoomRangeConfig.variant === ThSettingsRangeVariant.numberField 
@@ -72,7 +74,7 @@ export const StatefulZoom = () => {
         value={ fontSize } 
         onChange={ async(value) => await updatePreference(value) } 
         label={ isFXL ? t("reader.settings.zoom.title") : t("reader.settings.fontSize.title") }
-        placeholder={ getPlaceholder(zoomRangeConfig.placeholder, zoomRangeConfig.range) }
+        placeholder={ placeholderText }
         range={ zoomRangeConfig.range }
         step={ zoomRangeConfig.step }
         steppers={{
@@ -92,7 +94,7 @@ export const StatefulZoom = () => {
         value={ fontSize } 
         onChange={ async(value) => await updatePreference(value as number) } 
         label={ isFXL ? t("reader.settings.zoom.title") : t("reader.settings.fontSize.title") }
-        placeholder={ getPlaceholder(zoomRangeConfig.placeholder, zoomRangeConfig.range) }
+        placeholder={ placeholderText }
         range={ zoomRangeConfig.range }
         step={ zoomRangeConfig.step }
         formatOptions={{ style: "percent" }} 

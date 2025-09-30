@@ -13,11 +13,10 @@ import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
 import { useSpacingPresets } from "./hooks/useSpacingPresets";
+import { usePlaceholder } from "../hooks/usePlaceholder";
 
 import { useAppDispatch } from "@/lib/hooks";
 import { setPublisherStyles } from "@/lib/settingsReducer";
-
-import { getPlaceholder } from "../helpers/getPlaceholder";
 
 export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { preferences } = usePreferences();
@@ -28,6 +27,9 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
     range: preferences.settings.keys[ThSettingsKeys.letterSpacing].range,
     step: preferences.settings.keys[ThSettingsKeys.letterSpacing].step
   };
+
+  const placeholderText = usePlaceholder(letterSpacingRangeConfig.placeholder, letterSpacingRangeConfig.range);
+  
   const dispatch = useAppDispatch();
 
   const { getSetting, submitPreferences } = useEpubNavigator();
@@ -51,7 +53,7 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
       ? <StatefulNumberField 
         standalone={ standalone }
         label={ t("reader.settings.letterSpacing.title") }
-        placeholder={ getPlaceholder(letterSpacingRangeConfig.placeholder, letterSpacingRangeConfig.range) }
+        placeholder={ placeholderText }
         defaultValue={ undefined } 
         value={ letterSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value) } 
@@ -69,7 +71,7 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
         standalone={ standalone }
         displayTicks={ letterSpacingRangeConfig.variant === ThSettingsRangeVariant.incrementedSlider }
         label={ t("reader.settings.letterSpacing.title") }
-        placeholder={ getPlaceholder(letterSpacingRangeConfig.placeholder, letterSpacingRangeConfig.range) }
+        placeholder={ placeholderText }
         defaultValue={ undefined } 
         value={ letterSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 

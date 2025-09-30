@@ -13,11 +13,10 @@ import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
 import { useSpacingPresets } from "./hooks/useSpacingPresets";
+import { usePlaceholder } from "../hooks/usePlaceholder";
 
 import { useAppDispatch } from "@/lib/hooks";
 import { setPublisherStyles } from "@/lib/settingsReducer";
-
-import { getPlaceholder } from "../helpers/getPlaceholder";
 
 export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { preferences } = usePreferences();
@@ -28,6 +27,9 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
     range: preferences.settings.keys[ThSettingsKeys.wordSpacing].range,
     step: preferences.settings.keys[ThSettingsKeys.wordSpacing].step
   };
+
+  const placeholderText = usePlaceholder(wordSpacingRangeConfig.placeholder, wordSpacingRangeConfig.range);
+  
   const dispatch = useAppDispatch();
 
   const { getSetting, submitPreferences } = useEpubNavigator();
@@ -51,7 +53,7 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
       ? <StatefulNumberField 
         standalone={ standalone }
         label={ t("reader.settings.wordSpacing.title") }
-        placeholder={ getPlaceholder(wordSpacingRangeConfig.placeholder, wordSpacingRangeConfig.range) }
+        placeholder={ placeholderText }
         defaultValue={ undefined } 
         value={ wordSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value) } 
@@ -69,7 +71,7 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
         standalone={ standalone }
         displayTicks={ wordSpacingRangeConfig.variant === ThSettingsRangeVariant.incrementedSlider }
         label={ t("reader.settings.wordSpacing.title") }
-        placeholder={ getPlaceholder(wordSpacingRangeConfig.placeholder, wordSpacingRangeConfig.range) }
+        placeholder={ placeholderText }
         defaultValue={ undefined } 
         value={ wordSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 

@@ -13,11 +13,10 @@ import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
 import { useSpacingPresets } from "./hooks/useSpacingPresets";
+import { usePlaceholder } from "../hooks/usePlaceholder";
 
 import { useAppDispatch } from "@/lib/hooks";
 import { setPublisherStyles } from "@/lib/settingsReducer";
-
-import { getPlaceholder } from "../helpers/getPlaceholder";
 
 export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { preferences } = usePreferences();
@@ -28,6 +27,9 @@ export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsI
       range: preferences.settings.keys[ThSettingsKeys.paragraphIndent].range,
       step: preferences.settings.keys[ThSettingsKeys.paragraphIndent].step
     };
+
+  const placeholderText = usePlaceholder(paragraphIndentRangeConfig.placeholder, paragraphIndentRangeConfig.range);
+  
   const dispatch = useAppDispatch();
 
   const { getSetting, submitPreferences } = useEpubNavigator();
@@ -51,7 +53,7 @@ export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsI
       ? <StatefulNumberField 
         standalone={ standalone }
         label={ t("reader.settings.paraIndent.title") }
-        placeholder={ getPlaceholder(paragraphIndentRangeConfig.placeholder, paragraphIndentRangeConfig.range) }
+        placeholder={ placeholderText }
         defaultValue={ undefined } 
         value={ paragraphIndent ?? undefined } 
         onChange={ async(value) => await updatePreference(value) } 
@@ -73,7 +75,7 @@ export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsI
         standalone={ standalone }
         displayTicks={ paragraphIndentRangeConfig.variant === ThSettingsRangeVariant.incrementedSlider }
         label={ t("reader.settings.paraIndent.title") }
-        placeholder={ getPlaceholder(paragraphIndentRangeConfig.placeholder, paragraphIndentRangeConfig.range) }
+        placeholder={ placeholderText }
         defaultValue={ undefined } 
         value={ paragraphIndent ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 

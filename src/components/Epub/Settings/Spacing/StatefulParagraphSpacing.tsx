@@ -13,11 +13,10 @@ import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
 import { useSpacingPresets } from "./hooks/useSpacingPresets";
+import { usePlaceholder } from "../hooks/usePlaceholder";
 
 import { useAppDispatch } from "@/lib/hooks";
 import { setPublisherStyles } from "@/lib/settingsReducer";
-
-import { getPlaceholder } from "../helpers/getPlaceholder";
 
 export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { preferences } = usePreferences();
@@ -28,6 +27,9 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
     range: preferences.settings.keys[ThSettingsKeys.paragraphSpacing].range,
     step: preferences.settings.keys[ThSettingsKeys.paragraphSpacing].step
   };
+
+  const placeholderText = usePlaceholder(paragraphSpacingRangeConfig.placeholder, paragraphSpacingRangeConfig.range);
+  
   const dispatch = useAppDispatch();
 
   const { getSetting, submitPreferences } = useEpubNavigator();
@@ -51,7 +53,7 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
       ? <StatefulNumberField 
         standalone={ standalone }
         label={ t("reader.settings.paraSpacing.title") }
-        placeholder={ getPlaceholder(paragraphSpacingRangeConfig.placeholder, paragraphSpacingRangeConfig.range) }
+        placeholder={ placeholderText }
         defaultValue={ undefined } 
         value={ paragraphSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value) } 
@@ -73,7 +75,7 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
         standalone={ standalone }
         displayTicks={ paragraphSpacingRangeConfig.variant === ThSettingsRangeVariant.incrementedSlider }
         label={ t("reader.settings.paraSpacing.title") }
-        placeholder={ getPlaceholder(paragraphSpacingRangeConfig.placeholder, paragraphSpacingRangeConfig.range) }
+        placeholder={ placeholderText }
         defaultValue={ undefined } 
         value={ paragraphSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 
