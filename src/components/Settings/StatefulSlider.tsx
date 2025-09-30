@@ -8,12 +8,14 @@ import classNames from "classnames";
 
 export interface StatefulSliderProps extends Omit<ThSliderProps, "classNames"> {
   standalone?: boolean;
+  placeholder?: string;
   displayTicks?: boolean;
 }
 
 export const StatefulSlider = ({
   standalone,
   label,
+  placeholder,
   displayTicks = false,
   ...props
 }: StatefulSliderProps) => {
@@ -35,6 +37,7 @@ export const StatefulSlider = ({
     <ThSlider
       { ...props }
       { ...(standalone ? { label: label } : {"aria-label": label}) }
+      placeholder={ placeholder }
       className={classNames(
         settingsStyles.readerSettingsSlider,
         standalone && settingsStyles.readerSettingsGroup,
@@ -47,6 +50,9 @@ export const StatefulSlider = ({
         },
         output: {
           className: settingsStyles.readerSettingsSliderOutput
+        },
+        placeholder: {
+          className: settingsStyles.readerSettingsSliderPlaceholder
         },
         track: {
           className: settingsStyles.readerSettingsSliderTrack

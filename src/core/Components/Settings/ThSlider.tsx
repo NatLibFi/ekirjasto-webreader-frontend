@@ -1,6 +1,6 @@
 "use client";
 
-import { WithRef } from "../customTypes";
+import { HTMLAttributesWithRef, WithRef } from "../customTypes";
 
 import { 
   Label, 
@@ -18,6 +18,7 @@ import {
 export interface ThSliderProps extends Omit<SliderProps, "minValue" | "maxValue"> {
   ref?: React.ForwardedRef<HTMLDivElement>;
   label?: string;
+  placeholder?: string;
   range: number[];
   compounds?: {
     /**
@@ -28,6 +29,10 @@ export interface ThSliderProps extends Omit<SliderProps, "minValue" | "maxValue"
      * Props for the slider output component. See `SliderOutputProps` for more information.
      */
     output?: WithRef<SliderOutputProps, HTMLOutputElement>;
+    /**
+     * Props for the slider placeholder component. See `HTMLSpanElement` for more information.
+     */
+    placeholder?: HTMLAttributesWithRef<HTMLSpanElement>;
     /**
      * Props for the slider track component. See `SliderTrackProps` for more information.
      */
@@ -42,8 +47,10 @@ export interface ThSliderProps extends Omit<SliderProps, "minValue" | "maxValue"
 export const ThSlider = ({
   ref,
   label,
+  placeholder,
   range,
   compounds,
+  value,
   ...props
 }: ThSliderProps) => {
   return(
@@ -58,7 +65,14 @@ export const ThSlider = ({
           { label }
         </Label> 
       }
-      <SliderOutput { ...compounds?.output } />
+      <SliderOutput { ...compounds?.output }>
+        { value !== undefined 
+          ? value 
+          : placeholder 
+            ? <span { ...compounds?.placeholder }>{ placeholder }</span>
+            : null
+        }
+      </SliderOutput>
       <SliderTrack { ...compounds?.track }>
         <SliderThumb { ...compounds?.thumb } />
       </SliderTrack>

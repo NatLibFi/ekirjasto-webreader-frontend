@@ -48,8 +48,9 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
       ? <StatefulNumberField 
         standalone={ standalone }
         label={ t("reader.settings.paraSpacing.title") }
-        defaultValue={ 0 } 
-        value={ paragraphSpacing || 0 } 
+        placeholder={ `${ paragraphSpacingRangeConfig.range[0]} - ${paragraphSpacingRangeConfig.range[1] }` }
+        defaultValue={ undefined } 
+        value={ paragraphSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value) } 
         range={ paragraphSpacingRangeConfig.range }
         step={ paragraphSpacingRangeConfig.step }
@@ -69,8 +70,9 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
         standalone={ standalone }
         displayTicks={ paragraphSpacingRangeConfig.variant === ThSettingsRangeVariant.incrementedSlider }
         label={ t("reader.settings.paraSpacing.title") }
-        defaultValue={ 0 } 
-        value={ paragraphSpacing || 0 } 
+        placeholder={ `${ paragraphSpacingRangeConfig.range[0]} - ${paragraphSpacingRangeConfig.range[1] }` }
+        defaultValue={ undefined } 
+        value={ paragraphSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 
         range={ paragraphSpacingRangeConfig.range }
         step={ paragraphSpacingRangeConfig.step }

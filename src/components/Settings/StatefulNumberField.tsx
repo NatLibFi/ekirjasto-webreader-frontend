@@ -9,11 +9,13 @@ import classNames from "classnames";
 
 export interface StatefulNumberFieldProps extends Omit<ThNumberFieldProps, "classNames"> {
   standalone?: boolean;
+  placeholder?: string;
 }
 
 export const StatefulNumberField = ({
   standalone,
   label,
+  placeholder,
   ...props
 }: StatefulNumberFieldProps) => {
 
@@ -21,6 +23,7 @@ export const StatefulNumberField = ({
     <ThNumberField 
       { ...props }
       { ...(standalone ? { label: label } : { "aria-label": label }) }
+      placeholder={ placeholder }
       className={ classNames(settingsStyles.readerSettingsNumbfield, standalone ? settingsStyles.readerSettingsGroup : "") }
       compounds={{
         group: {
@@ -33,7 +36,7 @@ export const StatefulNumberField = ({
           className: readerSharedUI.icon
         },
         input: {
-          className: settingsStyles.readerSettingsInput
+          className: settingsStyles.readerSettingsInput,
         }
       }}
     />

@@ -23,6 +23,7 @@ import {
 export interface ThNumberFieldProps extends Omit<NumberFieldProps, "minValue" | "maxValue" | "decrementAriaLabel" | "incrementAriaLabel"> {
   ref?: React.ForwardedRef<HTMLInputElement>;
   label?: string;
+  placeholder?: string;
   range: number[];
   isVirtualKeyboardDisabled?: boolean;
   steppers?: {
@@ -39,7 +40,7 @@ export interface ThNumberFieldProps extends Omit<NumberFieldProps, "minValue" | 
     /**
      * Props for the Input component. See `InputProps` for more information.
      */
-    input?: WithRef<InputProps, HTMLInputElement>;
+    input?: Omit<WithRef<InputProps, HTMLInputElement>, "placeholder">;
     /**
      * Props for the Label component. See `LabelProps` for more information.
      */
@@ -54,6 +55,7 @@ export interface ThNumberFieldProps extends Omit<NumberFieldProps, "minValue" | 
 export const ThNumberField = ({
   ref,
   label,
+  placeholder,
   range,
   isVirtualKeyboardDisabled,
   steppers,
@@ -89,7 +91,8 @@ export const ThNumberField = ({
 
         <Input 
           { ...compounds?.input } 
-          { ...(isVirtualKeyboardDisabled ? { inputMode: "none" } : {}) } 
+          { ...(isVirtualKeyboardDisabled ? { inputMode: "none" } : {}) }
+          placeholder={ placeholder } 
         />
 
         { steppers && 

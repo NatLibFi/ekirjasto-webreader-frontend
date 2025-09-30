@@ -235,6 +235,10 @@
   border: 2px solid var(--theme-focus);
 }
 
+.readerSettingsSliderPlaceholder {
+  color: var(--theme-subdue);  
+}
+
 /* Slider with ticks */
 
 .readerSettingsSliderWithTicks .readerSettingsSliderTrack::before {
@@ -290,7 +294,7 @@
   pointer-events: none;
 }
 
-/* TMP?: Dropdown */
+/* Dropdown */
 
 .readerSettingsDropdownButton {
   margin-top: var(--layout-spacing);
@@ -351,7 +355,7 @@
   color: var(--theme-disable);
 }
 
-/* TMP: maxChars switch */
+/* Switch */
 
 .readerSettingsSwitch {
   display: flex;
@@ -402,6 +406,8 @@
 .readerSettingsSwitch[data-disabled] .readerSettingsSwitchIndicator::before {
   background: var(--theme-disable) !important;
 }
+
+/* Reset button */
 
 .readerSettingsResetButton {
   display: block;

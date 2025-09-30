@@ -48,8 +48,9 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
       ? <StatefulNumberField 
         standalone={ standalone }
         label={ t("reader.settings.letterSpacing.title") }
-        defaultValue={ 0 } 
-        value={ letterSpacing || 0 } 
+        placeholder={ `${ letterSpacingRangeConfig.range[0]} - ${letterSpacingRangeConfig.range[1] }` }
+        defaultValue={ undefined } 
+        value={ letterSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value) } 
         range={ letterSpacingRangeConfig.range }
         step={ letterSpacingRangeConfig.step }
@@ -65,8 +66,9 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
         standalone={ standalone }
         displayTicks={ letterSpacingRangeConfig.variant === ThSettingsRangeVariant.incrementedSlider }
         label={ t("reader.settings.letterSpacing.title") }
-        defaultValue={ 0 } 
-        value={ letterSpacing || 0 } 
+        placeholder={ `${ letterSpacingRangeConfig.range[0]} - ${letterSpacingRangeConfig.range[1] }` }
+        defaultValue={ undefined } 
+        value={ letterSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 
         range={ letterSpacingRangeConfig.range }
         step={ letterSpacingRangeConfig.step }

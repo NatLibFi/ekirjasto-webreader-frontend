@@ -48,8 +48,9 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
       ? <StatefulNumberField 
         standalone={ standalone }
         label={ t("reader.settings.wordSpacing.title") }
-        defaultValue={ 0 } 
-        value={ wordSpacing || 0 } 
+        placeholder={ `${ wordSpacingRangeConfig.range[0] } - ${ wordSpacingRangeConfig.range[1] }` }
+        defaultValue={ undefined } 
+        value={ wordSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value) } 
         range={ wordSpacingRangeConfig.range }
         step={ wordSpacingRangeConfig.step }
@@ -65,8 +66,9 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
         standalone={ standalone }
         displayTicks={ wordSpacingRangeConfig.variant === ThSettingsRangeVariant.incrementedSlider }
         label={ t("reader.settings.wordSpacing.title") }
-        defaultValue={ 0 } 
-        value={ wordSpacing || 0 } 
+        placeholder={ `${ wordSpacingRangeConfig.range[0] } - ${ wordSpacingRangeConfig.range[1] }` }
+        defaultValue={ undefined } 
+        value={ wordSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 
         range={ wordSpacingRangeConfig.range }
         step={ wordSpacingRangeConfig.step }

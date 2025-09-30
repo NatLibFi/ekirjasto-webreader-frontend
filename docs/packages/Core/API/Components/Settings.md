@@ -42,6 +42,7 @@ A numeric input component with optional steppers and range validation.
 interface ThNumberFieldProps extends Omit<NumberFieldProps, "minValue" | "maxValue" | "decrementAriaLabel" | "incrementAriaLabel"> {
   ref?: React.ForwardedRef<HTMLInputElement>;
   label?: string;                // Optional label text
+  placeholder?: string;          // Optional placeholder text (shown when value is undefined)
   range: number[];               // [min, max] values
   isVirtualKeyboardDisabled?: boolean; // Disable virtual keyboard
   steppers?: {
@@ -115,6 +116,7 @@ A slider component with customizable track, thumb, and output display.
 interface ThSliderProps extends Omit<SliderProps, "minValue" | "maxValue"> {
   ref?: React.ForwardedRef<HTMLDivElement>;
   label?: string;                // Slider label
+  placeholder?: string;          // Optional placeholder text (shown when value is undefined)
   range: number[];               // [min, max] values
   compounds?: {
     label?: LabelProps;          // Props for the label component

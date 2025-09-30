@@ -48,8 +48,9 @@ export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsI
       ? <StatefulNumberField 
         standalone={ standalone }
         label={ t("reader.settings.paraIndent.title") }
-        defaultValue={ 0 } 
-        value={ paragraphIndent || 0 } 
+        placeholder={ `${ paragraphIndentRangeConfig.range[0]} - ${paragraphIndentRangeConfig.range[1] }` }
+        defaultValue={ undefined } 
+        value={ paragraphIndent ?? undefined } 
         onChange={ async(value) => await updatePreference(value) } 
         range={ paragraphIndentRangeConfig.range }
         step={ paragraphIndentRangeConfig.step }
@@ -69,8 +70,9 @@ export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsI
         standalone={ standalone }
         displayTicks={ paragraphIndentRangeConfig.variant === ThSettingsRangeVariant.incrementedSlider }
         label={ t("reader.settings.paraIndent.title") }
-        defaultValue={ 0 } 
-        value={ paragraphIndent || 0 } 
+        placeholder={ `${ paragraphIndentRangeConfig.range[0]} - ${paragraphIndentRangeConfig.range[1] }` }
+        defaultValue={ undefined } 
+        value={ paragraphIndent ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 
         range={ paragraphIndentRangeConfig.range }
         step={ paragraphIndentRangeConfig.step }
