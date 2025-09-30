@@ -17,11 +17,14 @@ import { useSpacingPresets } from "./hooks/useSpacingPresets";
 import { useAppDispatch } from "@/lib/hooks";
 import { setPublisherStyles } from "@/lib/settingsReducer";
 
+import { getPlaceholder } from "../helpers/getPlaceholder";
+
 export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { preferences } = usePreferences();
   const { t } = useI18n();
   const paragraphIndentRangeConfig = {
       variant: preferences.settings.keys[ThSettingsKeys.paragraphIndent].variant,
+      placeholder: preferences.settings.keys[ThSettingsKeys.paragraphIndent].placeholder,
       range: preferences.settings.keys[ThSettingsKeys.paragraphIndent].range,
       step: preferences.settings.keys[ThSettingsKeys.paragraphIndent].step
     };
@@ -48,7 +51,7 @@ export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsI
       ? <StatefulNumberField 
         standalone={ standalone }
         label={ t("reader.settings.paraIndent.title") }
-        placeholder={ `${ paragraphIndentRangeConfig.range[0]} - ${paragraphIndentRangeConfig.range[1] }` }
+        placeholder={ getPlaceholder(paragraphIndentRangeConfig.placeholder, paragraphIndentRangeConfig.range) }
         defaultValue={ undefined } 
         value={ paragraphIndent ?? undefined } 
         onChange={ async(value) => await updatePreference(value) } 
@@ -70,7 +73,7 @@ export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsI
         standalone={ standalone }
         displayTicks={ paragraphIndentRangeConfig.variant === ThSettingsRangeVariant.incrementedSlider }
         label={ t("reader.settings.paraIndent.title") }
-        placeholder={ `${ paragraphIndentRangeConfig.range[0]} - ${paragraphIndentRangeConfig.range[1] }` }
+        placeholder={ getPlaceholder(paragraphIndentRangeConfig.placeholder, paragraphIndentRangeConfig.range) }
         defaultValue={ undefined } 
         value={ paragraphIndent ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 

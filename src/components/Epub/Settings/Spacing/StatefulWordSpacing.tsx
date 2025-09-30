@@ -17,11 +17,14 @@ import { useSpacingPresets } from "./hooks/useSpacingPresets";
 import { useAppDispatch } from "@/lib/hooks";
 import { setPublisherStyles } from "@/lib/settingsReducer";
 
+import { getPlaceholder } from "../helpers/getPlaceholder";
+
 export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { preferences } = usePreferences();
   const { t } = useI18n();
   const wordSpacingRangeConfig = {
     variant: preferences.settings.keys[ThSettingsKeys.wordSpacing].variant,
+    placeholder: preferences.settings.keys[ThSettingsKeys.wordSpacing].placeholder,
     range: preferences.settings.keys[ThSettingsKeys.wordSpacing].range,
     step: preferences.settings.keys[ThSettingsKeys.wordSpacing].step
   };
@@ -48,7 +51,7 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
       ? <StatefulNumberField 
         standalone={ standalone }
         label={ t("reader.settings.wordSpacing.title") }
-        placeholder={ `${ wordSpacingRangeConfig.range[0] } - ${ wordSpacingRangeConfig.range[1] }` }
+        placeholder={ getPlaceholder(wordSpacingRangeConfig.placeholder, wordSpacingRangeConfig.range) }
         defaultValue={ undefined } 
         value={ wordSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value) } 
@@ -66,7 +69,7 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
         standalone={ standalone }
         displayTicks={ wordSpacingRangeConfig.variant === ThSettingsRangeVariant.incrementedSlider }
         label={ t("reader.settings.wordSpacing.title") }
-        placeholder={ `${ wordSpacingRangeConfig.range[0] } - ${ wordSpacingRangeConfig.range[1] }` }
+        placeholder={ getPlaceholder(wordSpacingRangeConfig.placeholder, wordSpacingRangeConfig.range) }
         defaultValue={ undefined } 
         value={ wordSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 

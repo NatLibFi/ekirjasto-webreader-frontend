@@ -117,6 +117,11 @@ export enum ThSettingsRangeVariant {
   numberField = "numberField"
 }
 
+export enum ThSettingsRangePlaceholder {
+  range = "range",
+  none = "none"
+}
+
 export enum ThSheetTypes {
   popover = "popover",
   fullscreen = "fullscreen",

@@ -20,7 +20,8 @@ import {
   ThRunningHeadFormat,
   ThBreakpoints,
   ThDocumentTitleFormat,
-  ThSpacingPresetKeys
+  ThSpacingPresetKeys,
+  ThSettingsRangePlaceholder
 } from "./models/enums";
 import { ThCollapsibility, ThCollapsibilityVisibility } from "@/core/Components/Actions/hooks/useCollapsibility";
 
@@ -160,6 +161,7 @@ export interface ThSettingsGroupPref<T> {
 
 export interface ThSettingsRangePref {
   variant?: ThSettingsRangeVariant;
+  placeholder?: ThSettingsRangePlaceholder | string;
   range?: [number, number];
   step?: number;
 }

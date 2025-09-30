@@ -19,6 +19,8 @@ import { useI18n } from "@/i18n/useI18n";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setFontSize } from "@/lib/settingsReducer";
 
+import { getPlaceholder } from "./helpers/getPlaceholder";
+
 export const StatefulZoom = () => {
   const { preferences } = usePreferences();
   const { t } = useI18n();
@@ -37,15 +39,12 @@ export const StatefulZoom = () => {
     dispatch(setFontSize(getSetting("fontSize")));
   }, [submitPreferences, getSetting, dispatch]);
 
-  const getEffectiveRange = (preferred: [number, number] | undefined, fallback: [number, number], supportedRange: [number, number] | undefined): [number, number] => {
+  const getEffectiveRange = (preferred: [number, number], supportedRange: [number, number] | undefined): [number, number] => {
     if (!supportedRange) {
-      return preferred || fallback
+      return preferred
     }
     if (preferred && isRangeWithinSupportedRange(preferred, supportedRange)) {
       return preferred;
-    }
-    if (fallback && isRangeWithinSupportedRange(fallback, supportedRange)) {
-      return fallback;
     }
     return supportedRange;
   }
@@ -56,11 +55,12 @@ export const StatefulZoom = () => {
   }
 
   const zoomRangeConfig = {
-    variant: preferences.settings.keys?.[ThSettingsKeys.zoom]?.variant || defaultFontSize.variant,
+    variant: preferences.settings.keys[ThSettingsKeys.zoom].variant,
+    placeholder: preferences.settings.keys[ThSettingsKeys.zoom].placeholder,
     range: preferencesEditor?.fontSize.supportedRange
-      ? getEffectiveRange(preferences.settings.keys?.[ThSettingsKeys.zoom]?.range, defaultFontSize.range, preferencesEditor?.fontSize.supportedRange)
-      : preferences.settings.keys?.[ThSettingsKeys.zoom]?.range || defaultFontSize.range,
-    step: preferences.settings.keys?.[ThSettingsKeys.zoom]?.step || preferencesEditor?.fontSize.step || defaultFontSize.step
+      ? getEffectiveRange(preferences.settings.keys[ThSettingsKeys.zoom].range, preferencesEditor?.fontSize.supportedRange)
+      : preferences.settings.keys[ThSettingsKeys.zoom].range || defaultFontSize.range,
+    step: preferences.settings.keys[ThSettingsKeys.zoom].step || preferencesEditor?.fontSize.step
   }
 
   return (
@@ -72,6 +72,7 @@ export const StatefulZoom = () => {
         value={ fontSize } 
         onChange={ async(value) => await updatePreference(value) } 
         label={ isFXL ? t("reader.settings.zoom.title") : t("reader.settings.fontSize.title") }
+        placeholder={ getPlaceholder(zoomRangeConfig.placeholder, zoomRangeConfig.range) }
         range={ zoomRangeConfig.range }
         step={ zoomRangeConfig.step }
         steppers={{
@@ -91,6 +92,7 @@ export const StatefulZoom = () => {
         value={ fontSize } 
         onChange={ async(value) => await updatePreference(value as number) } 
         label={ isFXL ? t("reader.settings.zoom.title") : t("reader.settings.fontSize.title") }
+        placeholder={ getPlaceholder(zoomRangeConfig.placeholder, zoomRangeConfig.range) }
         range={ zoomRangeConfig.range }
         step={ zoomRangeConfig.step }
         formatOptions={{ style: "percent" }} 

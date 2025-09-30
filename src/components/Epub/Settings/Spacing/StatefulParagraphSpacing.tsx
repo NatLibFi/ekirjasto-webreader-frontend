@@ -17,11 +17,14 @@ import { useSpacingPresets } from "./hooks/useSpacingPresets";
 import { useAppDispatch } from "@/lib/hooks";
 import { setPublisherStyles } from "@/lib/settingsReducer";
 
+import { getPlaceholder } from "../helpers/getPlaceholder";
+
 export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { preferences } = usePreferences();
   const { t } = useI18n();
   const paragraphSpacingRangeConfig = {
     variant: preferences.settings.keys[ThSettingsKeys.paragraphSpacing].variant,
+    placeholder: preferences.settings.keys[ThSettingsKeys.paragraphSpacing].placeholder,
     range: preferences.settings.keys[ThSettingsKeys.paragraphSpacing].range,
     step: preferences.settings.keys[ThSettingsKeys.paragraphSpacing].step
   };
@@ -48,7 +51,7 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
       ? <StatefulNumberField 
         standalone={ standalone }
         label={ t("reader.settings.paraSpacing.title") }
-        placeholder={ `${ paragraphSpacingRangeConfig.range[0]} - ${paragraphSpacingRangeConfig.range[1] }` }
+        placeholder={ getPlaceholder(paragraphSpacingRangeConfig.placeholder, paragraphSpacingRangeConfig.range) }
         defaultValue={ undefined } 
         value={ paragraphSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value) } 
@@ -70,7 +73,7 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
         standalone={ standalone }
         displayTicks={ paragraphSpacingRangeConfig.variant === ThSettingsRangeVariant.incrementedSlider }
         label={ t("reader.settings.paraSpacing.title") }
-        placeholder={ `${ paragraphSpacingRangeConfig.range[0]} - ${paragraphSpacingRangeConfig.range[1] }` }
+        placeholder={ getPlaceholder(paragraphSpacingRangeConfig.placeholder, paragraphSpacingRangeConfig.range) }
         defaultValue={ undefined } 
         value={ paragraphSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 

@@ -17,11 +17,14 @@ import { useSpacingPresets } from "./hooks/useSpacingPresets";
 import { useAppDispatch } from "@/lib/hooks";
 import { setPublisherStyles } from "@/lib/settingsReducer";
 
+import { getPlaceholder } from "../helpers/getPlaceholder";
+
 export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { preferences } = usePreferences();
   const { t } = useI18n();
   const letterSpacingRangeConfig = {
     variant: preferences.settings.keys[ThSettingsKeys.letterSpacing].variant,
+    placeholder: preferences.settings.keys[ThSettingsKeys.letterSpacing].placeholder,
     range: preferences.settings.keys[ThSettingsKeys.letterSpacing].range,
     step: preferences.settings.keys[ThSettingsKeys.letterSpacing].step
   };
@@ -48,7 +51,7 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
       ? <StatefulNumberField 
         standalone={ standalone }
         label={ t("reader.settings.letterSpacing.title") }
-        placeholder={ `${ letterSpacingRangeConfig.range[0]} - ${letterSpacingRangeConfig.range[1] }` }
+        placeholder={ getPlaceholder(letterSpacingRangeConfig.placeholder, letterSpacingRangeConfig.range) }
         defaultValue={ undefined } 
         value={ letterSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value) } 
@@ -66,7 +69,7 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
         standalone={ standalone }
         displayTicks={ letterSpacingRangeConfig.variant === ThSettingsRangeVariant.incrementedSlider }
         label={ t("reader.settings.letterSpacing.title") }
-        placeholder={ `${ letterSpacingRangeConfig.range[0]} - ${letterSpacingRangeConfig.range[1] }` }
+        placeholder={ getPlaceholder(letterSpacingRangeConfig.placeholder, letterSpacingRangeConfig.range) }
         defaultValue={ undefined } 
         value={ letterSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 

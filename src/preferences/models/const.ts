@@ -4,6 +4,7 @@ import fontStacks from "@readium/css/css/vars/fontStacks.json";
 
 import { 
   ThLineHeightOptions, 
+  ThSettingsRangePlaceholder, 
   ThSettingsRangeVariant, 
   ThSpacingPresetKeys, 
   ThSpacingSettingsKeys, 
@@ -60,30 +61,35 @@ export const defaultFontFamilyOptions = {
 
 export const defaultFontSize: Required<ThSettingsRangePref> = {
   variant: ThSettingsRangeVariant.numberField,
+  placeholder: ThSettingsRangePlaceholder.range,
   range: [0.7, 2.5],
   step: 0.05
 }
 
 export const defaultParagraphSpacing: Required<ThSettingsRangePref> = {
   variant: ThSettingsRangeVariant.numberField,
+  placeholder: ThSettingsRangePlaceholder.range,
   range: [0, 3],
   step: 0.5
 }
 
 export const defaultParagraphIndent: Required<ThSettingsRangePref> = {
   variant: ThSettingsRangeVariant.numberField,
+  placeholder: ThSettingsRangePlaceholder.range,
   range: [0, 2],
   step: 0.25
 }
 
 export const defaultWordSpacing: Required<ThSettingsRangePref> = {
   variant: ThSettingsRangeVariant.numberField,
+  placeholder: ThSettingsRangePlaceholder.range,
   range: [0, 1],
   step: 0.1
 }
 
 export const defaultLetterSpacing: Required<ThSettingsRangePref> = {
   variant: ThSettingsRangeVariant.numberField,
+  placeholder: ThSettingsRangePlaceholder.range,
   range: [0, 0.5],
   step: 0.05
 }
@@ -96,6 +102,7 @@ export const defaultLineHeights = {
 
 export const defaultZoom: Required<ThSettingsRangePref> = {
   variant: ThSettingsRangeVariant.numberField,
+  placeholder: ThSettingsRangePlaceholder.range,
   range: [0.7, 4],
   step: 0.05
 }
