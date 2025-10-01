@@ -433,7 +433,10 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
     ],
     keys: {
       [ThSettingsKeys.letterSpacing]: defaultLetterSpacing,
-      [ThSettingsKeys.lineHeight]: defaultLineHeights,
+      [ThSettingsKeys.lineHeight]: {
+        allowUnset: true,
+        keys: defaultLineHeights
+      },
       [ThSettingsKeys.paragraphIndent]: defaultParagraphIndent,
       [ThSettingsKeys.paragraphSpacing]: defaultParagraphSpacing,
       [ThSettingsKeys.wordSpacing]: defaultWordSpacing,

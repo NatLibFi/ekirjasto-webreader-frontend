@@ -168,11 +168,16 @@ export interface ThSettingsRangePref {
   step?: number;
 }
 
+export interface ThSettingsRadioPref<T extends string> {
+  allowUnset?: boolean;
+  keys: {
+    [key in T]: number;
+  };
+}
+
 export type ThSettingsKeyTypes<K extends CustomizableKeys = DefaultKeys> = {
   [ThSettingsKeys.letterSpacing]: ThSettingsRangePref;
-  [ThSettingsKeys.lineHeight]: {
-    [key in Exclude<ThLineHeightOptions, ThLineHeightOptions.publisher>]: number;
-  };
+  [ThSettingsKeys.lineHeight]: ThSettingsRadioPref<Exclude<ThLineHeightOptions, ThLineHeightOptions.publisher>>;
   [ThSettingsKeys.paragraphIndent]: ThSettingsRangePref;
   [ThSettingsKeys.paragraphSpacing]: ThSettingsRangePref;
   [ThSettingsKeys.wordSpacing]: ThSettingsRangePref;

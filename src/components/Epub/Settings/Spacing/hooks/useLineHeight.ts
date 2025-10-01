@@ -11,8 +11,8 @@ export const useLineHeight = () => {
 
   return useMemo(() => ({
     [ThLineHeightOptions.publisher]: null,
-    [ThLineHeightOptions.small]: preferences.settings.keys[ThSettingsKeys.lineHeight][ThLineHeightOptions.small],
-    [ThLineHeightOptions.medium]: preferences.settings.keys[ThSettingsKeys.lineHeight][ThLineHeightOptions.medium],
-    [ThLineHeightOptions.large]: preferences.settings.keys[ThSettingsKeys.lineHeight][ThLineHeightOptions.large],
+    [ThLineHeightOptions.small]: preferences.settings.keys[ThSettingsKeys.lineHeight].keys[ThLineHeightOptions.small],
+    [ThLineHeightOptions.medium]: preferences.settings.keys[ThSettingsKeys.lineHeight].keys[ThLineHeightOptions.medium],
+    [ThLineHeightOptions.large]: preferences.settings.keys[ThSettingsKeys.lineHeight].keys[ThLineHeightOptions.large],
   }), [preferences.settings.keys]);
 };

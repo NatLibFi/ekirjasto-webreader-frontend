@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
-import { ThLineHeightOptions, ThSpacingSettingsKeys } from "@/preferences";
+import { ThLineHeightOptions, ThSpacingSettingsKeys, ThSettingsKeys } from "@/preferences";
 
 import { StatefulSettingsItemProps } from "../../../Settings/models/settings";
 
@@ -15,6 +15,7 @@ import { StatefulRadioGroup } from "../../../Settings/StatefulRadioGroup";
 
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
+import { usePreferences } from "@/preferences/hooks/usePreferences";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setPublisherStyles } from "@/lib/settingsReducer";
@@ -23,7 +24,10 @@ import { useSpacingPresets } from "./hooks/useSpacingPresets";
 
 export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { t } = useI18n();
+  const { preferences } = usePreferences();
+
   const publisherStyles = useAppSelector(state => state.settings.publisherStyles);
+
   const dispatch = useAppDispatch();
 
   const { getSetting, submitPreferences } = useEpubNavigator();
@@ -34,11 +38,43 @@ export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemPr
 
   const lineHeightOptions = useLineHeight();
 
+  // Dynamically build items array based on allowUnset preference
+  const items = useMemo(() => {
+    const baseItems = [
+      {
+        icon: SmallIcon,
+        label: t("reader.settings.lineHeight.small"),
+        value: ThLineHeightOptions.small
+      },
+      {
+        icon: MediumIcon,
+        label: t("reader.settings.lineHeight.medium"),
+        value: ThLineHeightOptions.medium
+      },
+      {
+        icon: LargeIcon,
+        label: t("reader.settings.lineHeight.large"),
+        value: ThLineHeightOptions.large
+      },
+    ];
+
+    // Only add publisher option if allowUnset is true
+    if (preferences.settings.keys[ThSettingsKeys.lineHeight].allowUnset !== false) {
+      baseItems.unshift({
+        icon: BookIcon,
+        label: t("reader.settings.lineHeight.publisher"),
+        value: ThLineHeightOptions.publisher
+      });
+    }
+
+    return baseItems;
+  }, [preferences.settings.keys, t]);
+
   const updatePreference = useCallback(async (value: string) => {
     const computedValue = value === ThLineHeightOptions.publisher
-      ? null 
+      ? null
       : lineHeightOptions[value as keyof typeof ThLineHeightOptions];
-    
+
     await submitPreferences({
       lineHeight: computedValue
     });
@@ -52,34 +88,13 @@ export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemPr
 
   return (
     <>
-    <StatefulRadioGroup 
+    <StatefulRadioGroup
       standalone={ standalone }
       label={ t("reader.settings.lineHeight.title") }
       orientation="horizontal"
-      value={ publisherStyles ? ThLineHeightOptions.publisher : lineHeight } 
+      value={ publisherStyles ? ThLineHeightOptions.publisher : lineHeight }
       onChange={ async (val: string) => await updatePreference(val) }
-      items={[
-        {
-          icon: BookIcon,
-          label: t("reader.settings.lineHeight.publisher"), 
-          value: ThLineHeightOptions.publisher 
-        },
-        {
-          icon: SmallIcon,
-          label: t("reader.settings.lineHeight.small"), 
-          value: ThLineHeightOptions.small 
-        },
-        {
-          icon: MediumIcon,
-          label: t("reader.settings.lineHeight.medium"), 
-          value: ThLineHeightOptions.medium 
-        },
-        {
-          icon: LargeIcon,
-          label: t("reader.settings.lineHeight.large"), 
-          value: ThLineHeightOptions.large 
-        },
-      ]}
+      items={ items }
     />
     </>
   );
