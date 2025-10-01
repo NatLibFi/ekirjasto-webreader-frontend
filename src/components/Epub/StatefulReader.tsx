@@ -298,8 +298,8 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
   let documentTitle: string | undefined;
   
   if (documentTitleFormat) {
-    if (typeof documentTitleFormat === "object") {
-      documentTitle = documentTitleFormat.custom;
+    if (typeof documentTitleFormat === "object" && "key" in documentTitleFormat) {
+      documentTitle = t(documentTitleFormat.key) || documentTitleFormat.fallback;
     } else {
       switch (documentTitleFormat) {
         case ThDocumentTitleFormat.title:

@@ -57,6 +57,7 @@ The `keys` object is used to configure range settings:
 These ranges expect:
 
 - `variant` (optional): from enum `ThSettingsRangeVariant` (`slider`, `incrementedSlider` or `numberfield`)
+- `placeholder` (optional): the placeholder text, as enum `ThSettingsRangePlaceholder`, `string`, or an object with `key` and `fallback` properties – the `key` should be a key from your translation files, and the `fallback` is the default value if the translation key is not found
 - `range` (optional): the min and max values, as `[number, number]`
 - `step` (optional): the step value, as `number`
 

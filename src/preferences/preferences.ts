@@ -25,6 +25,8 @@ import {
 } from "./models/enums";
 import { ThCollapsibility, ThCollapsibilityVisibility } from "@/core/Components/Actions/hooks/useCollapsibility";
 
+export type I18nValue<T> = T | string | { key: string; fallback?: string };
+
 export type ThBackLinkContent = 
   | { 
       type: "img";
@@ -161,7 +163,7 @@ export interface ThSettingsGroupPref<T> {
 
 export interface ThSettingsRangePref {
   variant?: ThSettingsRangeVariant;
-  placeholder?: ThSettingsRangePlaceholder | { key: string; fallback?: string };
+  placeholder?: I18nValue<ThSettingsRangePlaceholder>;
   range?: [number, number];
   step?: number;
 }
@@ -205,7 +207,7 @@ export interface ThPreferences<K extends CustomizableKeys = {}> {
   metadata?: {
     documentTitle?: {
       // TODO – Templating of custom
-      format: ThDocumentTitleFormat | { custom: string };
+      format: I18nValue<ThDocumentTitleFormat>;
     };
   };
   typography: {

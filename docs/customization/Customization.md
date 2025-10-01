@@ -28,7 +28,16 @@ The `documentTitle` preference allows you to configure the document title of the
   - `titleAndChapter`: The publication title and the current chapter/section title
   - `none`: Use the default document title from markup
 
-It can also be an object with property `custom` to provide an arbitrary document title.
+It can also be an object with property `key` and `fallback` to provide an arbitrary document title. The `key` should be a key from your translation files, and the `fallback` is the default value if the translation key is not found.
+
+For instance:
+
+```
+documentTitle: {
+  key: "documentTitle",
+  fallback: "Default Document Title"
+}
+```
 
 ## Typography
 
