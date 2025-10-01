@@ -299,7 +299,10 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
   
   if (documentTitleFormat) {
     if (typeof documentTitleFormat === "object" && "key" in documentTitleFormat) {
-      documentTitle = t(documentTitleFormat.key) || documentTitleFormat.fallback;
+      const translatedTitle = t(documentTitleFormat.key);
+      documentTitle = translatedTitle !== documentTitleFormat.key 
+        ? translatedTitle 
+        : documentTitleFormat.fallback;
     } else {
       switch (documentTitleFormat) {
         case ThDocumentTitleFormat.title:
@@ -315,6 +318,9 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
           break;
         case ThDocumentTitleFormat.none:
           documentTitle = undefined;
+          break;
+        default: 
+          documentTitle = documentTitleFormat;
           break;
       }
     }

@@ -22,7 +22,8 @@ export const usePlaceholder = (
 
   // Handle i18n object
   if (typeof placeholder === "object" && "key" in placeholder) {
-    return t(placeholder.key) || placeholder.fallback;
+    const translatedPlaceholder = t(placeholder.key);
+    return translatedPlaceholder !== placeholder.key ? translatedPlaceholder : placeholder.fallback;
   }
 
   // Handle string values (literal text, not translated)
