@@ -38,7 +38,7 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
 
   const paragraphSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.paragraphSpacing);
 
-  const updatePreference = useCallback(async (value: number) => {
+  const updatePreference = useCallback(async (value: number | null) => {
     await submitPreferences({
       paragraphSpacing: value
     });
@@ -57,6 +57,7 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
         defaultValue={ undefined } 
         value={ paragraphSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value) } 
+        onReset={ async() => await updatePreference(null) }
         range={ paragraphSpacingRangeConfig.range }
         step={ paragraphSpacingRangeConfig.step }
         steppers={{
@@ -79,6 +80,7 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
         defaultValue={ undefined } 
         value={ paragraphSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 
+        onReset={ async() => await updatePreference(null) }
         range={ paragraphSpacingRangeConfig.range }
         step={ paragraphSpacingRangeConfig.step }
         formatOptions={{

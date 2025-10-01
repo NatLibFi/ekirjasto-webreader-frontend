@@ -1,14 +1,19 @@
 "use client";
 
+import readerSharedUI from "../assets/styles/readerSharedUI.module.css";
 import settingsStyles from "./assets/styles/settings.module.css";
 
 import { ThSlider, ThSliderProps } from "@/core/Components/Settings/ThSlider";
+
+import { usePreferences } from "@/preferences/hooks/usePreferences";
+import { useI18n } from "@/i18n/useI18n";
 
 import classNames from "classnames";
 
 export interface StatefulSliderProps extends Omit<ThSliderProps, "classNames"> {
   standalone?: boolean;
   placeholder?: string;
+  resetLabel?: string;
   displayTicks?: boolean;
 }
 
@@ -17,8 +22,13 @@ export const StatefulSlider = ({
   label,
   placeholder,
   displayTicks = false,
+  value,
+  resetLabel,
   ...props
 }: StatefulSliderProps) => {
+  const { t } = useI18n();
+  const { preferences } = usePreferences();
+  
   const style = {
     ...(displayTicks && props.range && props.step ? {
       "--slider-ticks": (() => {
@@ -35,16 +45,20 @@ export const StatefulSlider = ({
   return (
     <>
     <ThSlider
+      value={ value }
       { ...props }
       { ...(standalone ? { label: label } : {"aria-label": label}) }
       placeholder={ placeholder }
-      className={classNames(
+      className={ classNames(
         settingsStyles.readerSettingsSlider,
         standalone && settingsStyles.readerSettingsGroup,
         displayTicks && settingsStyles.readerSettingsSliderWithTicks
-      )}
+      ) }
       style={ style }
       compounds={{
+        wrapper: {
+          className: settingsStyles.readerSettingsSliderWrapper
+        },
         label: {
           className: classNames(settingsStyles.readerSettingsLabel, settingsStyles.readerSettingsSliderLabel)
         },
@@ -59,6 +73,20 @@ export const StatefulSlider = ({
         },
         thumb: {
           className: settingsStyles.readerSettingsSliderThumb
+        },
+        reset: {
+          className: classNames(readerSharedUI.icon, settingsStyles.readerSettingsResetButton),
+          isDisabled: value === undefined,
+          compounds: {
+            tooltipTrigger: {
+              delay: preferences.theming.arrow.tooltipDelay,
+              closeDelay: preferences.theming.arrow.tooltipDelay
+            },
+            tooltip: {
+              className: readerSharedUI.tooltip
+            },
+            label: resetLabel ?? t("reader.settings.reset")
+          }
         }
       }}
     />

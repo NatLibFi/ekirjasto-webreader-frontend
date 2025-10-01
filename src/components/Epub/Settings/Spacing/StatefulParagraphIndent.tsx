@@ -38,7 +38,7 @@ export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsI
 
   const paragraphIndent = getEffectiveSpacingValue(ThSpacingSettingsKeys.paragraphIndent);
 
-  const updatePreference = useCallback(async (value: number) => {
+  const updatePreference = useCallback(async (value: number | null) => {
     await submitPreferences({
       paragraphIndent: value
     });
@@ -57,6 +57,7 @@ export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsI
         defaultValue={ undefined } 
         value={ paragraphIndent ?? undefined } 
         onChange={ async(value) => await updatePreference(value) } 
+        onReset={ async () => await updatePreference(null) }
         range={ paragraphIndentRangeConfig.range }
         step={ paragraphIndentRangeConfig.step }
         steppers={{
@@ -79,6 +80,7 @@ export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsI
         defaultValue={ undefined } 
         value={ paragraphIndent ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 
+        onReset={ async () => await updatePreference(null) }
         range={ paragraphIndentRangeConfig.range }
         step={ paragraphIndentRangeConfig.step }
         formatOptions={{

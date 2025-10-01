@@ -1,11 +1,14 @@
 "use client";
 
-import { ComponentType, SVGProps } from "react";
+import { ComponentType, SVGProps, useCallback, useState } from "react";
 
-import { WithRef } from "../customTypes";
+import { HTMLAttributesWithRef, WithRef } from "../customTypes";
 
 import AddIcon from "./assets/icons/add.svg";
 import RemoveIcon from "./assets/icons/remove.svg";
+
+import { ThActionButtonProps } from "../Buttons";
+import { ThSettingsResetButton } from "./ThSettingsResetButton";
 
 import { 
   Button, 
@@ -22,6 +25,7 @@ import {
 
 export interface ThNumberFieldProps extends Omit<NumberFieldProps, "minValue" | "maxValue" | "decrementAriaLabel" | "incrementAriaLabel"> {
   ref?: React.ForwardedRef<HTMLInputElement>;
+  onReset?: () => void;
   label?: string;
   placeholder?: string;
   range: number[];
@@ -33,6 +37,10 @@ export interface ThNumberFieldProps extends Omit<NumberFieldProps, "minValue" | 
     incrementLabel: string;
   };
   compounds?: {
+    /**
+     * Props for the wrapper component.
+     */
+    wrapper?: HTMLAttributesWithRef<HTMLDivElement>;
     /**
      * Props for the Group component. See `GroupProps` for more information.
      */
@@ -49,63 +57,86 @@ export interface ThNumberFieldProps extends Omit<NumberFieldProps, "minValue" | 
      * Props for the Button component used for decrement/increment. See `ButtonProps` for more information.
      */
     stepper?: ButtonProps;
+    /**
+     * Props for the Button component used for resetting the value. See `ThActionButtonProps` for more information.
+     */
+    reset?: ThActionButtonProps;
   };
 }
 
 export const ThNumberField = ({
   ref,
+  onReset,
   label,
   placeholder,
   range,
   isVirtualKeyboardDisabled,
   steppers,
   compounds,
+  value,
   ...props
 }: ThNumberFieldProps) => {
+  // Force re-render when onReset is called, 
+  // otherwise the value will not be updated
+  // because React Aria Components do not like
+  // when going from uncontrolled to controlled
+  // and vice-versa.
+  const [renderTrigger, setRenderTrigger] = useState(0);
+
+  const handleReset = useCallback(() => {
+    setRenderTrigger(prev => prev + 1);
+    onReset?.();
+  }, [onReset]);
 
   return (
-    <NumberField 
-      ref={ ref }
-      minValue={ Math.min(...range) }
-      maxValue={ Math.max(...range) }
-      decrementAriaLabel={ steppers?.decrementLabel }
-      incrementAriaLabel={ steppers?.incrementLabel }
-      { ...props }
-    >
-      { label && <Label { ...compounds?.label }>
-          { label }
-        </Label>
-      }
-
-      <Group { ...compounds?.group }>
-        { steppers && 
-          <Button 
-          { ...compounds?.stepper }
-          slot="decrement" 
+    <>
+      <div { ...compounds?.wrapper }>
+        <NumberField
+          key={ renderTrigger }
+          ref={ ref }
+          minValue={ Math.min(...range) }
+          maxValue={ Math.max(...range) }
+          decrementAriaLabel={ steppers?.decrementLabel }
+          incrementAriaLabel={ steppers?.incrementLabel }
+          { ...props }
         >
-          { steppers.decrementIcon 
-            ? <steppers.decrementIcon aria-hidden="true" focusable="false" /> 
-            : <RemoveIcon aria-hidden="true" focusable="false" /> }
-          </Button> 
-        }
+          { label && <Label { ...compounds?.label }>
+            { label }
+          </Label>
+          }
 
-        <Input 
-          { ...compounds?.input } 
-          { ...(isVirtualKeyboardDisabled ? { inputMode: "none" } : {}) }
-          placeholder={ placeholder } 
-        />
+          <Group { ...compounds?.group }>
+            {steppers &&
+              <Button
+                { ...compounds?.stepper }
+                slot="decrement"
+              >
+                { steppers.decrementIcon
+                  ? <steppers.decrementIcon aria-hidden="true" focusable="false" />
+                  : <RemoveIcon aria-hidden="true" focusable="false" /> }
+              </Button>
+            }
 
-        { steppers && 
-          <Button 
-            { ...compounds?.stepper }
-            slot="increment" 
-          >
-            { steppers.incrementIcon 
-              ? <steppers.incrementIcon aria-hidden="true" focusable="false" /> 
-              : <AddIcon aria-hidden="true" focusable="false" /> }
-          </Button>
-        }
-      </Group>
-    </NumberField>
+            <Input
+              { ...compounds?.input }
+              { ...(isVirtualKeyboardDisabled ? { inputMode: "none" } : {}) }
+              placeholder={ placeholder }
+            />
+
+            { steppers &&
+              <Button
+                { ...compounds?.stepper }
+                slot="increment"
+              >
+                { steppers.incrementIcon
+                  ? <steppers.incrementIcon aria-hidden="true" focusable="false" />
+                  : <AddIcon aria-hidden="true" focusable="false" /> }
+              </Button>
+            }
+          </Group>
+        </NumberField>
+        { onReset && <ThSettingsResetButton { ...compounds?.reset } onClick={ handleReset } /> }
+      </div>
+    </>
   );
 };

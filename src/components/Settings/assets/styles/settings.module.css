@@ -59,6 +59,28 @@
   outline: 2px solid var(--theme-focus);
 }
 
+.readerSettingsNumberFieldWrapper,
+.readerSettingsSliderWrapper {
+  display: flex;
+  align-items: flex-start;
+  max-width: 100%;
+  overflow: hidden;
+  flex: 1 0 auto;
+}
+
+.readerSettingsNumberFieldWrapper .readerSettingsNumberField,
+.readerSettingsSliderWrapper .readerSettingsSlider {
+  flex: 1 0 auto;
+}
+
+/* Reset button */
+
+.readerSettingsResetButton {
+  margin-inline-start: auto;
+}
+
+/* Number field */
+
 .readerSettingsNumberField .readerSettingsInput {
   background-color: var(--theme-background);
   color: var(--theme-text);
@@ -405,28 +427,4 @@
 
 .readerSettingsSwitch[data-disabled] .readerSettingsSwitchIndicator::before {
   background: var(--theme-disable) !important;
-}
-
-/* Reset button */
-
-.readerSettingsResetButton {
-  display: block;
-  box-sizing: content-box;
-  border: 2px solid var(--theme-subdue);
-  padding: calc(var(--icon-size, 24px) * (1/4)) calc(var(--icon-size, 24px) * (1/2));
-  text-align: center;
-  border-radius: var(--layout-radius);
-  margin-inline-start: auto;
-}
-
-.readerSettingsResetButton[data-hovered] {
-  background-color: var(--theme-hover);
-}
-
-.readerSettingsResetButton[data-focus-visible] {
-  outline: 2px solid var(--theme-focus);
-}
-
-.readerSettingsResetButton[data-disabled] {
-  color: var(--theme-disable);
 }

@@ -38,7 +38,7 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
 
   const letterSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.letterSpacing);
 
-  const updatePreference = useCallback(async (value: number) => {
+  const updatePreference = useCallback(async (value: number | null) => {
     await submitPreferences({
       letterSpacing: value
     });
@@ -56,7 +56,8 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
         placeholder={ placeholderText }
         defaultValue={ undefined } 
         value={ letterSpacing ?? undefined } 
-        onChange={ async(value) => await updatePreference(value) } 
+        onChange={ async(value) => await updatePreference(value as number) } 
+        onReset={ async() => await updatePreference(null) }
         range={ letterSpacingRangeConfig.range }
         step={ letterSpacingRangeConfig.step }
         steppers={{
@@ -75,6 +76,7 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
         defaultValue={ undefined } 
         value={ letterSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 
+        onReset={ async() => await updatePreference(null) }
         range={ letterSpacingRangeConfig.range }
         step={ letterSpacingRangeConfig.step }
         formatOptions={ { style: "percent" } }

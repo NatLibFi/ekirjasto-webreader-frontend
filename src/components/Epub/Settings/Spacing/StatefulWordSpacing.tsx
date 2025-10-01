@@ -38,7 +38,7 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
 
   const wordSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.wordSpacing);
 
-  const updatePreference = useCallback(async (value: number) => {
+  const updatePreference = useCallback(async (value: number | null) => {
     await submitPreferences({
       wordSpacing: value
     });
@@ -57,6 +57,7 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
         defaultValue={ undefined } 
         value={ wordSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value) } 
+        onReset={ async() => await updatePreference(null) }
         range={ wordSpacingRangeConfig.range }
         step={ wordSpacingRangeConfig.step }
         steppers={{
@@ -75,6 +76,7 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
         defaultValue={ undefined } 
         value={ wordSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 
+        onReset={ async() => await updatePreference(null) }
         range={ wordSpacingRangeConfig.range }
         step={ wordSpacingRangeConfig.step }
         formatOptions={{ style: "percent" }}

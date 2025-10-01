@@ -1,5 +1,7 @@
 "use client";
 
+import { useCallback, useState } from "react";
+
 import { HTMLAttributesWithRef, WithRef } from "../customTypes";
 
 import { 
@@ -14,13 +16,21 @@ import {
   SliderTrack, 
   SliderTrackProps 
 } from "react-aria-components";
+import { ThActionButtonProps } from "../Buttons";
+
+import { ThSettingsResetButton } from "./ThSettingsResetButton";
 
 export interface ThSliderProps extends Omit<SliderProps, "minValue" | "maxValue"> {
   ref?: React.ForwardedRef<HTMLDivElement>;
+  onReset?: () => void;
   label?: string;
   placeholder?: string;
   range: number[];
   compounds?: {
+    /**
+     * Props for the wrapper component.
+     */
+    wrapper?: HTMLAttributesWithRef<HTMLDivElement>;
     /**
      * Props for the label component. See `LabelProps` for more information.
      */
@@ -41,11 +51,16 @@ export interface ThSliderProps extends Omit<SliderProps, "minValue" | "maxValue"
      * Props for the slider thumb component. See `SliderThumbProps` for more information.
      */
     thumb?: WithRef<SliderThumbProps, HTMLDivElement>;
+    /**
+     * Props for the reset button component. See `ThActionButtonProps` for more information.
+     */
+    reset?: ThActionButtonProps;
   };
 }
 
 export const ThSlider = ({
   ref,
+  onReset,
   label,
   placeholder,
   range,
@@ -53,30 +68,46 @@ export const ThSlider = ({
   value,
   ...props
 }: ThSliderProps) => {
+  // Force re-render when onReset is called, 
+  // otherwise the value will not be updated
+  // because React Aria Components do not like
+  // when going from uncontrolled to controlled
+  // and vice-versa.
+  const [renderTrigger, setRenderTrigger] = useState(0);
+
+  const handleReset = useCallback(() => {
+    setRenderTrigger(prev => prev + 1);
+    onReset?.();
+  }, [onReset]);
+  
   return(
     <>
-    <Slider 
-      ref={ ref }
-      minValue={ Math.min(...range) }
-      maxValue={ Math.max(...range) }
-      { ...props }
-    >
-      { label && <Label { ...compounds?.label }>
-          { label }
-        </Label> 
-      }
-      <SliderOutput { ...compounds?.output }>
-        { value !== undefined 
-          ? value 
-          : placeholder 
-            ? <span { ...compounds?.placeholder }>{ placeholder }</span>
-            : null
+    <div { ...compounds?.wrapper }>
+      <Slider 
+        key={ renderTrigger }
+        ref={ ref }
+        minValue={ Math.min(...range) }
+        maxValue={ Math.max(...range) }
+        { ...props }
+      >
+        { label && <Label { ...compounds?.label }>
+            { label }
+          </Label> 
         }
-      </SliderOutput>
-      <SliderTrack { ...compounds?.track }>
-        <SliderThumb { ...compounds?.thumb } />
-      </SliderTrack>
-    </Slider>
+        <SliderOutput { ...compounds?.output }>
+          { value !== undefined 
+            ? value 
+            : placeholder 
+              ? <span { ...compounds?.placeholder }>{ placeholder }</span>
+              : null
+          }
+        </SliderOutput>
+        <SliderTrack { ...compounds?.track }>
+          <SliderThumb { ...compounds?.thumb } />
+        </SliderTrack>
+      </Slider>
+      { onReset && <ThSettingsResetButton { ...compounds?.reset } onClick={ handleReset } /> }
+    </div>
     </>
   )
 }

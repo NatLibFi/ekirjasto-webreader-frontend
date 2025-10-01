@@ -41,6 +41,7 @@ A numeric input component with optional steppers and range validation.
 ```typescript
 interface ThNumberFieldProps extends Omit<NumberFieldProps, "minValue" | "maxValue" | "decrementAriaLabel" | "incrementAriaLabel"> {
   ref?: React.ForwardedRef<HTMLInputElement>;
+  onReset?: () => void;
   label?: string;                // Optional label text
   placeholder?: string;          // Optional placeholder text (shown when value is undefined)
   range: number[];               // [min, max] values
@@ -52,10 +53,12 @@ interface ThNumberFieldProps extends Omit<NumberFieldProps, "minValue" | "maxVal
     incrementLabel: string;
   };
   compounds?: {
+    wrapper?: HTMLAttributesWithRef<HTMLDivElement>; // Props for the wrapper div
     group?: GroupProps;          // Props for the Group component
     input?: InputProps;          // Props for the Input component
     label?: LabelProps;          // Props for the Label component
     stepper?: ButtonProps;       // Props for stepper buttons
+    reset?: ThActionButtonProps; // Props for reset button
   };
 }
 ```
@@ -67,6 +70,7 @@ interface ThNumberFieldProps extends Omit<NumberFieldProps, "minValue" | "maxVal
 - Virtual keyboard control
 - Compound components pattern
 - Accessibility labels for steppers
+- Reset functionality
 
 ## ThRadioGroup
 
@@ -115,14 +119,17 @@ A slider component with customizable track, thumb, and output display.
 ```typescript
 interface ThSliderProps extends Omit<SliderProps, "minValue" | "maxValue"> {
   ref?: React.ForwardedRef<HTMLDivElement>;
+  onReset?: () => void;
   label?: string;                // Slider label
   placeholder?: string;          // Optional placeholder text (shown when value is undefined)
   range: number[];               // [min, max] values
   compounds?: {
+    wrapper?: HTMLAttributesWithRef<HTMLDivElement>; // Props for the wrapper div
     label?: LabelProps;          // Props for the label component
     output?: SliderOutputProps;  // Props for the output display
     track?: SliderTrackProps;    // Props for the track component
     thumb?: SliderThumbProps;    // Props for the thumb component
+    reset?: ThActionButtonProps; // Props for the reset button
   };
 }
 ```
@@ -134,6 +141,7 @@ interface ThSliderProps extends Omit<SliderProps, "minValue" | "maxValue"> {
 - Customizable track and thumb
 - Compound components pattern
 - Accessibility support
+- Reset functionality
 
 ## ThSwitch
 
@@ -178,7 +186,7 @@ interface ThSettingsWrapperProps extends HTMLAttributesWithRef<HTMLDivElement> {
   items?: Record<string, ThSettingsEntry> | null;  // Map of setting components
   prefs: ThSettingsPrefs;                         // Display preferences
   compounds?: {
-    label?: string;                              // Advanced settings label
+    label?: string;                               // Advanced settings label
     heading?: HeadingProps;                       // Props for heading
     button?: ThActionButtonProps;                 // Props for advanced settings button
   }
@@ -193,3 +201,20 @@ All settings components implement ARIA best practices:
 - Keyboard navigation
 - Focus management
 - Screen reader support
+
+## ThSettingsResetButton
+
+A button component for resetting settings to their default values.
+
+### Props
+
+```typescript
+interface ThSettingsResetButtonProps extends ThActionButtonProps {}
+```
+
+### Features
+
+- Built-in reset icon
+- Optional label text
+- Customizable through compounds props
+- Tooltip support inherited from ThActionButton
