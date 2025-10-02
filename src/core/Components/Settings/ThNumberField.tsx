@@ -1,27 +1,28 @@
 "use client";
 
-import { ComponentType, SVGProps, useCallback, useState } from "react";
+import { ComponentType, SVGProps, useCallback, useEffect, useState } from "react";
 
 import { HTMLAttributesWithRef, WithRef } from "../customTypes";
+
+import { ThSettingsResetButton } from "./ThSettingsResetButton";
 
 import AddIcon from "./assets/icons/add.svg";
 import RemoveIcon from "./assets/icons/remove.svg";
 
-import { ThActionButtonProps } from "../Buttons";
-import { ThSettingsResetButton } from "./ThSettingsResetButton";
-
-import { 
-  Button, 
-  ButtonProps, 
-  Group, 
-  GroupProps, 
-  Input, 
-  InputProps, 
-  Label, 
-  LabelProps, 
-  NumberField, 
-  NumberFieldProps 
+import {
+  Button,
+  ButtonProps,
+  Group,
+  GroupProps,
+  Input,
+  InputProps,
+  Label,
+  LabelProps,
+  NumberField,
+  NumberFieldProps
 } from "react-aria-components";
+
+import { usePrevious } from "@/core/Hooks";
 
 export interface ThNumberFieldProps extends Omit<NumberFieldProps, "minValue" | "maxValue" | "decrementAriaLabel" | "incrementAriaLabel"> {
   ref?: React.ForwardedRef<HTMLInputElement>;
@@ -60,7 +61,7 @@ export interface ThNumberFieldProps extends Omit<NumberFieldProps, "minValue" | 
     /**
      * Props for the Button component used for resetting the value. See `ThActionButtonProps` for more information.
      */
-    reset?: ThActionButtonProps;
+    reset?: any;
   };
 }
 
@@ -76,24 +77,30 @@ export const ThNumberField = ({
   value,
   ...props
 }: ThNumberFieldProps) => {
-  // Force re-render when onReset is called, 
-  // otherwise the value will not be updated
-  // because React Aria Components do not like
-  // when going from uncontrolled to controlled
-  // and vice-versa.
-  const [renderTrigger, setRenderTrigger] = useState(0);
+  // Track value changes to detect uncontrolled/controlled transitions
+  const [valueTransitionKey, setValueTransitionKey] = useState(0);
+  const previousValue = usePrevious(value);
 
-  const handleReset = useCallback(() => {
-    setRenderTrigger(prev => prev + 1);
-    onReset?.();
-  }, [onReset]);
+  useEffect(() => {
+    const isControlled = value !== undefined;
+    const wasControlled = previousValue !== undefined;
+
+    // Force key change on any controlled/uncontrolled transition
+    if (isControlled !== wasControlled) {
+      setValueTransitionKey(prev => prev + 1);
+    }
+  }, [previousValue, value]);
+
+  // Create key that includes the transition state
+  const componentKey = `${ value !== undefined ? "controlled" : "uncontrolled" }-${ String(value) }-${ valueTransitionKey }`;
 
   return (
     <>
       <div { ...compounds?.wrapper }>
         <NumberField
-          key={ renderTrigger }
+          key={ componentKey }
           ref={ ref }
+          value={ value }
           minValue={ Math.min(...range) }
           maxValue={ Math.max(...range) }
           decrementAriaLabel={ steppers?.decrementLabel }
@@ -135,7 +142,7 @@ export const ThNumberField = ({
             }
           </Group>
         </NumberField>
-        { onReset && <ThSettingsResetButton { ...compounds?.reset } onClick={ handleReset } /> }
+        { onReset && <ThSettingsResetButton { ...compounds?.reset } onClick={ onReset } /> }
       </div>
     </>
   );

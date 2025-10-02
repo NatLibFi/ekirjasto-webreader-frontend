@@ -1,24 +1,25 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { HTMLAttributesWithRef, WithRef } from "../customTypes";
 
+import { ThSettingsResetButton } from "./ThSettingsResetButton";
+
 import { 
-  Label, 
-  LabelProps, 
-  Slider, 
-  SliderOutput, 
-  SliderOutputProps, 
-  SliderProps, 
-  SliderThumb, 
-  SliderThumbProps, 
-  SliderTrack, 
+  Label,
+  LabelProps,
+  Slider,
+  SliderOutput,
+  SliderOutputProps,
+  SliderProps,
+  SliderThumb,
+  SliderThumbProps,
+  SliderTrack,
   SliderTrackProps 
 } from "react-aria-components";
-import { ThActionButtonProps } from "../Buttons";
 
-import { ThSettingsResetButton } from "./ThSettingsResetButton";
+import { usePrevious } from "@/core/Hooks";
 
 export interface ThSliderProps extends Omit<SliderProps, "minValue" | "maxValue"> {
   ref?: React.ForwardedRef<HTMLDivElement>;
@@ -54,7 +55,7 @@ export interface ThSliderProps extends Omit<SliderProps, "minValue" | "maxValue"
     /**
      * Props for the reset button component. See `ThActionButtonProps` for more information.
      */
-    reset?: ThActionButtonProps;
+    reset?: any;
   };
 }
 
@@ -68,36 +69,42 @@ export const ThSlider = ({
   value,
   ...props
 }: ThSliderProps) => {
-  // Force re-render when onReset is called, 
-  // otherwise the value will not be updated
-  // because React Aria Components do not like
-  // when going from uncontrolled to controlled
-  // and vice-versa.
-  const [renderTrigger, setRenderTrigger] = useState(0);
+  // Track value changes to detect uncontrolled/controlled transitions
+  const [valueTransitionKey, setValueTransitionKey] = useState(0);
+  const previousValue = usePrevious(value);
 
-  const handleReset = useCallback(() => {
-    setRenderTrigger(prev => prev + 1);
-    onReset?.();
-  }, [onReset]);
-  
+  useEffect(() => {
+    const isControlled = value !== undefined;
+    const wasControlled = previousValue !== undefined;
+
+    // Force key change on any controlled/uncontrolled transition
+    if (isControlled !== wasControlled) {
+      setValueTransitionKey(prev => prev + 1);
+    }
+  }, [previousValue, value]);
+
+  // Create key that includes the transition state
+  const componentKey = `${ value !== undefined ? "controlled" : "uncontrolled" }-${ String(value) }-${ valueTransitionKey }`;
+
   return(
     <>
     <div { ...compounds?.wrapper }>
-      <Slider 
-        key={ renderTrigger }
+      <Slider
+        key={ componentKey }
         ref={ ref }
+        value={ value }
         minValue={ Math.min(...range) }
         maxValue={ Math.max(...range) }
         { ...props }
       >
         { label && <Label { ...compounds?.label }>
             { label }
-          </Label> 
+          </Label>
         }
         <SliderOutput { ...compounds?.output }>
-          { value !== undefined 
-            ? value 
-            : placeholder 
+          { value !== undefined
+            ? value
+            : placeholder
               ? <span { ...compounds?.placeholder }>{ placeholder }</span>
               : null
           }
@@ -106,7 +113,7 @@ export const ThSlider = ({
           <SliderThumb { ...compounds?.thumb } />
         </SliderTrack>
       </Slider>
-      { onReset && <ThSettingsResetButton { ...compounds?.reset } onClick={ handleReset } /> }
+      { onReset && <ThSettingsResetButton { ...compounds?.reset } onClick={ onReset } /> }
     </div>
     </>
   )

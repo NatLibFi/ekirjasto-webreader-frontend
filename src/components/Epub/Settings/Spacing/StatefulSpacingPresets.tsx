@@ -66,7 +66,7 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
     }
     // For publisher and custom, themingSpacing remains {} (empty object)
 
-    const settingsOverrides = spacing?.overrides?.[spacingKey] || {};
+    const settingsOverrides = spacing?.custom || {};
 
     // Merge the preferences - settings overrides take precedence over theming
     const mergedSpacing = {
