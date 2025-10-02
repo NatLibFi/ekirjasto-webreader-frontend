@@ -13,6 +13,7 @@ import classNames from "classnames";
 export interface StatefulNumberFieldProps extends Omit<ThNumberFieldProps, "classNames"> {
   standalone?: boolean;
   resetLabel?: string;
+  canBeReset?: boolean;
   placeholder?: string;
 }
 
@@ -22,6 +23,7 @@ export const StatefulNumberField = ({
   placeholder,
   value,
   resetLabel,
+  canBeReset,
   ...props
 }: StatefulNumberFieldProps) => {
   const { t } = useI18n();
@@ -56,7 +58,7 @@ export const StatefulNumberField = ({
         },
         reset: {
           className: classNames(readerSharedUI.icon, settingsStyles.readerSettingsResetButton),
-          isDisabled: value === undefined,
+          isDisabled: value === undefined || !canBeReset,
           compounds: {
             tooltipTrigger: {
               delay: preferences.theming.arrow.tooltipDelay,

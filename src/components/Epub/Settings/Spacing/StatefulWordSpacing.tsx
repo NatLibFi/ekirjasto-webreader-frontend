@@ -34,15 +34,15 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
 
   const { getSetting, submitPreferences } = useEpubNavigator();
 
-  const { getEffectiveSpacingValue, setWordSpacing } = useSpacingPresets();
+  const { getEffectiveSpacingValue, setWordSpacing, canBeReset } = useSpacingPresets();
 
   const wordSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.wordSpacing);
-
-  const updatePreference = useCallback(async (value: number | null) => {
+  
+  const updatePreference = useCallback(async (value: number | number[] | null) => {
     await submitPreferences({
-      wordSpacing: value
+      wordSpacing: Array.isArray(value) ? value[0] : value
     });
-
+    
     setWordSpacing(getSetting("wordSpacing"));
     dispatch(setPublisherStyles(false));
   }, [submitPreferences, getSetting, dispatch, setWordSpacing]);
@@ -67,6 +67,7 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
         formatOptions={{ style: "percent" }} 
         isWheelDisabled={ true }
         isVirtualKeyboardDisabled={ true }
+        canBeReset={ canBeReset(ThSpacingSettingsKeys.wordSpacing) }
       />
       : <StatefulSlider
         standalone={ standalone }
@@ -80,6 +81,7 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
         range={ wordSpacingRangeConfig.range }
         step={ wordSpacingRangeConfig.step }
         formatOptions={{ style: "percent" }}
+        canBeReset={ canBeReset(ThSpacingSettingsKeys.wordSpacing) }
       /> 
     }
     </>

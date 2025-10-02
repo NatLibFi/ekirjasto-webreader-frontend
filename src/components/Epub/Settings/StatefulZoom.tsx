@@ -34,8 +34,8 @@ export const StatefulZoom = () => {
     preferencesEditor 
   } = useEpubNavigator();
 
-  const updatePreference = useCallback(async (value: number) => {
-    await submitPreferences({ fontSize: value });
+  const updatePreference = useCallback(async (value: number | number[]) => {
+    await submitPreferences({ fontSize: Array.isArray(value) ? value[0] : value });
     dispatch(setFontSize(getSetting("fontSize")));
   }, [submitPreferences, getSetting, dispatch]);
 

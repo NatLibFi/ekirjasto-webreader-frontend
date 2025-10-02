@@ -34,13 +34,13 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
 
   const { getSetting, submitPreferences } = useEpubNavigator();
 
-  const { getEffectiveSpacingValue, setParagraphSpacing } = useSpacingPresets();
+  const { getEffectiveSpacingValue, setParagraphSpacing, canBeReset } = useSpacingPresets();
 
   const paragraphSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.paragraphSpacing);
 
-  const updatePreference = useCallback(async (value: number | null) => {
+  const updatePreference = useCallback(async (value: number | number[] | null) => {
     await submitPreferences({
-      paragraphSpacing: value
+      paragraphSpacing: Array.isArray(value) ? value[0] : value
     });
 
     setParagraphSpacing(getSetting("paragraphSpacing"));
@@ -71,6 +71,7 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
         }} 
         isWheelDisabled={ true }
         isVirtualKeyboardDisabled={ true }
+        canBeReset={ canBeReset(ThSpacingSettingsKeys.paragraphSpacing) }
       />
       : <StatefulSlider
         standalone={ standalone }
@@ -88,6 +89,7 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
           minimumFractionDigits: 0,
           maximumFractionDigits: 2
         }}
+        canBeReset={ canBeReset(ThSpacingSettingsKeys.paragraphSpacing) }
       /> 
     }
     </>

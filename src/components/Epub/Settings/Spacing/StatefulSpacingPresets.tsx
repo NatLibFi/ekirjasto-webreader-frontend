@@ -1,8 +1,9 @@
 import { useCallback, useMemo } from "react";
 
-import {
+import { 
   ThSpacingPresetKeys,
   ThLineHeightOptions,
+  ThSpacingSettingsKeys,
 } from "@/preferences/models/enums";
 
 import BookIcon from "../assets/icons/book.svg";
@@ -15,6 +16,8 @@ import TuneIcon from "./assets/icons/tune.svg";
 import { StatefulSettingsItemProps } from "@/components/Settings";
 
 import { StatefulRadioGroup } from "../../../Settings/StatefulRadioGroup";
+
+import { useSpacingPresets } from "./hooks/useSpacingPresets";
 
 import { useI18n } from "@/i18n/useI18n";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
@@ -49,6 +52,15 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
 
   const lineHeightOptions = useLineHeight();
 
+  const { getEffectiveSpacingValue } = useSpacingPresets();
+
+  // Get current Redux spacing values
+  const letterSpacing = useAppSelector(state => state.settings.letterSpacing);
+  const lineHeight = useAppSelector(state => state.settings.lineHeight);
+  const paragraphIndent = useAppSelector(state => state.settings.paragraphIndent);
+  const paragraphSpacing = useAppSelector(state => state.settings.paragraphSpacing);
+  const wordSpacing = useAppSelector(state => state.settings.wordSpacing);
+
   const updatePreference = useCallback(async (value: string) => {
     const spacingKey = value as ThSpacingPresetKeys;
 
@@ -66,34 +78,63 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
     }
     // For publisher and custom, themingSpacing remains {} (empty object)
 
-    const settingsOverrides = spacing?.custom || {};
-
-    // Merge the preferences - settings overrides take precedence over theming
-    const mergedSpacing = {
-      ...themingSpacing,
-      ...settingsOverrides
-    };
-
-    // Submit the merged values to the navigator
+    // Submit the correct values to preferences:
+    // - User overrides if they exist for the setting
+    // - NEW preset values if no user override exists
     const preferencesToSubmit: any = {};
 
-    // Always include all spacing properties, even if undefined in preset
-    preferencesToSubmit.letterSpacing = mergedSpacing.letterSpacing ?? null;
+    // Get current preset values (for non-overridden settings)
+    const getCurrentPresetValue = (key: ThSpacingSettingsKeys): any => {
+      if (spacingKey !== ThSpacingPresetKeys.publisher && spacingKey !== ThSpacingPresetKeys.custom) {
+        const spacingConfig = preferences.settings.spacing?.presets;
+        if (spacingConfig?.keys) {
+          const presetValues = spacingConfig.keys[spacingKey as ThSpacingPresetKeys.tight | ThSpacingPresetKeys.balanced | ThSpacingPresetKeys.loose | ThSpacingPresetKeys.accessible];
+          const presetValue = presetValues?.[key as unknown as keyof typeof presetValues];
+          if (presetValue !== undefined) {
+            return presetValue;
+          }
+        }
+      }
 
-    // Handle lineHeight - convert enum to actual numeric value, null if undefined or publisher
-    preferencesToSubmit.lineHeight = !mergedSpacing.lineHeight || mergedSpacing.lineHeight === ThLineHeightOptions.publisher
+      // Return appropriate default for publisher/custom presets
+      switch (key) {
+        case ThSpacingSettingsKeys.lineHeight:
+          return ThLineHeightOptions.publisher;
+        case ThSpacingSettingsKeys.paragraphIndent:
+        case ThSpacingSettingsKeys.paragraphSpacing:
+        case ThSpacingSettingsKeys.wordSpacing:
+          return null;
+        default:
+          return null;
+      }
+    };
+
+    // Check each setting for user overrides vs preset values
+    const userOverrideLetterSpacing = (spacing?.userOverrides as any)?.[ThSpacingSettingsKeys.letterSpacing];
+    preferencesToSubmit.letterSpacing = userOverrideLetterSpacing ?? getCurrentPresetValue(ThSpacingSettingsKeys.letterSpacing);
+
+    const userOverrideLineHeight = (spacing?.userOverrides as any)?.[ThSpacingSettingsKeys.lineHeight];
+    const lineHeightValue = userOverrideLineHeight ?? getCurrentPresetValue(ThSpacingSettingsKeys.lineHeight);
+    preferencesToSubmit.lineHeight = !lineHeightValue || lineHeightValue === ThLineHeightOptions.publisher
       ? null
-      : lineHeightOptions[mergedSpacing.lineHeight as ThLineHeightOptions];
+      : typeof lineHeightValue === "number"
+        ? lineHeightValue
+        : lineHeightOptions[lineHeightValue as ThLineHeightOptions];
 
-    preferencesToSubmit.paragraphIndent = mergedSpacing.paragraphIndent ?? null;
-    preferencesToSubmit.paragraphSpacing = mergedSpacing.paragraphSpacing ?? null;
-    preferencesToSubmit.wordSpacing = mergedSpacing.wordSpacing ?? null;
+    const userOverrideParagraphIndent = (spacing?.userOverrides as any)?.[ThSpacingSettingsKeys.paragraphIndent];
+    preferencesToSubmit.paragraphIndent = userOverrideParagraphIndent ?? getCurrentPresetValue(ThSpacingSettingsKeys.paragraphIndent);
+
+    const userOverrideParagraphSpacing = (spacing?.userOverrides as any)?.[ThSpacingSettingsKeys.paragraphSpacing];
+    preferencesToSubmit.paragraphSpacing = userOverrideParagraphSpacing ?? getCurrentPresetValue(ThSpacingSettingsKeys.paragraphSpacing);
+
+    const userOverrideWordSpacing = (spacing?.userOverrides as any)?.[ThSpacingSettingsKeys.wordSpacing];
+    preferencesToSubmit.wordSpacing = userOverrideWordSpacing ?? getCurrentPresetValue(ThSpacingSettingsKeys.wordSpacing);
 
     await submitPreferences(preferencesToSubmit);
 
     // Always set the spacing preset
     dispatch(setSpacingPreset(value as ThSpacingPresetKeys));
-  }, [dispatch, preferences, spacing, submitPreferences, lineHeightOptions]);
+  }, [dispatch, preferences, submitPreferences, lineHeightOptions, getEffectiveSpacingValue]);
 
   // Use appropriate spacing keys based on layout
   const spacingKeys = useMemo(() => {

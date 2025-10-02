@@ -34,13 +34,13 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
 
   const { getSetting, submitPreferences } = useEpubNavigator();
 
-  const { getEffectiveSpacingValue, setLetterSpacing } = useSpacingPresets();
+  const { getEffectiveSpacingValue, setLetterSpacing, canBeReset } = useSpacingPresets();
 
   const letterSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.letterSpacing);
 
-  const updatePreference = useCallback(async (value: number | null) => {
+  const updatePreference = useCallback(async (value: number | number[] | null) => {
     await submitPreferences({
-      letterSpacing: value
+      letterSpacing: Array.isArray(value) ? value[0] : value
     });
 
     setLetterSpacing(getSetting("letterSpacing"));
@@ -67,6 +67,7 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
         formatOptions={{ style: "percent" }} 
         isWheelDisabled={ true }
         isVirtualKeyboardDisabled={ true }
+        canBeReset={ canBeReset(ThSpacingSettingsKeys.letterSpacing) }
       />
       : <StatefulSlider
         standalone={ standalone }
@@ -80,6 +81,7 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
         range={ letterSpacingRangeConfig.range }
         step={ letterSpacingRangeConfig.step }
         formatOptions={ { style: "percent" } }
+        canBeReset={ canBeReset(ThSpacingSettingsKeys.letterSpacing) }
       />
     } 
     </>

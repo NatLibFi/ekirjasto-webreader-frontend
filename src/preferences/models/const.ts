@@ -88,7 +88,7 @@ export const defaultWordSpacing: Required<ThSettingsRangePref> = {
 }
 
 export const defaultLetterSpacing: Required<ThSettingsRangePref> = {
-  variant: ThSettingsRangeVariant.slider,
+  variant: ThSettingsRangeVariant.numberField,
   placeholder: ThSettingsRangePlaceholder.range,
   range: [0, 0.5],
   step: 0.05
