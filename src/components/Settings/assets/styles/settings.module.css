@@ -2,14 +2,6 @@
   margin: calc(var(--layout-spacing) * 2) 0; 
 }
 
-.readerSettings .readerSettingsGroup:first-of-type {
-  margin-top: 0;
-}
-
-.readerSettings .readerSettingsGroup:last-of-type {
-  margin-bottom: 0;
-}
-
 .readerSettingsAdvancedGroup {
   position: relative;
 }
@@ -36,6 +28,10 @@
   margin: var(--layout-spacing) 0;
   text-align: center;
   border-radius: var(--layout-radius);
+}
+
+.readerSettingsNumberField .readerSettingsGroupWrapper {
+  margin-bottom: 0;
 }
 
 .readerSettingsRadioWrapper {
@@ -65,12 +61,19 @@
   align-items: flex-start;
   max-width: 100%;
   overflow: hidden;
-  flex: 1 0 auto;
 }
 
 .readerSettingsNumberFieldWrapper .readerSettingsNumberField,
 .readerSettingsSliderWrapper .readerSettingsSlider {
   flex: 1 0 auto;
+}
+
+.readerSettings .readerSettingsGroup:first-of-type {
+  margin-top: 0;
+}
+
+.readerSettings .readerSettingsGroup:last-of-type {
+  margin-bottom: 0;
 }
 
 /* Reset button */
@@ -86,7 +89,7 @@
   color: var(--theme-text);
   font-weight: bold;
   align-self: center;
-  max-width: 10ch;
+  max-width: 20ch;
 }
 
 .readerSettingsGroupWrapper[data-disabled] .readerSettingsInput {

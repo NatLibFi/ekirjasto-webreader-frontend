@@ -13,7 +13,7 @@ import { usePlugins } from "@/components/Plugins/PluginProvider";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { usePreferenceKeys } from "@/preferences/hooks/usePreferenceKeys";
 
-import { initialSettingsState, SpacingStateKey } from "@/lib/settingsReducer";
+import { SpacingStateKey } from "@/lib/settingsReducer";
 import { useAppSelector, useAppDispatch } from "@/lib";
 import {
   resetSpacingSettings,
@@ -76,7 +76,7 @@ export const useSpacingPresets = () => {
   function getEffectiveSpacingValue(key: ThSpacingSettingsKeys.wordSpacing): number | null;
   function getEffectiveSpacingValue(key: ThSpacingSettingsKeys): any {
     // Check for override values first
-    const overrideValue = spacing.overrides?.[spacing.preset]?.[key as SpacingStateKey];
+    const overrideValue = spacing.custom?.[key as SpacingStateKey];
     if (overrideValue !== undefined) {
       return overrideValue;
     }
@@ -131,7 +131,7 @@ export const useSpacingPresets = () => {
     getEffectiveSpacingValue,
     shouldApplyPresets, 
     spacing.preset, 
-    spacing.overrides, 
+    spacing.custom, 
     preferences.settings?.spacing?.presets, 
     letterSpacing, 
     lineHeight, 
@@ -141,30 +141,8 @@ export const useSpacingPresets = () => {
     wordSpacing
   ]);
 
-  const canGetReset = useCallback(() => {
-    if (shouldApplyPresets && spacing.preset) {
-      // Check if the preset has overrides that is not an empty object
-      const presetOverrides = spacing.overrides?.[spacing.preset];
-      return !!presetOverrides && Object.keys(presetOverrides).length > 0;
-    } else {
-      // Check if the state.settings.properties differ from the value in initialState of settingsReducer
-      const currentLetterSpacing = letterSpacing ?? null;
-      const currentLineHeight = lineHeight ?? initialSettingsState.lineHeight;
-      const currentParagraphIndent = paragraphIndent ?? null;
-      const currentParagraphSpacing = paragraphSpacing ?? null;
-      const currentWordSpacing = wordSpacing ?? null;
-
-      return (
-        currentLetterSpacing !== initialSettingsState.letterSpacing ||
-        currentLineHeight !== initialSettingsState.lineHeight ||
-        currentParagraphIndent !== initialSettingsState.paragraphIndent ||
-        currentParagraphSpacing !== initialSettingsState.paragraphSpacing ||
-        currentWordSpacing !== initialSettingsState.wordSpacing
-      );
-    }
-  }, [shouldApplyPresets, spacing.preset, spacing.overrides, letterSpacing, lineHeight, paragraphIndent, paragraphSpacing, wordSpacing]);
-
   // Spacing actions (automatically handle preset logic)
+
   const setLetterSpacingAction = useCallback((value: number | null) => {
     const payload: any = { value };
     if (shouldApplyPresets && spacing.preset) {
@@ -213,48 +191,9 @@ export const useSpacingPresets = () => {
     dispatch(resetSpacingSettings(payload));
   }, [dispatch, shouldApplyPresets, spacing.preset]);
 
-  const getResetValues = useCallback(() => {
-    // Default reset values when no preset is active
-    const defaultResetValues = {
-      lineHeight: ThLineHeightOptions.publisher,
-      paragraphIndent: null,
-      paragraphSpacing: null,
-      letterSpacing: null,
-      wordSpacing: null
-    };
-
-    // If no preset or should not apply presets, return default values
-    if (!shouldApplyPresets || !spacing.preset) {
-      return defaultResetValues;
-    }
-
-    // Get preset values if preset system is active
-    const spacingConfig = preferences.settings?.spacing?.presets;
-    if (!spacingConfig?.keys) {
-      return defaultResetValues;
-    }
-
-    // Preferences spacing presets exclude publisher and custom so we know we won't find them
-    if (spacing.preset === ThSpacingPresetKeys.publisher || spacing.preset === ThSpacingPresetKeys.custom) {
-      return defaultResetValues;
-    }
-
-    const presetValues = spacingConfig.keys[spacing.preset as ThSpacingPresetKeys.tight | ThSpacingPresetKeys.balanced | ThSpacingPresetKeys.loose | ThSpacingPresetKeys.accessible];
-
-    return {
-      lineHeight: presetValues?.lineHeight ?? ThLineHeightOptions.publisher,
-      paragraphIndent: presetValues?.paragraphIndent ?? null,
-      paragraphSpacing: presetValues?.paragraphSpacing ?? null,
-      letterSpacing: presetValues?.letterSpacing ?? null,
-      wordSpacing: presetValues?.wordSpacing ?? null
-    };
-  }, [shouldApplyPresets, spacing.preset, preferences.settings?.spacing?.presets]);
-
   return {
     currentPreset: spacing.preset,
     getEffectiveSpacingValue: getEffectiveSpacingValueCallback,
-    canGetReset: canGetReset,
-    getResetValues: getResetValues,
     setLetterSpacing: setLetterSpacingAction,
     setLineHeight: setLineHeightAction,
     setParagraphIndent: setParagraphIndentAction,

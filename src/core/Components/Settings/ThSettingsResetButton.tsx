@@ -1,6 +1,6 @@
 "use client";
 
-import Reset from "./assets/icons/reset_settings.svg";
+import Undo from "./assets/icons/undo.svg";
 
 import { ThActionButton, ThActionButtonProps } from "../Buttons/ThActionButton";
 
@@ -20,7 +20,7 @@ export const ThSettingsResetButton = ({
       { children 
         ? children 
         : <>
-          <Reset aria-hidden="true" focusable="false" /> 
+          <Undo aria-hidden="true" focusable="false" /> 
           { label }
           </> 
       }

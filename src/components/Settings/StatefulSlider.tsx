@@ -51,13 +51,15 @@ export const StatefulSlider = ({
       placeholder={ placeholder }
       className={ classNames(
         settingsStyles.readerSettingsSlider,
-        standalone && settingsStyles.readerSettingsGroup,
         displayTicks && settingsStyles.readerSettingsSliderWithTicks
       ) }
       style={ style }
       compounds={{
         wrapper: {
-          className: settingsStyles.readerSettingsSliderWrapper
+          className: classNames(
+            settingsStyles.readerSettingsSliderWrapper,
+            standalone && settingsStyles.readerSettingsGroup
+          )
         },
         label: {
           className: classNames(settingsStyles.readerSettingsLabel, settingsStyles.readerSettingsSliderLabel)

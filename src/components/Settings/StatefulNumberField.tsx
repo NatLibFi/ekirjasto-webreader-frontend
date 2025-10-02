@@ -34,10 +34,13 @@ export const StatefulNumberField = ({
       { ...props }
       { ...(standalone ? { label: label } : { "aria-label": label }) }
       placeholder={ placeholder }
-      className={ classNames(settingsStyles.readerSettingsNumbfield, standalone ? settingsStyles.readerSettingsGroup : "") }
+      className={ settingsStyles.readerSettingsNumberField }
       compounds={{
         wrapper: {
-          className: settingsStyles.readerSettingsNumberFieldWrapper
+          className: classNames(
+            settingsStyles.readerSettingsNumberFieldWrapper,
+            standalone && settingsStyles.readerSettingsGroup
+          )
         },
         group: {
           className: settingsStyles.readerSettingsGroupWrapper
