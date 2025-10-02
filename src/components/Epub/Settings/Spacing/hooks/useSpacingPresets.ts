@@ -164,19 +164,20 @@ export const useSpacingPresets = () => {
   }
 
   // Helper function to get reset spacing value (pure preset values, ignoring customizations)
+  // Function overloads for proper typing
+  function getSpacingResetValue(key: ThSpacingSettingsKeys.letterSpacing): number | null;
+  function getSpacingResetValue(key: ThSpacingSettingsKeys.lineHeight): ThLineHeightOptions | null;
+  function getSpacingResetValue(key: ThSpacingSettingsKeys.paragraphIndent): number | null;
+  function getSpacingResetValue(key: ThSpacingSettingsKeys.paragraphSpacing): number | null;
+  function getSpacingResetValue(key: ThSpacingSettingsKeys.wordSpacing): number | null;
   function getSpacingResetValue(key: ThSpacingSettingsKeys): any {
     if (!shouldApplyPresets) {
       return key === ThSpacingSettingsKeys.lineHeight ? ThLineHeightOptions.publisher : null;
     }
 
     if (spacing.preset) {
-      // For custom preset, we want to clear any overrides and return the base value
-      if (spacing.preset === ThSpacingPresetKeys.custom) {
-        // Return the base value if it exists, otherwise return the default
-        return spacing.baseValues?.[key as SpacingStateKey] ?? getDefaultValue(key);
-
-        // For regular presets, return the preset value
-      } else if (spacing.preset !== ThSpacingPresetKeys.publisher) {
+      if (spacing.preset !== ThSpacingPresetKeys.publisher && 
+          spacing.preset !== ThSpacingPresetKeys.custom) {
         const spacingConfig = preferences.settings?.spacing?.presets;
         if (spacingConfig?.keys) {
         const presetValues = spacingConfig.keys[spacing.preset as ThSpacingPresetKeys.tight | ThSpacingPresetKeys.balanced | ThSpacingPresetKeys.loose | ThSpacingPresetKeys.accessible];
@@ -188,7 +189,7 @@ export const useSpacingPresets = () => {
       }
     }
 
-    // For publisher preset or when no preset is selected, return the default value
+    // For publisher or custom preset or when no preset is selected, return the default value
     return getDefaultValue(key);
   }
 
@@ -218,20 +219,20 @@ export const useSpacingPresets = () => {
 
     // For custom preset, can reset if current value is not null/undefined (has any value to reset)
     if (spacing.preset === ThSpacingPresetKeys.custom) {
-      const effectiveValue = getEffectiveSpacingValue(key as any);
+      const effectiveValue = getEffectiveSpacingValueCallback(key as any);
       return effectiveValue !== null && effectiveValue !== undefined;
     }
 
     // For other presets, can reset if current value differs from preset value
-    const effectiveValue = getEffectiveSpacingValue(key as any);
-    const resetValue = getSpacingResetValue(key);
+    const effectiveValue = getEffectiveSpacingValueCallback(key as any);
+    const resetValue = getSpacingResetValueCallback(key as any);
 
     // Compare values - if different, can be reset
     if (effectiveValue === null && resetValue === null) return false;
     if (effectiveValue === undefined && resetValue === undefined) return false;
 
     return effectiveValue !== resetValue;
-  }, [shouldApplyPresets, spacing.preset, spacing.userOverrides, getEffectiveSpacingValue, getSpacingResetValue]);
+  }, [shouldApplyPresets, spacing.preset, spacing.userOverrides, getEffectiveSpacingValueCallback, getSpacingResetValueCallback]);
 
   // Spacing actions (automatically handle preset logic)
 
