@@ -95,10 +95,23 @@ const handleSpacingSetting = (state: any, action: any, settingKey: ThSpacingSett
     }
 
     const currentOverrides = state.spacing.custom || {};
-    state.spacing.custom = {
-      ...currentOverrides,
-      [settingKey]: value
-    };
+
+    if (value === null) {
+      // Null means reset - remove the custom override entirely
+      const { [settingKey]: removed, ...remainingOverrides } = currentOverrides;
+      state.spacing.custom = remainingOverrides;
+    } else {
+      // Non-null value means user modification - create/update custom override
+      state.spacing.custom = {
+        ...currentOverrides,
+        [settingKey]: value
+      };
+
+      // If user is modifying a setting and current preset is not "custom", switch to "custom"
+      if (state.spacing.preset !== ThSpacingPresetKeys.custom) {
+        state.spacing.preset = ThSpacingPresetKeys.custom;
+      }
+    }
   } else {
     state[settingKey] = value;
   }
