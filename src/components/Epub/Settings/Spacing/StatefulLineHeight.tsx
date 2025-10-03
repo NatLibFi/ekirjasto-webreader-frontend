@@ -17,8 +17,7 @@ import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { setPublisherStyles } from "@/lib/settingsReducer";
+import { useAppSelector } from "@/lib/hooks";
 import { useLineHeight } from "./hooks/useLineHeight";
 import { useSpacingPresets } from "./hooks/useSpacingPresets";
 
@@ -27,8 +26,6 @@ export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemPr
   const { preferences } = usePreferences();
 
   const publisherStyles = useAppSelector(state => state.settings.publisherStyles);
-
-  const dispatch = useAppDispatch();
 
   const { getSetting, submitPreferences } = useEpubNavigator();
 
@@ -83,8 +80,7 @@ export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemPr
     const currentDisplayLineHeightOption = Object.entries(lineHeightOptions).find(([key, value]) => value === currentLineHeight)?.[0] as ThLineHeightOptions;
 
     setLineHeight(currentDisplayLineHeightOption);
-    dispatch(setPublisherStyles(false));
-  }, [submitPreferences, getSetting, dispatch, setLineHeight, lineHeightOptions]);
+  }, [submitPreferences, getSetting, setLineHeight, lineHeightOptions]);
 
   return (
     <>

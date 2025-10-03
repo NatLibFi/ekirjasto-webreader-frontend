@@ -29,11 +29,19 @@ export interface SetLineLengthPayload {
   }
 }
 
-export interface UpdateBaseValuesPayload {
+export interface SetSpacingSettingPayload<T = number | ThLineHeightOptions | null> {
   type: string;
   payload: {
-    key: SpacingStateKey;
-    value: any;
+    value: T;
+    preset?: ThSpacingPresetKeys;
+  }
+}
+
+export interface SetSpacingPresetPayload {
+  type: string;
+  payload: {
+    preset: ThSpacingPresetKeys;
+    values: Partial<Record<SpacingStateKey, number | ThLineHeightOptions | null>>;
   }
 }
 
@@ -41,8 +49,8 @@ export type SpacingStateKey = Exclude<ThSpacingSettingsKeys, ThSpacingSettingsKe
 
 export interface SpacingStateObject {
   preset: ThSpacingPresetKeys;
-  baseValues: Partial<Record<SpacingStateKey, any>>;    // Current preset values
-  userOverrides: Partial<Record<SpacingStateKey, any>>; // User modifications only
+  custom: Partial<Record<SpacingStateKey, number | ThLineHeightOptions | null>>;
+  baseline: Partial<Record<SpacingStateKey, number | ThLineHeightOptions | null>>;
 }
 
 export interface SettingsReducerState {
@@ -79,51 +87,49 @@ const initialState: SettingsReducerState = {
   scroll: false,
   spacing: {
     preset: ThSpacingPresetKeys.publisher,
-    baseValues: {}, // Publisher preset uses publisher defaults, not our custom presets
-    userOverrides: {}
+    custom: {},
+    baseline: {}
   },
   textAlign: ThTextAlignOptions.publisher,
   textNormalization: false,
   wordSpacing: null,
 }
 
-const handleSpacingSetting = (state: any, action: any, settingKey: ThSpacingSettingsKeys) => {
-  const { value } = action.payload;
+const handleSpacingSetting = (state: any, action: SetSpacingSettingPayload, settingKey: ThSpacingSettingsKeys) => {
+  const { value, preset } = action.payload;
+
+  if (!preset) {
+    state[settingKey] = value;
+    return;
+  }
 
   // Initialize spacing state if needed
   if (!state.spacing) {
     state.spacing = {
-      preset: ThSpacingPresetKeys.publisher,
-      baseValues: {},
-      userOverrides: {}
+      preset: ThSpacingPresetKeys.custom,
+      custom: {
+        [settingKey]: value
+      }
     };
   }
 
-  // Ensure new properties exist for backward compatibility
-  if (!state.spacing.baseValues) {
-    state.spacing.baseValues = {};
+  // Ensure custom exist for backward compatibility
+  if (!state.spacing.custom) {
+    state.spacing.custom = {};
   }
-  if (!state.spacing.userOverrides) {
-    state.spacing.userOverrides = {};
-  }
+
+  if (state.spacing.preset !== ThSpacingPresetKeys.custom) {
+    state.spacing.preset = ThSpacingPresetKeys.custom;
+    state.spacing.custom = state.spacing.baseline;
+  } 
 
   if (value === null) {
-    // Reset - remove user override
-    delete state.spacing.userOverrides[settingKey];
-    // For custom preset, also clear base value so it falls back to defaults
-    if (state.spacing.preset === ThSpacingPresetKeys.custom) {
-      delete state.spacing.baseValues[settingKey];
-    }
+    delete state.spacing.custom[settingKey];
   } else {
-    // User modification - add to userOverrides
-    state.spacing.userOverrides[settingKey] = value;
-    state[settingKey] = value;
-
-    // If user is modifying a setting and current preset is not "custom", switch to "custom"
-    if (state.spacing.preset !== ThSpacingPresetKeys.custom) {
-      state.spacing.preset = ThSpacingPresetKeys.custom;
-    }
+    state.spacing.custom[settingKey] = value;
   }
+
+  state.publisherStyles = false;
 };
 
 export const settingsSlice = createSlice({
@@ -211,66 +217,20 @@ export const settingsSlice = createSlice({
     setScroll: (state, action) => {
       state.scroll = action.payload
     },
-    setSpacingPreset: (state, action) => {
-      if (!state.spacing) {
-        state.spacing = {
-          preset: action.payload,
-          baseValues: {},
-          userOverrides: {}
-        };
-      } else {
-        // When switching presets, update baseValues to new preset values and keep userOverrides
-        state.spacing.preset = action.payload;
+    setSpacingPreset: (state, action: SetSpacingPresetPayload) => {
+      const { preset, values } = action.payload;
 
-        // Update baseValues based on the new preset
-        if (action.payload === ThSpacingPresetKeys.publisher) {
-          state.spacing.baseValues = {};
-        } else {
-          // For other presets, baseValues will be populated when getEffectiveSpacingValue is called
-          // We keep userOverrides intact but clear baseValues for non-publisher presets
-          state.spacing.baseValues = {};
-        }
+      state.spacing.preset = preset;
+
+      if (preset !== ThSpacingPresetKeys.custom) {
+        state.spacing.baseline = values;
       }
 
-      // Ensure new properties exist for backward compatibility
-      if (!state.spacing.baseValues) {
-        state.spacing.baseValues = {};
-      }
-      if (!state.spacing.userOverrides) {
-        state.spacing.userOverrides = {};
-      }
-
-      // For publisher and custom presets, check if all user modifications are cleared
-      if (action.payload === ThSpacingPresetKeys.publisher || action.payload === ThSpacingPresetKeys.custom) {
-        const hasUserModifications = Object.keys(state.spacing.userOverrides || {}).length > 0;
-        if (!hasUserModifications) {
-          state.publisherStyles = initialState.publisherStyles;
-        } else {
-          state.publisherStyles = false;
-        }
+      if (preset === ThSpacingPresetKeys.publisher) {
+        state.publisherStyles = true;
       } else {
         state.publisherStyles = false;
       }
-    },
-    updateBaseValues: (state, action: UpdateBaseValuesPayload) => {
-      const { key, value } = action.payload;
-
-      // Initialize spacing state if needed
-      if (!state.spacing) {
-        state.spacing = {
-          preset: ThSpacingPresetKeys.publisher,
-          baseValues: {},
-          userOverrides: {}
-        };
-      }
-
-      // Ensure baseValues exists
-      if (!state.spacing.baseValues) {
-        state.spacing.baseValues = {};
-      }
-
-      // Update the specific base value
-      state.spacing.baseValues[key] = value;
     },
     setTextAlign: (state, action) => {
       state.textAlign = action.payload
@@ -280,50 +240,6 @@ export const settingsSlice = createSlice({
     },
     setWordSpacing: (state, action) => {
       handleSpacingSetting(state, action, ThSpacingSettingsKeys.wordSpacing);
-    },
-    resetSpacingSettings: (state, action) => {      
-      const { payload } = action;
-
-      // If a preset is specified, clear overrides for that preset
-      if (payload?.preset) {
-        const { preset } = payload;
-
-        // Ensure new properties exist for backward compatibility
-        if (!state.spacing) {
-          state.spacing = {
-            preset: ThSpacingPresetKeys.publisher,
-            baseValues: {},
-            userOverrides: {}
-          };
-        }
-        if (!state.spacing.userOverrides) {
-          state.spacing.userOverrides = {};
-        }
-
-        state.spacing.userOverrides = {};
-
-        if (preset === ThSpacingPresetKeys.publisher) {
-          state.publisherStyles = initialState.publisherStyles;
-        }
-
-        return;
-      }
-
-      // Otherwise, reset all spacing settings to initial state
-      state.publisherStyles = initialState.publisherStyles;
-
-      state.letterSpacing = initialState.letterSpacing;
-      state.lineHeight = initialState.lineHeight;
-      state.paragraphIndent = initialState.paragraphIndent;
-      state.paragraphSpacing = initialState.paragraphSpacing;
-      state.wordSpacing = initialState.wordSpacing;
-    },
-    resetTextSettings: (state) => {
-      state.fontFamily = initialState.fontFamily;
-      state.fontWeight = initialState.fontWeight;
-      state.hyphens = initialState.hyphens;
-      state.textAlign = initialState.textAlign;
-      state.textNormalization = initialState.textNormalization;
     }
   }
 });
@@ -347,10 +263,7 @@ export const {
   setSpacingPreset,
   setTextAlign,
   setTextNormalization, 
-  setWordSpacing,
-  resetSpacingSettings,
-  resetTextSettings,
-  updateBaseValues
+  setWordSpacing
 } = settingsSlice.actions;
 
 export default settingsSlice.reducer;

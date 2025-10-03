@@ -15,9 +15,6 @@ import { useI18n } from "@/i18n/useI18n";
 import { useSpacingPresets } from "./hooks/useSpacingPresets";
 import { usePlaceholder } from "../hooks/usePlaceholder";
 
-import { useAppDispatch } from "@/lib/hooks";
-import { setPublisherStyles } from "@/lib/settingsReducer";
-
 export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { preferences } = usePreferences();
   const { t } = useI18n();
@@ -30,8 +27,6 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
 
   const placeholderText = usePlaceholder(paragraphSpacingRangeConfig.placeholder, paragraphSpacingRangeConfig.range);
   
-  const dispatch = useAppDispatch();
-
   const { getSetting, submitPreferences } = useEpubNavigator();
 
   const { getEffectiveSpacingValue, setParagraphSpacing, canBeReset } = useSpacingPresets();
@@ -44,8 +39,7 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
     });
 
     setParagraphSpacing(getSetting("paragraphSpacing"));
-    dispatch(setPublisherStyles(false));
-  }, [submitPreferences, getSetting, dispatch, setParagraphSpacing]);
+  }, [submitPreferences, getSetting, setParagraphSpacing]);
 
   return (
     <>
