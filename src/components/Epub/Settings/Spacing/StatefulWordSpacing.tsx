@@ -25,7 +25,7 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
     step: preferences.settings.keys[ThSettingsKeys.wordSpacing].step
   };
 
-  const placeholderText = usePlaceholder(wordSpacingRangeConfig.placeholder, wordSpacingRangeConfig.range);
+  const placeholderText = usePlaceholder(wordSpacingRangeConfig.placeholder, wordSpacingRangeConfig.range, "percent");
   
   const { getSetting, submitPreferences } = useEpubNavigator();
 

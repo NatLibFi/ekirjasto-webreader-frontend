@@ -25,7 +25,7 @@ export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsI
       step: preferences.settings.keys[ThSettingsKeys.paragraphIndent].step
     };
 
-  const placeholderText = usePlaceholder(paragraphIndentRangeConfig.placeholder, paragraphIndentRangeConfig.range);
+  const placeholderText = usePlaceholder(paragraphIndentRangeConfig.placeholder, paragraphIndentRangeConfig.range, "multiplier");
   
   const { getSetting, submitPreferences } = useEpubNavigator();
 

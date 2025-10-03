@@ -4,7 +4,8 @@ import { useI18n } from "@/i18n/useI18n";
 
 export const usePlaceholder = (
   placeholder: ThSettingsRangePlaceholder | string | { key: string; fallback?: string } | undefined,
-  range: [number, number]
+  range: [number, number],
+  format?: "percent" | "number" | "multiplier"
 ): string | undefined => {
   const { t } = useI18n();
 
@@ -17,7 +18,23 @@ export const usePlaceholder = (
     return undefined;
   }
   if (placeholder === ThSettingsRangePlaceholder.range) {
-    return `${range[0]} - ${range[1]}`;
+    switch (format) {
+      case "percent":
+        const minRange = range[0] * 100;
+        const maxRange = range[1] * 100;
+        const minPercent = minRange === 0 ? "0" : `${minRange}%`;
+        const maxPercent = maxRange === 0 ? "0" : `${maxRange}%`;
+        return `${ minPercent } - ${ maxPercent }`;
+      case "multiplier":
+        const minMultiplierRange = range[0];
+        const maxMultiplierRange = range[1];
+        const minMultiplier = minMultiplierRange === 0 ? "0" : `${minMultiplierRange}×`;
+        const maxMultiplier = maxMultiplierRange === 0 ? "0" : `${maxMultiplierRange}×`;
+        return `${ minMultiplier } - ${ maxMultiplier }`;
+      case "number":
+      default:
+        return `${ range[0] } - ${ range[1] }`;
+    }
   }
 
   // Handle i18n object

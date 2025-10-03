@@ -25,7 +25,7 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
     step: preferences.settings.keys[ThSettingsKeys.letterSpacing].step
   };
 
-  const placeholderText = usePlaceholder(letterSpacingRangeConfig.placeholder, letterSpacingRangeConfig.range);
+  const placeholderText = usePlaceholder(letterSpacingRangeConfig.placeholder, letterSpacingRangeConfig.range, "percent");
   
   const { getSetting, submitPreferences } = useEpubNavigator();
 

@@ -25,7 +25,7 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
     step: preferences.settings.keys[ThSettingsKeys.paragraphSpacing].step
   };
 
-  const placeholderText = usePlaceholder(paragraphSpacingRangeConfig.placeholder, paragraphSpacingRangeConfig.range);
+  const placeholderText = usePlaceholder(paragraphSpacingRangeConfig.placeholder, paragraphSpacingRangeConfig.range, "multiplier");
   
   const { getSetting, submitPreferences } = useEpubNavigator();
 
