@@ -47,10 +47,10 @@ export const StatefulPublisherStyles = ({ standalone = true }: StatefulSettingsI
       lineHeight: lineHeight === ThLineHeightOptions.publisher 
         ? null 
         : lineHeightOptions[lineHeight as keyof typeof ThLineHeightOptions],
-      paragraphIndent: paragraphIndent || 0,
-      paragraphSpacing: paragraphSpacing || 0,
-      letterSpacing: letterSpacing || 0,
-      wordSpacing: wordSpacing || 0
+      paragraphIndent: paragraphIndent,
+      paragraphSpacing: paragraphSpacing,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing
     };
     await submitPreferences(values);
 

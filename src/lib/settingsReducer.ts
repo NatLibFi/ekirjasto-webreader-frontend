@@ -95,11 +95,28 @@ const initialState: SettingsReducerState = {
   wordSpacing: null,
 }
 
+const checkRootSpacingSettingsAtInit = (state: SettingsReducerState) => {
+  return (
+    state.letterSpacing === null &&
+    state.lineHeight === ThLineHeightOptions.publisher &&
+    state.paragraphIndent === null &&
+    state.paragraphSpacing === null &&
+    state.wordSpacing === null
+  );
+}
+
 const handleSpacingSetting = (state: any, action: SetSpacingSettingPayload, settingKey: ThSpacingSettingsKeys) => {
   const { value, preset } = action.payload;
 
+  state.publisherStyles = false;
+
   if (!preset) {
     state[settingKey] = value;
+
+    if (checkRootSpacingSettingsAtInit(state)) {
+      state.publisherStyles = true;
+    }
+
     return;
   }
 
@@ -128,8 +145,6 @@ const handleSpacingSetting = (state: any, action: SetSpacingSettingPayload, sett
   } else {
     state.spacing.custom[settingKey] = value;
   }
-
-  state.publisherStyles = false;
 };
 
 export const settingsSlice = createSlice({
