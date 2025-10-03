@@ -206,6 +206,10 @@ export const useSpacingPresets = () => {
     preferences.settings?.spacing?.presets
   ]);
 
+  const allowResetCallback = useCallback((): boolean => {
+    return !shouldApplyPresets || spacing.preset === ThSpacingPresetKeys.custom;
+  }, [shouldApplyPresets, spacing.preset]);
+
   const canBeResetCallback = useCallback((key: ThSpacingSettingsKeys): boolean => {
     // For custom preset, can reset if current value is not null/undefined (has any value to reset)
     if (!shouldApplyPresets || !spacing.preset || spacing.preset === ThSpacingPresetKeys.custom) {
@@ -271,6 +275,7 @@ export const useSpacingPresets = () => {
     getPresetValues: getPresetValuesCallback,
     getEffectiveSpacingValue: getEffectiveSpacingValueCallback,
     getSpacingResetValue: getSpacingResetValueCallback,
+    allowReset: allowResetCallback,
     canBeReset: canBeResetCallback,
     setLetterSpacing: setLetterSpacingAction,
     setLineHeight: setLineHeightAction,

@@ -29,7 +29,7 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
   
   const { getSetting, submitPreferences } = useEpubNavigator();
 
-  const { getEffectiveSpacingValue, setParagraphSpacing, canBeReset } = useSpacingPresets();
+  const { getEffectiveSpacingValue, setParagraphSpacing, canBeReset, allowReset } = useSpacingPresets();
 
   const paragraphSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.paragraphSpacing);
 
@@ -51,7 +51,7 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
         defaultValue={ undefined } 
         value={ paragraphSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value) } 
-        onReset={ async() => await updatePreference(null) }
+        onReset={ allowReset() ? async() => await updatePreference(null) : undefined }
         range={ paragraphSpacingRangeConfig.range }
         step={ paragraphSpacingRangeConfig.step }
         steppers={{
@@ -75,7 +75,7 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
         defaultValue={ undefined } 
         value={ paragraphSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 
-        onReset={ async() => await updatePreference(null) }
+        onReset={ allowReset() ? async() => await updatePreference(null) : undefined }
         range={ paragraphSpacingRangeConfig.range }
         step={ paragraphSpacingRangeConfig.step }
         formatOptions={{

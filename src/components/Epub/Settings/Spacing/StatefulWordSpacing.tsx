@@ -29,7 +29,7 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
   
   const { getSetting, submitPreferences } = useEpubNavigator();
 
-  const { getEffectiveSpacingValue, setWordSpacing, canBeReset } = useSpacingPresets();
+  const { getEffectiveSpacingValue, setWordSpacing, canBeReset, allowReset } = useSpacingPresets();
 
   const wordSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.wordSpacing);
   
@@ -51,7 +51,7 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
         defaultValue={ undefined } 
         value={ wordSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value) } 
-        onReset={ async() => await updatePreference(null) }
+        onReset={ allowReset() ? async() => await updatePreference(null) : undefined }
         range={ wordSpacingRangeConfig.range }
         step={ wordSpacingRangeConfig.step }
         steppers={{
@@ -71,7 +71,7 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
         defaultValue={ undefined } 
         value={ wordSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 
-        onReset={ async() => await updatePreference(null) }
+        onReset={ allowReset() ? async() => await updatePreference(null) : undefined }
         range={ wordSpacingRangeConfig.range }
         step={ wordSpacingRangeConfig.step }
         formatOptions={{ style: "percent" }}

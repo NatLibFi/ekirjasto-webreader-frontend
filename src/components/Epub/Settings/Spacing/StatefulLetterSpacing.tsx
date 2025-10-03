@@ -29,7 +29,7 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
   
   const { getSetting, submitPreferences } = useEpubNavigator();
 
-  const { getEffectiveSpacingValue, setLetterSpacing, canBeReset } = useSpacingPresets();
+  const { getEffectiveSpacingValue, setLetterSpacing, canBeReset, allowReset } = useSpacingPresets();
 
   const letterSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.letterSpacing);
 
@@ -51,7 +51,7 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
         defaultValue={ undefined } 
         value={ letterSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 
-        onReset={ async() => await updatePreference(null) }
+        onReset={ allowReset() ? async() => await updatePreference(null) : undefined }
         range={ letterSpacingRangeConfig.range }
         step={ letterSpacingRangeConfig.step }
         steppers={{
@@ -71,7 +71,7 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
         defaultValue={ undefined } 
         value={ letterSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 
-        onReset={ async() => await updatePreference(null) }
+        onReset={ allowReset() ? async() => await updatePreference(null) : undefined }
         range={ letterSpacingRangeConfig.range }
         step={ letterSpacingRangeConfig.step }
         formatOptions={ { style: "percent" } }

@@ -191,13 +191,13 @@
 
 .readerSettingsSlider {
   display: grid;
-  grid-template-areas: "label output blank"
-                       "track track blank";
-  grid-template-columns: 1fr auto minmax(calc(var(--layout-spacing) / 2), 20%);
+  grid-template-areas: "label output"
+                       "track track";
+  grid-template-columns: 1fr auto;
   gap: calc(var(--layout-spacing) / 2);
   color: var(--theme-text);
   flex-direction: column;
-  max-width: 100%;
+  max-width: min(calc(100% - (var(--layout-spacing) / 2)), 80%);
 }
 
 .readerSettingsSliderLabel {
