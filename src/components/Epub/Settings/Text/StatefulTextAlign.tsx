@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 
 import { ThTextAlignOptions } from "@/preferences/models/enums";
 import { StatefulSettingsItemProps } from "../../../Settings/models/settings";
@@ -26,6 +26,29 @@ export const StatefulTextAlign = ({ standalone = true }: StatefulSettingsItemPro
   const dispatch = useAppDispatch();
 
   const { getSetting, submitPreferences } = useEpubNavigator();
+
+  const items = [
+    {
+      id: ThTextAlignOptions.publisher,
+      icon: BookIcon,
+      label: t("reader.settings.align.publisher"), 
+      value: ThTextAlignOptions.publisher 
+    },
+    {
+      id: ThTextAlignOptions.start,
+      icon: isRTL ? RightAlignIcon : LeftAlignIcon,
+      label: isRTL ? t("reader.settings.align.right") : t("reader.settings.align.left"), 
+      value: ThTextAlignOptions.start 
+    },
+    {
+      id: ThTextAlignOptions.justify,
+      icon: JustifyIcon,
+      label: t("reader.settings.align.justify"), 
+      value: ThTextAlignOptions.justify 
+    }
+  ];
+
+  const itemsRef = useRef(items);
 
   const updatePreference = useCallback(async (value: string) => {
     const textAlign: TextAlignment | null = value === ThTextAlignOptions.publisher 
@@ -60,23 +83,12 @@ export const StatefulTextAlign = ({ standalone = true }: StatefulSettingsItemPro
       orientation="horizontal" 
       value={ textAlign } 
       onChange={ async (val: string) => await updatePreference(val) }
-      items={[
-        {
-          icon: BookIcon,
-          label: t("reader.settings.align.publisher"), 
-          value: ThTextAlignOptions.publisher 
-        },
-        {
-          icon: isRTL ? RightAlignIcon : LeftAlignIcon,
-          label: isRTL ? t("reader.settings.align.right") : t("reader.settings.align.left"), 
-          value: ThTextAlignOptions.start 
-        },
-        {
-          icon: JustifyIcon,
-          label: t("reader.settings.align.justify"), 
-          value: ThTextAlignOptions.justify 
-        }
-      ]}
+      items={ items }
+      gridNavigation={{
+        items: itemsRef,
+        currentValue: textAlign,
+        onChange: async (val: string) => await updatePreference(val),
+      }}
     />
     </>
   );

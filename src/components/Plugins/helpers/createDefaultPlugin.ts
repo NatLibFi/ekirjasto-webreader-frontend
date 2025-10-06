@@ -110,10 +110,7 @@ export const createDefaultPlugin = (): ThPlugin => {
           type: "text"
         },
         [ThSettingsKeys.theme]: {
-          Comp: StatefulTheme,
-          props: {
-            mapArrowNav: 2
-          }
+          Comp: StatefulTheme
         },
         [ThSettingsKeys.wordSpacing]: {
           Comp: StatefulWordSpacing,

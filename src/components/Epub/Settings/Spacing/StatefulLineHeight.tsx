@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 
 import { ThLineHeightOptions, ThSpacingSettingsKeys, ThSettingsKeys } from "@/preferences";
 
@@ -39,16 +39,19 @@ export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemPr
   const items = useMemo(() => {
     const baseItems = [
       {
+        id: ThLineHeightOptions.small,
         icon: SmallIcon,
         label: t("reader.settings.lineHeight.small"),
         value: ThLineHeightOptions.small
       },
       {
+        id: ThLineHeightOptions.medium,
         icon: MediumIcon,
         label: t("reader.settings.lineHeight.medium"),
         value: ThLineHeightOptions.medium
       },
       {
+        id: ThLineHeightOptions.large,
         icon: LargeIcon,
         label: t("reader.settings.lineHeight.large"),
         value: ThLineHeightOptions.large
@@ -58,6 +61,7 @@ export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemPr
     // Only add publisher option if allowUnset is true
     if (preferences.settings.keys[ThSettingsKeys.lineHeight].allowUnset !== false) {
       baseItems.unshift({
+        id: ThLineHeightOptions.publisher,
         icon: BookIcon,
         label: t("reader.settings.lineHeight.publisher"),
         value: ThLineHeightOptions.publisher
@@ -66,6 +70,8 @@ export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemPr
 
     return baseItems;
   }, [preferences.settings.keys, t]);
+
+  const itemsRef = useRef(items);
 
   const updatePreference = useCallback(async (value: string) => {
     const computedValue = value === ThLineHeightOptions.publisher
@@ -91,6 +97,11 @@ export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemPr
       value={ publisherStyles ? ThLineHeightOptions.publisher : lineHeight }
       onChange={ async (val: string) => await updatePreference(val) }
       items={ items }
+      gridNavigation={{
+        items: itemsRef,
+        currentValue: publisherStyles ? ThLineHeightOptions.publisher : lineHeight,
+        onChange: async (val: string) => await updatePreference(val),
+      }}
     />
     </>
   );

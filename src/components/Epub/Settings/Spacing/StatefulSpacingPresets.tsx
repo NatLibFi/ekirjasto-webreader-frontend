@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 
 import { 
   ThSpacingPresetKeys,
@@ -107,11 +107,14 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
   // Create dynamic items array based on spacing keys
   const items = useMemo(() => {
     return spacingKeys.map((key: ThSpacingPresetKeys) => ({
+      id: key,
       icon: iconMap[key],
       value: key,
       label: t(`reader.settings.spacing.presets.${ key }`)
     }));
   }, [spacingKeys, t]);
+
+  const itemsRef = useRef(items);
 
   // Return null if no items to display
   if (items.length === 0) {
@@ -127,7 +130,12 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
       value={ spacing?.preset || ThSpacingPresetKeys.publisher }
       onChange={ async (val: string) => await updatePreference(val as ThSpacingPresetKeys) }
       items={ items }
+      gridNavigation={{
+        items: itemsRef,
+        currentValue: spacing?.preset || ThSpacingPresetKeys.publisher,
+        onChange: async (val: string) => await updatePreference(val as ThSpacingPresetKeys),
+      }}
     />
     </>
-  )
+  );
 }

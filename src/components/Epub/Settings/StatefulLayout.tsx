@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 
 import { ThLayoutOptions } from "@/preferences/models/enums";
 
@@ -25,6 +25,23 @@ export const StatefulLayout = () => {
 
   const { getSetting, submitPreferences } = useEpubNavigator();
 
+  const items = [
+    {
+      id: ThLayoutOptions.paginated,
+      icon: PaginatedIcon,
+      label: t("reader.settings.layout.paginated"),
+      value: ThLayoutOptions.paginated
+    },
+    {
+      id: ThLayoutOptions.scroll,
+      icon: ScrollableIcon,
+      label: t("reader.settings.layout.scrolled"),
+      value: ThLayoutOptions.scroll
+    }
+  ];
+
+  const itemsRef = useRef(items);
+
   const updatePreference = useCallback(async (value: string) => { 
     const derivedValue = value === ThLayoutOptions.scroll;
     await submitPreferences({ scroll: derivedValue });
@@ -39,18 +56,12 @@ export const StatefulLayout = () => {
       orientation="horizontal"
       value={ isScroll ? ThLayoutOptions.scroll : ThLayoutOptions.paginated }
       onChange={ async (val: string) => await updatePreference(val) }
-      items={[
-        {
-          icon: PaginatedIcon,
-          label: t("reader.settings.layout.paginated"),
-          value: ThLayoutOptions.paginated
-        },
-        {
-          icon: ScrollableIcon,
-          label: t("reader.settings.layout.scrolled"),
-          value: ThLayoutOptions.scroll
-        }
-      ]} 
+      items={ items }
+      gridNavigation={{
+        items: itemsRef,
+        currentValue: isScroll ? ThLayoutOptions.scroll : ThLayoutOptions.paginated,
+        onChange: async (val: string) => await updatePreference(val),
+      }}
     />
     </>
   )

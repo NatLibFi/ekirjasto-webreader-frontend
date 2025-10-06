@@ -14,6 +14,7 @@ import {
 } from "react-aria-components"
 
 export interface ThRadioGroupItems {
+  id: string;
   value: string;
   icon?: ComponentType<SVGProps<SVGElement>>;
   label: string;
@@ -75,10 +76,11 @@ export const ThRadioGroup = ({
           </Label> 
         }
         <div { ...compounds?.wrapper }>
-          { items.map((item, index) => (
+          { items.map((item) => (
             <Radio 
               { ...compounds?.radio }
-              key={ index }
+              id={ item.id }
+              key={ item.id }
               value={ item.value }
               isDisabled={ item.isDisabled }
             >
