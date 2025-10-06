@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback } from "react";
 
 import { HTMLAttributesWithRef, WithRef } from "../customTypes";
+import { ThActionButtonProps } from "../Buttons";
 
 import { ThSettingsResetButton } from "./ThSettingsResetButton";
 
@@ -19,7 +20,7 @@ import {
   SliderTrackProps 
 } from "react-aria-components";
 
-import { usePrevious } from "@/core/Hooks";
+import { useObjectRef } from "react-aria";
 
 export interface ThSliderProps extends Omit<SliderProps, "minValue" | "maxValue"> {
   ref?: React.ForwardedRef<HTMLDivElement>;
@@ -55,7 +56,7 @@ export interface ThSliderProps extends Omit<SliderProps, "minValue" | "maxValue"
     /**
      * Props for the reset button component. See `ThActionButtonProps` for more information.
      */
-    reset?: any;
+    reset?: ThActionButtonProps;
   };
 }
 
@@ -69,36 +70,32 @@ export const ThSlider = ({
   value,
   ...props
 }: ThSliderProps) => {
-  // Track value changes to detect uncontrolled/controlled transitions
-  const [valueTransitionKey, setValueTransitionKey] = useState(0);
-  const previousValue = usePrevious(value);
+  const resolvedRef = useObjectRef(ref);
 
-  useEffect(() => {
-    const isControlled = value !== undefined;
-    const wasControlled = previousValue !== undefined;
-
-    // Force key change on any controlled/uncontrolled transition
-    if (isControlled !== wasControlled) {
-      setValueTransitionKey(prev => prev + 1);
-    }
-  }, [previousValue, value]);
-
-  // Create key that includes the transition state
-  const componentKey = `${ value !== undefined ? "controlled" : "uncontrolled" }-${ String(value) }-${ valueTransitionKey }`;
-
+  // Callback that handles reset and focus restoration
+  const handleResetWithFocus = useCallback(() => {
+    onReset?.();
+    // Use requestAnimationFrame to defer focus until after current call stack
+    requestAnimationFrame(() => {
+      if (resolvedRef.current) {
+        const inputElement = resolvedRef.current.querySelector("input");
+        if (inputElement) {
+          (inputElement as HTMLElement).focus();
+        }
+      }
+    });
+  }, [onReset, resolvedRef]);
   return(
     <>
     <div { ...compounds?.wrapper }>
       <Slider
-        key={ componentKey }
-        ref={ ref }
+        ref={ resolvedRef }
         value={ value }
         minValue={ Math.min(...range) }
         maxValue={ Math.max(...range) }
         { ...props }
       >
         { label && <Label { ...compounds?.label }>
-            { label }
           </Label>
         }
         <SliderOutput { ...compounds?.output }>
@@ -113,7 +110,7 @@ export const ThSlider = ({
           <SliderThumb { ...compounds?.thumb } />
         </SliderTrack>
       </Slider>
-      { onReset && <ThSettingsResetButton { ...compounds?.reset } onClick={ onReset } /> }
+      { onReset && <ThSettingsResetButton { ...compounds?.reset } onClick={ handleResetWithFocus } /> }
     </div>
     </>
   )

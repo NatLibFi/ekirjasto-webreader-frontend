@@ -1,13 +1,14 @@
 "use client";
 
-import { ComponentType, SVGProps, useCallback, useEffect, useState } from "react";
+import { ComponentType, SVGProps, useCallback } from "react";
 
 import { HTMLAttributesWithRef, WithRef } from "../customTypes";
-
-import { ThSettingsResetButton } from "./ThSettingsResetButton";
+import { ThActionButtonProps } from "../Buttons";
 
 import AddIcon from "./assets/icons/add.svg";
 import RemoveIcon from "./assets/icons/remove.svg";
+
+import { ThSettingsResetButton } from "./ThSettingsResetButton";
 
 import {
   Button,
@@ -22,7 +23,7 @@ import {
   NumberFieldProps
 } from "react-aria-components";
 
-import { usePrevious } from "@/core/Hooks";
+import { useObjectRef } from "react-aria";
 
 export interface ThNumberFieldProps extends Omit<NumberFieldProps, "minValue" | "maxValue" | "decrementAriaLabel" | "incrementAriaLabel"> {
   ref?: React.ForwardedRef<HTMLInputElement>;
@@ -61,7 +62,7 @@ export interface ThNumberFieldProps extends Omit<NumberFieldProps, "minValue" | 
     /**
      * Props for the Button component used for resetting the value. See `ThActionButtonProps` for more information.
      */
-    reset?: any;
+    reset?: ThActionButtonProps;
   };
 }
 
@@ -77,30 +78,31 @@ export const ThNumberField = ({
   value,
   ...props
 }: ThNumberFieldProps) => {
-  // Track value changes to detect uncontrolled/controlled transitions
-  const [valueTransitionKey, setValueTransitionKey] = useState(0);
-  const previousValue = usePrevious(value);
+  const resolvedRef = useObjectRef(ref);
 
-  useEffect(() => {
-    const isControlled = value !== undefined;
-    const wasControlled = previousValue !== undefined;
-
-    // Force key change on any controlled/uncontrolled transition
-    if (isControlled !== wasControlled) {
-      setValueTransitionKey(prev => prev + 1);
-    }
-  }, [previousValue, value]);
-
-  // Create key that includes the transition state
-  const componentKey = `${ value !== undefined ? "controlled" : "uncontrolled" }-${ String(value) }-${ valueTransitionKey }`;
+  // Callback that handles reset and focus restoration
+  const handleResetWithFocus = useCallback(() => {
+    onReset?.();
+    // Use requestAnimationFrame to defer focus until after current call stack
+    requestAnimationFrame(() => {
+      if (resolvedRef.current) {
+        const inputElement = resolvedRef.current.querySelector("input");
+        if (inputElement) {
+          (inputElement as HTMLElement).focus();
+        }
+      }
+    });
+  }, [onReset, resolvedRef]);
 
   return (
     <>
       <div { ...compounds?.wrapper }>
         <NumberField
-          key={ componentKey }
-          ref={ ref }
-          value={ value }
+          ref={ resolvedRef }
+          // This looks super weird but is the only way
+          // to unset the value in NumberField as undefined
+          // will not update the value
+          value={ value === undefined ? NaN : value }
           minValue={ Math.min(...range) }
           maxValue={ Math.max(...range) }
           decrementAriaLabel={ steppers?.decrementLabel }
@@ -142,7 +144,7 @@ export const ThNumberField = ({
             }
           </Group>
         </NumberField>
-        { onReset && <ThSettingsResetButton { ...compounds?.reset } onClick={ onReset } /> }
+        { onReset && <ThSettingsResetButton { ...compounds?.reset } onClick={ handleResetWithFocus } /> }
       </div>
     </>
   );
