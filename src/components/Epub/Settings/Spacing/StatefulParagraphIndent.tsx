@@ -29,7 +29,7 @@ export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsI
   
   const { getSetting, submitPreferences } = useEpubNavigator();
 
-  const { getEffectiveSpacingValue, setParagraphIndent, canBeReset, allowReset } = useSpacingPresets();
+  const { getEffectiveSpacingValue, setParagraphIndent, canBeReset } = useSpacingPresets();
 
   const paragraphIndent = getEffectiveSpacingValue(ThSpacingSettingsKeys.paragraphIndent);
 
@@ -51,7 +51,7 @@ export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsI
         defaultValue={ undefined } 
         value={ paragraphIndent ?? undefined } 
         onChange={ async(value) => await updatePreference(value) } 
-        onReset={ allowReset() ? async () => await updatePreference(null) : undefined }
+        onReset={ canBeReset(ThSpacingSettingsKeys.paragraphIndent) ? async () => await updatePreference(null) : undefined }
         range={ paragraphIndentRangeConfig.range }
         step={ paragraphIndentRangeConfig.step }
         steppers={{
@@ -65,7 +65,6 @@ export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsI
         }} 
         isWheelDisabled={ true }
         isVirtualKeyboardDisabled={ true }
-        canBeReset={ canBeReset(ThSpacingSettingsKeys.paragraphIndent) }
       />
       : <StatefulSlider
         standalone={ standalone }
@@ -75,7 +74,7 @@ export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsI
         defaultValue={ undefined } 
         value={ paragraphIndent ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 
-        onReset={ allowReset() ? async () => await updatePreference(null) : undefined }
+        onReset={ canBeReset(ThSpacingSettingsKeys.paragraphIndent) ? async () => await updatePreference(null) : undefined }
         range={ paragraphIndentRangeConfig.range }
         step={ paragraphIndentRangeConfig.step }
         formatOptions={{
@@ -83,7 +82,6 @@ export const StatefulParagraphIndent = ({ standalone = true }: StatefulSettingsI
           minimumFractionDigits: 0,
           maximumFractionDigits: 2
         }}
-        canBeReset={ canBeReset(ThSpacingSettingsKeys.paragraphIndent) }
       />
     } 
     </>

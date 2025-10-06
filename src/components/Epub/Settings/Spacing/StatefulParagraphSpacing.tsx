@@ -29,7 +29,7 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
   
   const { getSetting, submitPreferences } = useEpubNavigator();
 
-  const { getEffectiveSpacingValue, setParagraphSpacing, canBeReset, allowReset } = useSpacingPresets();
+  const { getEffectiveSpacingValue, setParagraphSpacing, canBeReset } = useSpacingPresets();
 
   const paragraphSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.paragraphSpacing);
 
@@ -51,7 +51,7 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
         defaultValue={ undefined } 
         value={ paragraphSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value) } 
-        onReset={ allowReset() ? async() => await updatePreference(null) : undefined }
+        onReset={ canBeReset(ThSpacingSettingsKeys.paragraphSpacing) ? async() => await updatePreference(null) : undefined }
         range={ paragraphSpacingRangeConfig.range }
         step={ paragraphSpacingRangeConfig.step }
         steppers={{
@@ -65,7 +65,6 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
         }} 
         isWheelDisabled={ true }
         isVirtualKeyboardDisabled={ true }
-        canBeReset={ canBeReset(ThSpacingSettingsKeys.paragraphSpacing) }
       />
       : <StatefulSlider
         standalone={ standalone }
@@ -75,7 +74,7 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
         defaultValue={ undefined } 
         value={ paragraphSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 
-        onReset={ allowReset() ? async() => await updatePreference(null) : undefined }
+        onReset={ canBeReset(ThSpacingSettingsKeys.paragraphSpacing) ? async() => await updatePreference(null) : undefined }
         range={ paragraphSpacingRangeConfig.range }
         step={ paragraphSpacingRangeConfig.step }
         formatOptions={{
@@ -83,7 +82,6 @@ export const StatefulParagraphSpacing = ({ standalone = true }: StatefulSettings
           minimumFractionDigits: 0,
           maximumFractionDigits: 2
         }}
-        canBeReset={ canBeReset(ThSpacingSettingsKeys.paragraphSpacing) }
       /> 
     }
     </>

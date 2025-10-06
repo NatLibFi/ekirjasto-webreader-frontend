@@ -29,7 +29,7 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
   
   const { getSetting, submitPreferences } = useEpubNavigator();
 
-  const { getEffectiveSpacingValue, setWordSpacing, canBeReset, allowReset } = useSpacingPresets();
+  const { getEffectiveSpacingValue, setWordSpacing, canBeReset } = useSpacingPresets();
 
   const wordSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.wordSpacing);
   
@@ -51,7 +51,7 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
         defaultValue={ undefined } 
         value={ wordSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value) } 
-        onReset={ allowReset() ? async() => await updatePreference(null) : undefined }
+        onReset={ canBeReset(ThSpacingSettingsKeys.wordSpacing) ? async() => await updatePreference(null) : undefined }
         range={ wordSpacingRangeConfig.range }
         step={ wordSpacingRangeConfig.step }
         steppers={{
@@ -61,7 +61,6 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
         formatOptions={{ style: "percent" }} 
         isWheelDisabled={ true }
         isVirtualKeyboardDisabled={ true }
-        canBeReset={ canBeReset(ThSpacingSettingsKeys.wordSpacing) }
       />
       : <StatefulSlider
         standalone={ standalone }
@@ -71,11 +70,10 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
         defaultValue={ undefined } 
         value={ wordSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 
-        onReset={ allowReset() ? async() => await updatePreference(null) : undefined }
+        onReset={ canBeReset(ThSpacingSettingsKeys.wordSpacing) ? async() => await updatePreference(null) : undefined }
         range={ wordSpacingRangeConfig.range }
         step={ wordSpacingRangeConfig.step }
         formatOptions={{ style: "percent" }}
-        canBeReset={ canBeReset(ThSpacingSettingsKeys.wordSpacing) }
       /> 
     }
     </>

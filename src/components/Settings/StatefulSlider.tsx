@@ -14,7 +14,6 @@ export interface StatefulSliderProps extends Omit<ThSliderProps, "classNames"> {
   standalone?: boolean;
   placeholder?: string;
   resetLabel?: string;
-  canBeReset?: boolean;
   displayTicks?: boolean;
 }
 
@@ -25,7 +24,6 @@ export const StatefulSlider = ({
   displayTicks = false,
   value,
   resetLabel,
-  canBeReset,
   ...props
 }: StatefulSliderProps) => {
   const { t } = useI18n();
@@ -80,7 +78,6 @@ export const StatefulSlider = ({
         },
         reset: {
           className: classNames(readerSharedUI.icon, settingsStyles.readerSettingsResetButton),
-          isDisabled: value === undefined || !canBeReset,
           compounds: {
             tooltipTrigger: {
               delay: preferences.theming.arrow.tooltipDelay,

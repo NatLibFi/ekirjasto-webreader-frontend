@@ -29,7 +29,7 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
   
   const { getSetting, submitPreferences } = useEpubNavigator();
 
-  const { getEffectiveSpacingValue, setLetterSpacing, canBeReset, allowReset } = useSpacingPresets();
+  const { getEffectiveSpacingValue, setLetterSpacing, canBeReset } = useSpacingPresets();
 
   const letterSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.letterSpacing);
 
@@ -51,7 +51,7 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
         defaultValue={ undefined } 
         value={ letterSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 
-        onReset={ allowReset() ? async() => await updatePreference(null) : undefined }
+        onReset={ canBeReset(ThSpacingSettingsKeys.letterSpacing) ? async() => await updatePreference(null) : undefined }
         range={ letterSpacingRangeConfig.range }
         step={ letterSpacingRangeConfig.step }
         steppers={{
@@ -61,7 +61,6 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
         formatOptions={{ style: "percent" }} 
         isWheelDisabled={ true }
         isVirtualKeyboardDisabled={ true }
-        canBeReset={ canBeReset(ThSpacingSettingsKeys.letterSpacing) }
       />
       : <StatefulSlider
         standalone={ standalone }
@@ -71,11 +70,10 @@ export const StatefulLetterSpacing = ({ standalone = true }: StatefulSettingsIte
         defaultValue={ undefined } 
         value={ letterSpacing ?? undefined } 
         onChange={ async(value) => await updatePreference(value as number) } 
-        onReset={ allowReset() ? async() => await updatePreference(null) : undefined }
+        onReset={ canBeReset(ThSpacingSettingsKeys.letterSpacing) ? async() => await updatePreference(null) : undefined }
         range={ letterSpacingRangeConfig.range }
         step={ letterSpacingRangeConfig.step }
         formatOptions={ { style: "percent" } }
-        canBeReset={ canBeReset(ThSpacingSettingsKeys.letterSpacing) }
       />
     } 
     </>
