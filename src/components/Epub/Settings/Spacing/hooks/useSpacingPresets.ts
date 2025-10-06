@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useEffect } from "react";
+import { useCallback, useMemo } from "react";
 
 import { 
   ThSettingsKeys, 
@@ -13,13 +13,15 @@ import { usePlugins } from "@/components/Plugins/PluginProvider";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { usePreferenceKeys } from "@/preferences/hooks/usePreferenceKeys";
 
-import { SpacingStateKey } from "@/lib/settingsReducer";
 import { useAppSelector, useAppDispatch } from "@/lib";
 import {
+  SpacingStateKey,
   setLetterSpacing,
   setLineHeight,
   setParagraphIndent,
   setParagraphSpacing,
+  setPublisherStyles,
+  setSpacingPreset,
   setWordSpacing
 } from "@/lib/settingsReducer";
 
@@ -270,6 +272,13 @@ export const useSpacingPresets = () => {
     dispatch(setWordSpacing(payload));
   }, [dispatch, shouldApplyPresets, spacing.preset]);
 
+  const setPublisherStylesAction = useCallback((value: boolean) => {
+    if (shouldApplyPresets && value) {
+      dispatch(setSpacingPreset({ preset: ThSpacingPresetKeys.publisher, values: {} }));
+    }
+    dispatch(setPublisherStyles(value));
+  }, [dispatch, shouldApplyPresets]);
+
   return {
     currentPreset: spacing.preset,
     getPresetValues: getPresetValuesCallback,
@@ -281,6 +290,7 @@ export const useSpacingPresets = () => {
     setLineHeight: setLineHeightAction,
     setParagraphIndent: setParagraphIndentAction,
     setParagraphSpacing: setParagraphSpacingAction,
-    setWordSpacing: setWordSpacingAction
+    setWordSpacing: setWordSpacingAction,
+    setPublisherStyles: setPublisherStylesAction
   };
 };

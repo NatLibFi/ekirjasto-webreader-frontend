@@ -13,22 +13,19 @@ import { useI18n } from "@/i18n/useI18n";
 import { useSpacingPresets } from "./Spacing/hooks/useSpacingPresets";
 import { useLineHeight } from "./Spacing/hooks/useLineHeight";
 
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { setPublisherStyles } from "@/lib/settingsReducer";
+import { useAppSelector } from "@/lib/hooks";
 
 export const StatefulPublisherStyles = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { t } = useI18n();
   const publisherStyles = useAppSelector(state => state.settings.publisherStyles);
 
-  const { getEffectiveSpacingValue } = useSpacingPresets();
+  const { getEffectiveSpacingValue, setPublisherStyles } = useSpacingPresets();
 
   const lineHeight = getEffectiveSpacingValue(ThSpacingSettingsKeys.lineHeight);
   const paragraphIndent = getEffectiveSpacingValue(ThSpacingSettingsKeys.paragraphIndent);
   const paragraphSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.paragraphSpacing);
   const letterSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.letterSpacing);
   const wordSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.wordSpacing);
-
-  const dispatch = useAppDispatch();
 
   const lineHeightOptions = useLineHeight();
 
@@ -54,8 +51,8 @@ export const StatefulPublisherStyles = ({ standalone = true }: StatefulSettingsI
     };
     await submitPreferences(values);
 
-    dispatch(setPublisherStyles(isSelected ? true : false));
-  }, [submitPreferences, dispatch, lineHeight, paragraphIndent, paragraphSpacing, letterSpacing, wordSpacing, lineHeightOptions]);
+    setPublisherStyles(isSelected ? true : false);
+  }, [submitPreferences, setPublisherStyles, lineHeight, paragraphIndent, paragraphSpacing, letterSpacing, wordSpacing, lineHeightOptions]);
 
   return(
     <>
