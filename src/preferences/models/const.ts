@@ -59,18 +59,11 @@ export const defaultFontFamilyOptions = {
   monospace: fontStacks.RS__monospaceTf
 }
 
-export const defaultFontSize: Required<ThSettingsRangePref> = {
-  variant: ThSettingsRangeVariant.numberField,
-  placeholder: ThSettingsRangePlaceholder.range,
-  range: [0.7, 2.5],
-  step: 0.05
-}
-
 export const defaultParagraphSpacing: Required<ThSettingsRangePref> = {
   variant: ThSettingsRangeVariant.numberField,
   placeholder: ThSettingsRangePlaceholder.range,
   range: [0, 3],
-  step: 0.5
+  step: 0.25
 }
 
 export const defaultParagraphIndent: Required<ThSettingsRangePref> = {
@@ -115,17 +108,17 @@ export const defaultSpacingPresets = {
   },
   [ThSpacingPresetKeys.balanced]: {
     [ThSpacingSettingsKeys.lineHeight]: ThLineHeightOptions.medium,
-    [ThSpacingSettingsKeys.paragraphSpacing]: 0.5,
+    [ThSpacingSettingsKeys.paragraphSpacing]: 0.75,
     [ThSpacingSettingsKeys.paragraphIndent]: 0
   },
   [ThSpacingPresetKeys.loose]: {
     [ThSpacingSettingsKeys.lineHeight]: ThLineHeightOptions.large,
-    [ThSpacingSettingsKeys.paragraphSpacing]: 1.5,
+    [ThSpacingSettingsKeys.paragraphSpacing]: 1.75,
     [ThSpacingSettingsKeys.paragraphIndent]: 0
   },
   [ThSpacingPresetKeys.accessible]: {
     [ThSpacingSettingsKeys.lineHeight]: ThLineHeightOptions.large,
-    [ThSpacingSettingsKeys.paragraphSpacing]: 3,
+    [ThSpacingSettingsKeys.paragraphSpacing]: 2.5,
     [ThSpacingSettingsKeys.paragraphIndent]: 0,
     [ThSpacingSettingsKeys.letterSpacing]: 0.1,
     [ThSpacingSettingsKeys.wordSpacing]: 0.3

@@ -2,7 +2,7 @@
 
 import React, { useCallback } from "react";
 
-import { defaultFontSize, ThSettingsKeys, ThSettingsRangeVariant } from "@/preferences";
+import { ThSettingsKeys, ThSettingsRangeVariant } from "@/preferences";
 
 import Decrease from "./assets/icons/text_decrease.svg";
 import Increase from "./assets/icons/text_increase.svg";
@@ -59,8 +59,8 @@ export const StatefulZoom = () => {
     placeholder: preferences.settings.keys[ThSettingsKeys.zoom].placeholder,
     range: preferencesEditor?.fontSize.supportedRange
       ? getEffectiveRange(preferences.settings.keys[ThSettingsKeys.zoom].range, preferencesEditor?.fontSize.supportedRange)
-      : preferences.settings.keys[ThSettingsKeys.zoom].range || defaultFontSize.range,
-    step: preferences.settings.keys[ThSettingsKeys.zoom].step || preferencesEditor?.fontSize.step
+      : preferences.settings.keys[ThSettingsKeys.zoom].range,
+    step: preferences.settings.keys[ThSettingsKeys.zoom].step
   }
 
   const placeholderText = usePlaceholder(zoomRangeConfig.placeholder, zoomRangeConfig.range);
