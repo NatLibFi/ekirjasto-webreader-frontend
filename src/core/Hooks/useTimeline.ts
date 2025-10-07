@@ -71,6 +71,9 @@ export const useTimeline = ({
   const [previousItem, setPreviousItem] = useState<TimelineItem | null>(null);
   const [nextItem, setNextItem] = useState<TimelineItem | null>(null);
 
+  const [relativeProgression, setRelativeProgression] = useState<number | undefined>(undefined);
+  const [totalProgression, setTotalProgression] = useState<number | undefined>(undefined);
+
   const idCounterRef = useRef(0);
 
   // Create the timeline object
@@ -89,8 +92,8 @@ export const useTimeline = ({
       currentIndex: currentItem?.readingOrderIndex ? currentItem.readingOrderIndex + 1 : undefined,
       totalPositions: positionsList.length,
       currentPositions: currentPositions || [],
-      relativeProgression: currentItem?.progressionRange?.[0],
-      totalProgression: currentItem?.totalProgressionRange?.[0],
+      relativeProgression: relativeProgression,
+      totalProgression: totalProgression,
       currentChapter: currentItem?.title,
       positionsLeft: currentItem?.positionRange?.[1] && currentPositions[0] !== undefined
         ? Math.max(0, currentItem.positionRange[1] - currentPositions[0])
@@ -106,7 +109,9 @@ export const useTimeline = ({
     previousItem,
     nextItem,
     positionsList,
-    currentPositions
+    currentPositions,
+    relativeProgression,
+    totalProgression
   ]);
 
   const buildTocTree = useCallback((
@@ -349,6 +354,10 @@ export const useTimeline = ({
     }
 
     updateTimelineItems();
+
+    // Update progression state when location changes
+    setRelativeProgression(currentLocation?.locations.progression);
+    setTotalProgression(currentLocation?.locations.totalProgression);
   }, [currentLocation, tocTree, timelineItems, handleTocEntryOnNav, updateTimelineItems]);
 
   // Update the singleton and call onChange
