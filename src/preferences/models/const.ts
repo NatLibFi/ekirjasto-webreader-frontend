@@ -22,9 +22,9 @@ export const defaultTextSettingsMain = [ThTextSettingsKeys.fontFamily];
 
 export const defaultTextSettingsSubpanel = [
   ThTextSettingsKeys.fontFamily,
-  ThTextSettingsKeys.fontWeight,
   ThTextSettingsKeys.textAlign,
   ThTextSettingsKeys.hyphens,
+  ThTextSettingsKeys.fontWeight,
   ThTextSettingsKeys.textNormalize
 ]
 

@@ -443,14 +443,7 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
       [ThSettingsKeys.zoom]: defaultZoom
     },
     text: {
-      header: ThSheetHeaderVariant.previous,
-      subPanel: [
-        ThTextSettingsKeys.fontFamily,
-        ThTextSettingsKeys.fontWeight,
-        ThTextSettingsKeys.textAlign,
-        ThTextSettingsKeys.hyphens,
-        ThTextSettingsKeys.textNormalize
-      ]
+      header: ThSheetHeaderVariant.previous
     },
     spacing: {
       header: ThSheetHeaderVariant.previous,
