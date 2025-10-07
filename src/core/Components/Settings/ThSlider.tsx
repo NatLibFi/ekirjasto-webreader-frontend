@@ -96,6 +96,7 @@ export const ThSlider = ({
         { ...props }
       >
         { label && <Label { ...compounds?.label }>
+            { label }
           </Label>
         }
         <SliderOutput { ...compounds?.output }>
