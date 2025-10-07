@@ -68,6 +68,7 @@ return (
     { ...props }
     { ...(standalone ? { label: label } : { "aria-label": label }) }
     value={ value }
+    onChange={ onChange }
     items={ useGraphicalNavigation !== false ? items : [] }
     compounds={{
       wrapper: {
