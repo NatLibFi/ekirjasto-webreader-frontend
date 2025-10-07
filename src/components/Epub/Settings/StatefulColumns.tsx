@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import AutoLayoutIcon from "./assets/icons/document_scanner.svg";
 import OneColIcon from "./assets/icons/article.svg";
@@ -70,8 +70,6 @@ export const StatefulColumns = () => {
     }
   ], [t, effectiveValue, columnCount]);
 
-  const itemsRef = useRef(items);
-
   const updateEffectiveValue = useCallback((preference: string, setting: number | null) => {
     const derivedValue = preference === "auto" || setting === null ? "auto" : setting.toString();
     setEffectiveValue(derivedValue);
@@ -114,11 +112,6 @@ export const StatefulColumns = () => {
       onChange={ async (val: string) => await updatePreference(val) }
       isDisabled={ isScroll }
       items={ items }
-      gridNavigation={{
-        items: itemsRef,
-        currentValue: effectiveValue,
-        onChange: async (val: string) => await updatePreference(val),
-      }}
     />
     </>
   );

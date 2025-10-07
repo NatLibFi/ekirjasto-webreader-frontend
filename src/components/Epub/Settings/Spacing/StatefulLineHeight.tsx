@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo } from "react";
 
 import { ThLineHeightOptions, ThSpacingSettingsKeys, ThSettingsKeys } from "@/preferences";
 
@@ -71,8 +71,6 @@ export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemPr
     return baseItems;
   }, [preferences.settings.keys, t]);
 
-  const itemsRef = useRef(items);
-
   const updatePreference = useCallback(async (value: string) => {
     const computedValue = value === ThLineHeightOptions.publisher
       ? null
@@ -97,11 +95,6 @@ export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemPr
       value={ publisherStyles ? ThLineHeightOptions.publisher : lineHeight }
       onChange={ async (val: string) => await updatePreference(val) }
       items={ items }
-      gridNavigation={{
-        items: itemsRef,
-        currentValue: publisherStyles ? ThLineHeightOptions.publisher : lineHeight,
-        onChange: async (val: string) => await updatePreference(val),
-      }}
     />
     </>
   );

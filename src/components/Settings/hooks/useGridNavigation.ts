@@ -43,15 +43,19 @@ export const useGridNavigation = ({
 
     switch (e.code) {
       case "ArrowUp":
+        e.preventDefault();
         nextIdx = currentIdx - columns;
         break;
       case "ArrowDown":
+        e.preventDefault();
         nextIdx = currentIdx + columns;
         break;
       case "ArrowLeft":
+        e.preventDefault();
         nextIdx = isRTL ? currentIdx + 1 : currentIdx - 1;
         break;
       case "ArrowRight":
+        e.preventDefault();
         nextIdx = isRTL ? currentIdx - 1 : currentIdx + 1;
         break;
       case "Escape":
@@ -65,7 +69,6 @@ export const useGridNavigation = ({
     }
 
     if (nextIdx !== null && nextIdx >= 0 && nextIdx < items.current.length) {
-      e.preventDefault();
       const nextItem = items.current[nextIdx];
 
       // Extract value from object items or use primitive directly

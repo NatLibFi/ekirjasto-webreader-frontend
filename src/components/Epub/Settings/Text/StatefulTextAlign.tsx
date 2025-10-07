@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useRef } from "react";
+import React, { useCallback } from "react";
 
 import { ThTextAlignOptions } from "@/preferences/models/enums";
 import { StatefulSettingsItemProps } from "../../../Settings/models/settings";
@@ -48,8 +48,6 @@ export const StatefulTextAlign = ({ standalone = true }: StatefulSettingsItemPro
     }
   ];
 
-  const itemsRef = useRef(items);
-
   const updatePreference = useCallback(async (value: string) => {
     const textAlign: TextAlignment | null = value === ThTextAlignOptions.publisher 
       ? null 
@@ -84,11 +82,6 @@ export const StatefulTextAlign = ({ standalone = true }: StatefulSettingsItemPro
       value={ textAlign } 
       onChange={ async (val: string) => await updatePreference(val) }
       items={ items }
-      gridNavigation={{
-        items: itemsRef,
-        currentValue: textAlign,
-        onChange: async (val: string) => await updatePreference(val),
-      }}
     />
     </>
   );

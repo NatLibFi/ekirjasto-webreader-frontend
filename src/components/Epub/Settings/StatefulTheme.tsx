@@ -139,6 +139,7 @@ export const StatefulTheme = () => {
       label={ t("reader.settings.themes.title") }
       value={ theme }
       onChange={ async (val) => await updatePreference(val as ThemeKeyType) }
+      useGraphicalNavigation={ false }
     >
       <div 
         ref={ radioGroupWrapperRef }

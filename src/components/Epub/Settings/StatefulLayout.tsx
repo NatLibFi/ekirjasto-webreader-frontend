@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useRef } from "react";
+import React, { useCallback } from "react";
 
 import { ThLayoutOptions } from "@/preferences/models/enums";
 
@@ -40,8 +40,6 @@ export const StatefulLayout = () => {
     }
   ];
 
-  const itemsRef = useRef(items);
-
   const updatePreference = useCallback(async (value: string) => { 
     const derivedValue = value === ThLayoutOptions.scroll;
     await submitPreferences({ scroll: derivedValue });
@@ -57,11 +55,6 @@ export const StatefulLayout = () => {
       value={ isScroll ? ThLayoutOptions.scroll : ThLayoutOptions.paginated }
       onChange={ async (val: string) => await updatePreference(val) }
       items={ items }
-      gridNavigation={{
-        items: itemsRef,
-        currentValue: isScroll ? ThLayoutOptions.scroll : ThLayoutOptions.paginated,
-        onChange: async (val: string) => await updatePreference(val),
-      }}
     />
     </>
   )

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo } from "react";
 
 import { 
   ThSpacingPresetKeys,
@@ -114,8 +114,6 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
     }));
   }, [spacingKeys, t]);
 
-  const itemsRef = useRef(items);
-
   // Return null if no items to display
   if (items.length === 0) {
     return null;
@@ -130,11 +128,6 @@ export const StatefulSpacingPresets = ({ standalone }: StatefulSettingsItemProps
       value={ spacing?.preset || ThSpacingPresetKeys.publisher }
       onChange={ async (val: string) => await updatePreference(val as ThSpacingPresetKeys) }
       items={ items }
-      gridNavigation={{
-        items: itemsRef,
-        currentValue: spacing?.preset || ThSpacingPresetKeys.publisher,
-        onChange: async (val: string) => await updatePreference(val as ThSpacingPresetKeys),
-      }}
     />
     </>
   );
