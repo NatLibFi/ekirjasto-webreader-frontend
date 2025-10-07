@@ -170,6 +170,8 @@
       },
       "fontWeight": {
         "title": "Graisse",
+        "default": "Normal",
+        "bolder": "Gras",
         "increase": "Augmenter la graisse",
         "decrease": "Diminuer la graisse"
       },

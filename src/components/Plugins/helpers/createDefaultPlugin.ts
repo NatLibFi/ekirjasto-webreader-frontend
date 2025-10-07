@@ -11,7 +11,7 @@ import { StatefulTocContainer } from "../../Actions/Toc/StatefulTocContainer";
 
 import { StatefulColumns } from "../../Epub/Settings/StatefulColumns";
 import { StatefulFontFamily } from "../../Epub/Settings/Text/StatefulFontFamily";
-import { StatefulFontWeight } from "../../Epub/Settings/Text/StatefulFontWeight";
+import { UnstableStatefulFontWeight } from "../../Epub/Settings/Text/StatefulFontWeight";
 import { StatefulHyphens } from "../../Epub/Settings/Text/StatefulHyphens";
 import { StatefulLayout } from "../../Epub/Settings/StatefulLayout";
 import { StatefulLetterSpacing } from "../../Epub/Settings/Spacing/StatefulLetterSpacing";
@@ -61,7 +61,7 @@ export const createDefaultPlugin = (): ThPlugin => {
           type: "text"
         },
         [ThSettingsKeys.fontWeight]: {
-          Comp: StatefulFontWeight,
+          Comp: UnstableStatefulFontWeight,
           type: "text"
         },
         [ThSettingsKeys.hyphens]: {
