@@ -235,6 +235,15 @@ export const settingsSlice = createSlice({
     setSpacingPreset: (state, action: SetSpacingPresetPayload) => {
       const { preset, values } = action.payload;
 
+      // Initialize spacing state if needed
+      if (!state.spacing) {
+        state.spacing = {
+          preset: preset,
+          custom: {},
+          baseline: {}
+        };
+      }
+
       state.spacing.preset = preset;
 
       if (preset !== ThSpacingPresetKeys.custom) {
