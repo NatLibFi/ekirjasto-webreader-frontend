@@ -146,7 +146,7 @@ export const useSpacingPresets = () => {
     }
 
     if (spacing.preset === ThSpacingPresetKeys.custom) {
-      const customValue = spacing.custom[key as SpacingStateKey];
+      const customValue = spacing.custom?.[key as SpacingStateKey];
       if (customValue !== undefined) {
         return customValue;
       }
