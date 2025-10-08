@@ -16,6 +16,7 @@ import { setActionOpen } from "@/lib/actionsReducer";
 export interface StatefulRadioGroupProps extends Omit<ThRadioGroupProps, "classNames"> {
   standalone?: boolean;
   useGraphicalNavigation?: boolean;
+  onEscape?: () => void;
 }
 
 export const StatefulRadioGroup = ({
@@ -27,6 +28,7 @@ export const StatefulRadioGroup = ({
   value,
   children,
   onChange,
+  onEscape,
   ...props
 }: StatefulRadioGroupProps) => {
   const itemsRef = useRef(items || []);
@@ -56,7 +58,7 @@ export const StatefulRadioGroup = ({
     currentValue: useGraphicalNavigation !== false ? value : null,
     onChange: onChange || (() => {}),
     isRTL,
-    onEscape: onEscapeCallback,
+    onEscape: onEscape || onEscapeCallback,
     onFocus: onFocusCallback
   });
 
