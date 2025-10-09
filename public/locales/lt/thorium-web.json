@@ -204,7 +204,8 @@
                 "title": "Raidžių išretinimas",
                 "increase": "Padidinti raidžių išretinimą",
                 "decrease": "Sumažinti raidžių išretinimą"
-            }
+            },
+            "reset": "Atkurti"
         },
         "overflowMenu": {
             "active": {
