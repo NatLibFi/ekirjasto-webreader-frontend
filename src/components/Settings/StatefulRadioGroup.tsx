@@ -4,7 +4,7 @@ import { useCallback, useRef } from "react";
 
 import settingsStyles from "./assets/styles/settings.module.css";
 
-import { ThActionsKeys, ThLayoutDirection } from "@/preferences/models/enums";
+import { ThActionsKeys, ThLayoutDirection, ThSettingsContainerKeys } from "@/preferences/models/enums";
 
 import { ThRadioGroup, ThRadioGroupProps } from "@/core/Components/Settings/ThRadioGroup";
 
@@ -12,6 +12,7 @@ import { useGridNavigation } from "./hooks/useGridNavigation";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setActionOpen } from "@/lib/actionsReducer";
+import { setSettingsContainer } from "@/lib/readerReducer";
 
 export interface StatefulRadioGroupProps extends Omit<ThRadioGroupProps, "classNames"> {
   standalone?: boolean;
@@ -35,16 +36,23 @@ export const StatefulRadioGroup = ({
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const direction = useAppSelector(state => state.reader.direction);
   const isRTL = direction === ThLayoutDirection.rtl;
-    
+  const settingsContainer = useAppSelector(state => state.reader.settingsContainer);
+  
   const dispatch = useAppDispatch();
 
-  // Default escape handler that closes settings panel
+  // Default escape handler that adapts to context
   const onEscapeCallback = useCallback(() => {
-    dispatch(setActionOpen({
-      key: ThActionsKeys.settings,
-      isOpen: false
-    }));
-  }, [dispatch]);
+    if (settingsContainer !== ThSettingsContainerKeys.initial) {
+      // In subpanel - go back to initial view
+      dispatch(setSettingsContainer(ThSettingsContainerKeys.initial));
+    } else {
+      // In main panel - close settings
+      dispatch(setActionOpen({
+        key: ThActionsKeys.settings,
+        isOpen: false
+      }));
+    }
+  }, [dispatch, settingsContainer]);
 
   // Default focus handler that focuses elements by value within the container only
   const onFocusCallback = useCallback((value: string) => {
