@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ComponentType, SVGProps } from "react";
+import React, { ComponentType, SVGProps, useEffect, useRef } from "react";
 
 import { HTMLAttributesWithRef, WithRef } from "../customTypes";
 
@@ -51,33 +51,57 @@ export const ThRadioGroup = ({
   items,
   compounds,
   children,
+  value,
   ...props
 }: ThRadioGroupProps) => {
+  const radioGroupRef = useRef<HTMLDivElement>(null);
+
+  // Auto-detect when value doesn't match items and ensure first radio is focusable
+  // Otherwise all inputs will have tabindex -1 and the entire group will be skipped
+  // when tabbing.
+  useEffect(() => {
+    if (items?.length && radioGroupRef.current && value !== undefined) {
+      const valueMatches = items.some((item) => item.value === value);
+
+      if (!valueMatches) {
+        // When no value matches, make first radio focusable for tab navigation
+        const firstRadio = radioGroupRef.current.querySelector("input[type='radio']") as HTMLInputElement;
+        if (firstRadio && firstRadio.getAttribute("tabindex") !== "0") {
+          firstRadio.setAttribute("tabindex", "0");
+        }
+      }
+      // When value matches, let React Aria handle tabindex completely
+    }
+  }, [items, value]);
+
   if (React.isValidElement(children)) {
     return (
-      <RadioGroup 
-        ref={ ref }
+      <RadioGroup
+        ref={ ref || radioGroupRef }
+        value={ value }
         { ...props }
       >
         { label && <Label { ...compounds?.label }>
             { label }
-          </Label> 
+          </Label>
         }
         { children }
       </RadioGroup>
     )
   } else if (items) {
     return (
-      <RadioGroup 
+      <RadioGroup
+        ref={ radioGroupRef }
+        value={ value }
         { ...props }
       >
         { label && <Label { ...compounds?.label }>
             { label }
-          </Label> 
+          </Label>
         }
         <div { ...compounds?.wrapper }>
           { items.map((item) => (
-            <Radio 
+            <Radio
               { ...compounds?.radio }
               id={ item.id }
               key={ item.id }
@@ -88,7 +112,7 @@ export const ThRadioGroup = ({
                 { item.icon && <item.icon aria-hidden="true" focusable="false" /> }
                 <span { ...compounds?.radioLabel }>
                   { item.label }
-                </span> 
+                </span>
               </React.Fragment>
             </Radio>
           )) }
@@ -96,4 +120,4 @@ export const ThRadioGroup = ({
       </RadioGroup>
     )
   }
-}
+};

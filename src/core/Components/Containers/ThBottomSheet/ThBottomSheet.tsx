@@ -13,7 +13,6 @@ import { OverlayTriggerState, useOverlayTriggerState } from "react-stately";
 import { ThContainerHeader, ThContainerHeaderProps } from "../ThContainerHeader";
 import { ThContainerBody } from "../ThContainerBody";
 import { ThContainerProps } from "../ThContainer";
-import { useFirstFocusable, UseFirstFocusableProps } from "../hooks/useFirstFocusable";
 
 import { ThDragIndicatorButton, ThDragIndicatorButtonProps } from "./ThDragIndicatorButton";
 
@@ -28,6 +27,9 @@ import {
   useObjectRef, 
   useOverlay 
 } from "react-aria";
+
+import { useTransform } from "motion/react";
+import { useFirstFocusable, UseFirstFocusableProps } from "../hooks/useFirstFocusable";
 
 export interface ThBottomSheetHeaderProps extends ThContainerHeaderProps {
   wrapper: React.ComponentProps<typeof Sheet.Header>,
@@ -84,6 +86,10 @@ const ThBottomSheetContainer = ({
     isKeyboardDismissDisabled: isKeyboardDismissDisabled
   }, containerRef);
   const [isFullHeight, setFullHeight] = useState<boolean>(false);
+
+  const autoPadding = useTransform(() => {
+    return (sheetRef.current as SheetRef)?.y.get() ?? 0;
+  });
 
   // Apply scroller className from compounds
   useEffect(() => {
@@ -178,7 +184,7 @@ const ThBottomSheetContainer = ({
       <Sheet.Content 
         scrollRef={ scrollerRef }
         { ...compounds?.content }
-        { ...(isDraggable ? { style: { ...compounds?.content?.style, paddingBottom: (sheetRef.current as SheetRef)?.y } as { [key: string]: any }} : {})}
+        { ...(isDraggable && compounds?.content?.disableDrag ? { style: { ...compounds?.content?.style, paddingBottom: autoPadding } as { [key: string]: any }} : {})}
       >
         { Body }
       </Sheet.Content>
