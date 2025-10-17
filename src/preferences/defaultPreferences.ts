@@ -83,6 +83,13 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
                 displayInFullscreen: true
               }
             }
+          },
+          webPub: {
+            default: {
+              variants: ThRunningHeadFormat.chapter,
+              displayInImmersive: true,
+              displayInFullscreen: true
+            }
           }
         }
       }
@@ -130,6 +137,16 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
               displayInFullscreen: true
             }
           }
+        },
+        webPub: {
+          default: {
+            variants: [
+              ThProgressionFormat.readingOrderIndex, 
+              ThProgressionFormat.none
+            ],
+            displayInImmersive: true,
+            displayInFullscreen: true
+          }
         }
       }
     },
@@ -144,7 +161,8 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
     layout: {
       ui: {
         reflow: ThLayoutUI.layered,
-        fxl: ThLayoutUI.layered
+        fxl: ThLayoutUI.layered,
+        webPub: ThLayoutUI.stacked
       },
       radius: 5, // border-radius of containers
       spacing: 20, // padding of containers/sheets
@@ -319,6 +337,10 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
       ThActionsKeys.toc,
       ThActionsKeys.fullscreen,
       ThActionsKeys.jumpToPosition
+    ],
+    webPubOrder: [
+      ThActionsKeys.toc,
+      ThActionsKeys.fullscreen
     ],
     collapse: {
       // Number of partially icons to display

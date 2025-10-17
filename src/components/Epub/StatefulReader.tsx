@@ -19,7 +19,8 @@ import {
   ThTextAlignOptions, 
   ThLayoutUI,
   ThDocumentTitleFormat,
-  ThSpacingSettingsKeys
+  ThSpacingSettingsKeys,
+  ThProgressionFormat
 } from "../../preferences/models/enums";
 import { ThColorScheme } from "@/core/Hooks/useColorScheme";
 
@@ -27,6 +28,7 @@ import { ThPlugin, ThPluginRegistry } from "../Plugins/PluginRegistry";
 
 import { I18nProvider } from "react-aria";
 import { ThPluginProvider } from "../Plugins/PluginProvider";
+import { NavigatorProvider } from "@/core/Navigator";
 
 import {
   BasicTextSelection,
@@ -181,7 +183,7 @@ export const StatefulReader = ({
 };
 
 const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; selfHref: string }) => {
-  const { fxlThemeKeys, reflowThemeKeys } = usePreferenceKeys();
+  const { fxlActionKeys, fxlThemeKeys, reflowActionKeys, reflowThemeKeys } = usePreferenceKeys();
   const { preferences } = usePreferences();
   const { t } = useI18n();
   const { getEffectiveSpacingValue } = useSpacingPresets();
@@ -260,6 +262,7 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
     }, [dispatch]);
   const fs = useFullscreen(onFsChange);
 
+  const epubNavigator = useEpubNavigator();
   const { 
     EpubNavigatorLoad, 
     EpubNavigatorDestroy, 
@@ -277,7 +280,7 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
     getCframes,
     onFXLPositionChange,
     submitPreferences
-  } = useEpubNavigator();
+  } = epubNavigator;
 
   const { setLocalData, getLocalData, localData } = useLocalStorage(localDataKey.current);
 
@@ -794,7 +797,7 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
           publication: publication,
           listeners: listeners, 
           positionsList: positionsList,
-          initialPosition: initialPosition ?? undefined,
+          initialPosition: initialPosition ? new Locator(initialPosition) : undefined,
           preferences: epubPreferences,
           defaults: defaults
         }, () => p.observe(window));
@@ -819,6 +822,7 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
   return (
     <>
     <I18nProvider locale={ preferences.locale }>
+    <NavigatorProvider navigator={ epubNavigator }>
       <main id="reader-main">
         <StatefulDockingWrapper>
           <div 
@@ -834,7 +838,16 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
               )
             }
           >
-            <StatefulReaderHeader layout={ layoutUI } />
+            <StatefulReaderHeader 
+              actionKeys={ isFXL ? fxlActionKeys : reflowActionKeys }
+              actionsOrder={ isFXL ? preferences.actions.fxlOrder : preferences.actions.reflowOrder }
+              layout={ layoutUI }
+              runningHeadFormatPref={
+                isFXL 
+                  ? preferences.theming.header?.runningHead?.format?.fxl 
+                  : preferences.theming.header?.runningHead?.format?.reflow
+              } 
+            />
 
           { !isScroll 
             ? <nav className={ arrowStyles.container } id={ arrowStyles.left }>
@@ -862,10 +875,23 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
               </nav> 
             : <></> }
 
-          <StatefulReaderFooter layout={ layoutUI } />
+          <StatefulReaderFooter 
+            layout={ layoutUI } 
+            progressionFormatPref={
+              isFXL 
+                ? preferences.theming.progression?.format?.fxl 
+                : preferences.theming.progression?.format?.reflow
+            }
+            progressionFormatFallback={
+              isFXL 
+                ? ThProgressionFormat.readingOrderIndex
+                : ThProgressionFormat.resourceProgression
+            }
+          />
         </div>
       </StatefulDockingWrapper>
     </main>
+  </NavigatorProvider>
   </I18nProvider>
   </>
 )};

@@ -142,6 +142,7 @@ export type SpacingSettingsKey<K extends CustomizableKeys> =
 export interface ThActionsPref<K extends CustomizableKeys> {
   reflowOrder: Array<ActionKey<K>>;
   fxlOrder: Array<ActionKey<K>>;
+  webPubOrder: Array<ActionKey<K>>;
   collapse: ThCollapsibility;
   keys: Record<ActionKey<K>, ThActionsTokens>;
 };
@@ -228,6 +229,7 @@ export interface ThPreferences<K extends CustomizableKeys = {}> {
         format?: {
           reflow?: ThFormatPref<ThRunningHeadFormat>;
           fxl?: ThFormatPref<ThRunningHeadFormat>;
+          webPub?: ThFormatPref<ThRunningHeadFormat>;
         }
       }
     };
@@ -235,6 +237,7 @@ export interface ThPreferences<K extends CustomizableKeys = {}> {
       format?: {
         reflow?: ThFormatPref<ThProgressionFormat | Array<ThProgressionFormat>>;
         fxl?: ThFormatPref<ThProgressionFormat | Array<ThProgressionFormat>>;
+        webPub?: ThFormatPref<ThProgressionFormat | Array<ThProgressionFormat>>;
       };
     };
     arrow: {
@@ -250,7 +253,8 @@ export interface ThPreferences<K extends CustomizableKeys = {}> {
     layout: {
       ui?: {
         reflow?: ThLayoutUI,
-        fxl?: ThLayoutUI
+        fxl?: ThLayoutUI,
+        webPub?: ThLayoutUI
       };
       radius: number;
       spacing: number;
@@ -345,7 +349,7 @@ export const createPreferences = <K extends CustomizableKeys = {}>(
   // Validate actions
   if (params.actions) {
     validateObjectKeys<ActionKey<K>, ThActionsTokens>(
-      [params.actions.reflowOrder as Array<ActionKey<K>>, params.actions.fxlOrder as Array<ActionKey<K>>],
+      [params.actions.reflowOrder as Array<ActionKey<K>>, params.actions.fxlOrder as Array<ActionKey<K>>, params.actions.webPubOrder as Array<ActionKey<K>>],
       params.actions.keys as Record<string, ThActionsTokens>,
       "actions"
     );

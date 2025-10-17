@@ -56,6 +56,16 @@ const onlineBooks = [
   }
 ];
 
+const webPublications = [
+  {
+    title: "Readium CSS Implementers’ Documentation",
+    author: "Jiminy Panoz",
+    cover: "/images/readium-css.jpg",
+    url: "/read/experimental/readium-css",
+    rendition: "Reflowable"
+  }
+];
+
 export default function Home() {
   const [isManifestEnabled, setIsManifestEnabled] = useState<boolean>(true);
 
@@ -82,7 +92,7 @@ export default function Home() {
       </header>
 
       <PublicationGrid
-        publications={ books }
+        publications={ [...books, ...webPublications] }
         renderCover={ (publication) => (
           <Image
             src={ publication.cover }

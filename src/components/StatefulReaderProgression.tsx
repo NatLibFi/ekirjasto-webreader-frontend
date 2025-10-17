@@ -5,12 +5,11 @@ import React, { useEffect, useState, useMemo } from "react";
 import progressionStyles from "./assets/styles/readerProgression.module.css";
 
 import { ThProgressionFormat } from "@/preferences/models/enums";
-import { ThFormatPrefValue } from "@/preferences";
+import { ThFormatPref, ThFormatPrefValue } from "@/preferences";
 
 import { ThProgression } from "@/core/Components/Reader/ThProgression";
 
 import { useI18n } from "@/i18n/useI18n";
-import { usePreferences } from "@/preferences/hooks/usePreferences";
 
 import { useAppSelector } from "@/lib/hooks";
 
@@ -48,15 +47,17 @@ const getBestMatchingFormat = (
 };
 
 export const StatefulReaderProgression = ({ 
-  className 
+  className,
+  formatPref,
+  fallbackVariant
 }: { 
-  className?: string 
+  className?: string,
+  formatPref?: ThFormatPref<ThProgressionFormat | ThProgressionFormat[]>,
+  fallbackVariant: ThProgressionFormat | Array<ThProgressionFormat>
 }) => {
   const { t } = useI18n();
-  const { preferences } = usePreferences();
   
   const unstableTimeline = useAppSelector(state => state.publication.unstableTimeline);
-  const isFXL = useAppSelector(state => state.publication.isFXL);
   const isImmersive = useAppSelector(state => state.reader.isImmersive);
   const isFullscreen = useAppSelector(state => state.reader.isFullscreen);
   const isHovering = useAppSelector(state => state.reader.isHovering);
@@ -64,16 +65,13 @@ export const StatefulReaderProgression = ({
 
   const [displayText, setDisplayText] = useState("");
   
-  const formatPref = isFXL 
-    ? preferences.theming.progression?.format?.fxl
-    : preferences.theming.progression?.format?.reflow;
-
-  // Get the fallback format based on isFXL
-  const fallbackFormat = useMemo<ThFormatPrefValue<ThProgressionFormat>>(() => ({
-    variants: isFXL ? ThProgressionFormat.readingOrderIndex : ThProgressionFormat.resourceProgression,
-    displayInImmersive: true,
-    displayInFullscreen: true
-  }), [isFXL]);
+  const fallbackFormat = useMemo(() => {
+    return {
+      variants: fallbackVariant,
+      displayInImmersive: true,
+      displayInFullscreen: true
+    };
+  }, [fallbackVariant]);
   
   const breakpointsMap = useMemo(() => {
     return makeBreakpointsMap<ThFormatPrefValue<ThProgressionFormat | ThProgressionFormat[]>>({
