@@ -90,7 +90,8 @@ import {
   setDirection, 
   setArrows, 
   setFullscreen,
-  setScrollAffordance
+  setScrollAffordance,
+  setReaderProfile
 } from "@/lib/readerReducer";
 import { 
   setFXL, 
@@ -714,6 +715,8 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
 
   useEffect(() => {
     if (!publication) return;
+
+    dispatch(setReaderProfile("epub"));
 
     dispatch(setRTL(publication.metadata.effectiveReadingProgression === ReadingProgression.rtl));
     dispatch(setFXL(publication.metadata.effectiveLayout === Layout.fixed));
