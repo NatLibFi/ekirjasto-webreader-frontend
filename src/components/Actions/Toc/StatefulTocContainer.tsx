@@ -20,7 +20,7 @@ import {
   TreeItemContent
 } from "react-aria-components";
 
-import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
+import { useNavigator } from "@/core/Navigator";
 import { useDocking } from "../../Docking/hooks/useDocking";
 import { useI18n } from "@/i18n/useI18n";
 
@@ -47,7 +47,7 @@ export const StatefulTocContainer = ({ triggerRef }: StatefulActionContainerProp
   const actionState = useAppSelector(state => state.actions.keys[ThActionsKeys.toc]);
   const dispatch = useAppDispatch();
 
-  const { goLink } = useEpubNavigator();
+  const { goLink } = useNavigator();
 
   const docking = useDocking(ThActionsKeys.toc);
   const sheetType = docking.sheetType;
