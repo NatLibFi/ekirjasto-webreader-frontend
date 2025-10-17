@@ -32,6 +32,7 @@ export const StatefulReaderFooter = ({
 }) => {
   const { t } = useI18n();
   const footerRef = useRef<HTMLDivElement>(null);
+  const readerProfile = useAppSelector(state => state.reader.profile);
   const isImmersive = useAppSelector(state => state.reader.isImmersive);
   const isHovering = useAppSelector(state => state.reader.isHovering);
   const hasScrollAffordance = useAppSelector(state => state.reader.hasScrollAffordance);
@@ -143,7 +144,7 @@ export const StatefulReaderFooter = ({
       onMouseLeave={ removeHover }
       { ...focusWithinProps }
     >
-      { isScroll && !isFXL
+      { (isScroll || readerProfile === "webPub")
         ? <StatefulReaderPagination 
             aria-label={ t("reader.navigation.scroll.wrapper") }
             links={ updateLinks() } 

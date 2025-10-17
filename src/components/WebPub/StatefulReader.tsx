@@ -47,16 +47,16 @@ import { useTimeline } from "@/core/Hooks/useTimeline";
 import { useDocumentTitle } from "@/core/Hooks/useDocumentTitle";
 import { ThemeKeyType, useTheming } from "@/preferences";
 
-import { setScroll, toggleActionOpen, useAppStore } from "@/lib";
+import { toggleActionOpen, useAppStore } from "@/lib";
 import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 import { 
   setDirection, 
   setFullscreen, 
   setLoading, 
-  setPlatformModifier 
+  setPlatformModifier, 
+  setReaderProfile
 } from "@/lib/readerReducer";
 import { 
-  setFXL,
   setPublicationEnd, 
   setPublicationStart, 
   setRTL, 
@@ -292,9 +292,7 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
   useEffect(() => {
     if (!publication) return;
 
-    // WebPub navigator is always scroll
-    dispatch(setScroll(true));
-    dispatch(setFXL(false));
+    dispatch(setReaderProfile("webPub"));
     
     dispatch(setRTL(publication.metadata.effectiveReadingProgression === ReadingProgression.rtl));
 

@@ -4,6 +4,7 @@ import { defaultPlatformModifier, UnstablePlatformModifier } from "@/core/Helper
 import { ThSettingsContainerKeys, ThLayoutDirection } from "@/preferences/models/enums";
 
 export interface ReaderReducerState {
+  profile: "epub" | "webPub" | undefined;
   direction: ThLayoutDirection;
   isLoading: boolean;
   isImmersive: boolean;
@@ -16,6 +17,7 @@ export interface ReaderReducerState {
 }
 
 const initialState: ReaderReducerState = {
+  profile: undefined,
   direction: ThLayoutDirection.ltr,
   isLoading: true,
   isImmersive: false,
@@ -31,6 +33,9 @@ export const readerSlice = createSlice({
   name: "reader",
   initialState,
   reducers: {
+    setReaderProfile: (state, action) => {
+      state.profile = action.payload
+    },
     setDirection: (state, action) => {
       state.direction = action.payload
     },
@@ -78,6 +83,7 @@ export const readerSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const { 
+  setReaderProfile, 
   setDirection, 
   setLoading,
   setPlatformModifier, 

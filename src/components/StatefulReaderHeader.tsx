@@ -45,7 +45,6 @@ export const StatefulReaderHeader = ({
   
   const actionsMap = useAppSelector(state => state.actions.keys);
   const overflowMap = useAppSelector(state => state.actions.overflow);
-  const isFXL = useAppSelector(state => state.publication.isFXL);
   const isScroll = useAppSelector(state => state.settings.scroll);
   const isImmersive = useAppSelector(state => state.reader.isImmersive);
   const isHovering = useAppSelector(state => state.reader.isHovering);
