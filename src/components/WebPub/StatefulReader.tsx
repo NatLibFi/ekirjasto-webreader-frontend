@@ -52,9 +52,11 @@ import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 import { 
   setDirection, 
   setFullscreen, 
+  setHovering, 
   setLoading, 
   setPlatformModifier, 
-  setReaderProfile
+  setReaderProfile,
+  toggleImmersive
 } from "@/lib/readerReducer";
 import { 
   setPublicationEnd, 
@@ -227,6 +229,12 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
     }
   });
 
+  const toggleIsImmersive = useCallback(() => {
+    // If tap/click in iframe, then header/footer no longer hoovering 
+    dispatch(setHovering(false));
+    dispatch(toggleImmersive());
+  }, [dispatch]);
+
   const listeners: WebPubNavigatorListeners = {
     frameLoaded: async function (_wnd: Window): Promise<void> {
       p.observe(window);
@@ -247,7 +255,8 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
       }
     },
     tap: function (_e: FrameClickEvent): boolean {
-      return false;
+      toggleIsImmersive();
+      return true;
     },
     click: function (_e: FrameClickEvent): boolean {
       return false;
