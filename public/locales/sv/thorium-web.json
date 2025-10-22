@@ -6,6 +6,13 @@
                 "title": "Kolumner",
                 "two": "2 kolumner"
             }
+        },
+        "app": {
+            "loading": "Läser in",
+            "publicationWrapper": "Du är nu i publikationen.",
+            "docking": {
+                "dockingLeft": "Dockningsfönster till vänster"
+            }
         }
     }
 }
