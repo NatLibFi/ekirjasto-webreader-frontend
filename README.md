@@ -107,3 +107,65 @@ Thorium Web is licensed under the [BSD-3-Clause license](https://opensource.org/
 ## Acknowledgments
 
 Thorium Web is built using a number of open-source libraries and frameworks, including [Readium](https://readium.org/), [React](https://reactjs.org/), [React Aria](https://react-spectrum.adobe.com/react-aria/index.html), and [Material Symbols and Icons](https://fonts.google.com/icons). We are grateful for the contributions of the developers and maintainers of these projects.
+
+## Example manifest
+
+{
+  "@context": "https://readium.org/webpub-manifest/context.jsonld",
+  "links": [
+    {
+      "href": "~readium/positions.json",
+      "type": "application/vnd.readium.position-list+json"
+    },
+    {
+      "href": "~readium/content.json",
+      "type": "application/vnd.readium.content+json"
+    },
+    {
+      "href": "http://localhost:15080/OTc4OTUxMTQyNjIwMi5lcHVi/manifest.json",
+      "rel": "self",
+      "type": "application/webpub+json"
+    }
+  ],
+  "metadata": {
+    "title": "Tokkerin käsikirja",
+    "author": "Jaakob Rissanen & Ville Kormilainen",
+    "language": "fi",
+    "identifier": "urn:uuid:f0d26c0b-a79e-42c4-9764-aa44dcc0511a",
+    "publisher": "Kustannusosakeyhtiö Otava",
+    "published": "2021-11-24T07:28:13Z",
+    "modified": "2021-11-29T08:57:28Z",
+    "presentation": {
+      "layout": "reflowable"
+    },
+    "conformsTo": "https://readium.org/webpub-manifest/profiles/epub",
+    "http://idpf.org/epub/vocab/package/meta/#Sigil version": "1.8.0",
+    "http://idpf.org/epub/vocab/package/meta/#generator": "Adobe InDesign 16.4",
+    "http://purl.org/dc/terms/rights": "Tekijät ja Kustannusosakeyhtiö Otava",
+    "http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/specified-fonts": "true",
+    "http://www.idpf.org/2007/opf#version": "3.0",
+    "https://github.com/readium/go-toolkit/releases": "v0.10.2"
+  },
+  "readingOrder": [
+    { "href": "OEBPS/Tokkerin_kasikirja.xhtml", "type": "application/xhtml+xml" },
+    { "href": "OEBPS/Tokkerin_kasikirja-1.xhtml", "type": "application/xhtml+xml" },
+    { "href": "OEBPS/Tokkerin_kasikirja-2.xhtml", "type": "application/xhtml+xml" },
+    ...
+    { "href": "OEBPS/Tokkerin_kasikirja-61.xhtml", "type": "application/xhtml+xml" }
+  ],
+  "resources": [
+    { "href": "OEBPS/toc.ncx", "type": "application/x-dtbncx+xml" },
+    { "href": "OEBPS/toc.xhtml", "rel": "contents", "type": "application/xhtml+xml" },
+    { "href": "OEBPS/css/idGeneratedStyles.css", "type": "text/css" },
+    { "href": "OEBPS/font/AktivGrotesk-Light.ttf", "type": "application/vnd.ms-opentype" },
+    ...
+    { "href": "OEBPS/video/video-20.mp4", "type": "video/mp4" }
+  ],
+  "toc": [
+    { "href": "OEBPS/Tokkerin_kasikirja.xhtml#_idParaDest-1", "title": "Kansi" },
+    { "href": "OEBPS/Tokkerin_kasikirja-1.xhtml#_idParaDest-2", "title": "Nimiö" },
+    { "href": "OEBPS/Tokkerin_kasikirja-2.xhtml#_idParaDest-3", "title": "Tekijänoikeudet" },
+    ...
+    { "href": "OEBPS/Tokkerin_kasikirja-59.xhtml#_idParaDest-27", "title": "23. Lopuksi" }
+  ]
+}
