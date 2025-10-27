@@ -173,7 +173,7 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
       constraints: {
         [ThSheetTypes.bottomSheet]: 600, // Max-width of all bottom sheets
         [ThSheetTypes.popover]: 600, // Max-width of all popover sheets
-        pagination: null // Max-width of pagination component
+        pagination: 1024 // Max-width of pagination component
       }
     },
     breakpoints: {
