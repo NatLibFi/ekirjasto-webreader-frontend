@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { eKirjastoPreferences } from "../preferences/eKirjastoPreferences";
+
 
 import { ThStoreProvider } from "@/lib/ThStoreProvider";
 import { ThPreferencesProvider } from "@/preferences";
@@ -23,7 +25,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={ inter.className }>
         <ThStoreProvider>
-          <ThPreferencesProvider>
+          <ThPreferencesProvider value={eKirjastoPreferences}>
             <ThI18nProvider>
               { children }
             </ThI18nProvider>
