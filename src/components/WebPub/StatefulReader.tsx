@@ -9,7 +9,8 @@ import {
   ThActionsKeys, 
   ThDocumentTitleFormat, 
   ThLayoutUI, 
-  ThProgressionFormat 
+  ThProgressionFormat, 
+  ThThemeKeys
 } from "@/preferences/models/enums";
 
 import { WebPubNavigatorListeners } from "@readium/navigator";
@@ -117,7 +118,7 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
   const container = useRef<HTMLDivElement>(null);
   const localDataKey = useRef(`${selfHref}-current-location`);
 
-  const theme = "auto";
+  const theme = ThThemeKeys.light;
 
   const dispatch = useAppDispatch();
 
