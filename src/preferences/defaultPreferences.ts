@@ -339,6 +339,7 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
       ThActionsKeys.jumpToPosition
     ],
     webPubOrder: [
+      ThActionsKeys.settings,
       ThActionsKeys.toc,
       ThActionsKeys.fullscreen
     ],
@@ -452,6 +453,9 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
     fxlOrder: [
       ThSettingsKeys.theme,
       ThSettingsKeys.columns
+    ],
+    webPubOrder: [
+      ThSettingsKeys.zoom
     ],
     keys: {
       [ThSettingsKeys.letterSpacing]: defaultLetterSpacing,

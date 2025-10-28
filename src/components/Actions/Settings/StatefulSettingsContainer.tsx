@@ -43,18 +43,24 @@ export const StatefulSettingsContainer = ({
     reflowSettingsKeys,
     subPanelSpacingSettingsKeys,
     subPanelTextSettingsKeys,
+    webPubSettingsKeys
   } = usePreferenceKeys();
   const { preferences } = usePreferences();
   const { t } = useI18n();
   const { settingsComponentsMap } = usePlugins();
+  const readerProfile = useAppSelector(state => state.reader.profile);
   const isFXL = useAppSelector(state => state.publication.isFXL);
   const contains = useAppSelector(state => state.reader.settingsContainer);
   const actionState = useAppSelector(state => state.actions.keys[ThActionsKeys.settings]);
   const dispatch = useAppDispatch();
 
   const settingItems = useMemo(() => {
-    return isFXL ? fxlSettingsKeys : reflowSettingsKeys
-  }, [isFXL, fxlSettingsKeys, reflowSettingsKeys]);
+    return readerProfile === "webPub" 
+      ? webPubSettingsKeys 
+      : isFXL 
+        ? fxlSettingsKeys 
+        : reflowSettingsKeys
+  }, [readerProfile, isFXL, fxlSettingsKeys, reflowSettingsKeys, webPubSettingsKeys]);
   
   const docking = useDocking(ThActionsKeys.settings);
   const sheetType = docking.sheetType;
@@ -149,12 +155,12 @@ export const StatefulSettingsContainer = ({
     }
   }, [contains, preferences.settings.spacing, preferences.settings.text]);
 
-useEffect(() => {
-  const handleEscape = (event: KeyboardEvent) => {
-    if (event.key === "Escape" && contains !== ThSettingsContainerKeys.initial) {
-      dispatch(setSettingsContainer(ThSettingsContainerKeys.initial));
-    }
-  };
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && contains !== ThSettingsContainerKeys.initial) {
+        dispatch(setSettingsContainer(ThSettingsContainerKeys.initial));
+      }
+    };
 
   document.addEventListener("keydown", handleEscape, true);
 

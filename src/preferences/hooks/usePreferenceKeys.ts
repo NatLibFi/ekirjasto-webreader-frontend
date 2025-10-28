@@ -23,6 +23,7 @@ export const usePreferenceKeys = () => {
 
   const reflowSettingsKeys = preferences.settings.reflowOrder;
   const fxlSettingsKeys = preferences.settings.fxlOrder;
+  const webPubSettingsKeys = preferences.settings.webPubOrder;
 
   const mainTextSettingsKeys = preferences.settings.text?.main ?? defaultTextSettingsMain;
   const subPanelTextSettingsKeys = preferences.settings.text?.subPanel ?? defaultTextSettingsSubpanel;
@@ -40,6 +41,7 @@ export const usePreferenceKeys = () => {
     fxlThemeKeys,
     reflowSettingsKeys,
     fxlSettingsKeys,
+    webPubSettingsKeys,
     mainTextSettingsKeys,
     subPanelTextSettingsKeys,
     mainSpacingSettingsKeys,

@@ -9,34 +9,50 @@ import Increase from "./assets/icons/text_increase.svg";
 import ZoomOut from "./assets/icons/zoom_out.svg";
 import ZoomIn from "./assets/icons/zoom_in.svg";
 
-import { StatefulSlider } from "../../Settings/StatefulSlider";
-import { StatefulNumberField } from "../../Settings/StatefulNumberField";
+import { StatefulSlider } from "./StatefulSlider";
+import { StatefulNumberField } from "./StatefulNumberField";
 
 import { usePreferences } from "@/preferences/hooks/usePreferences";
-import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
+import { useNavigator } from "@/core/Navigator/hooks";
 import { useI18n } from "@/i18n/useI18n";
-import { usePlaceholder } from "./hooks/usePlaceholder";
+import { usePlaceholder } from "../Epub/Settings/hooks/usePlaceholder";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setFontSize } from "@/lib/settingsReducer";
-
+import { setWebPubZoom } from "@/lib/webPubSettings";
 
 export const StatefulZoom = () => {
   const { preferences } = usePreferences();
   const { t } = useI18n();
-  const fontSize = useAppSelector((state) => state.settings.fontSize);
+
+  const readerProfile = useAppSelector((state) => state.reader.profile);
   const isFXL = useAppSelector((state) => state.publication.isFXL);
+  const fontSize = useAppSelector((state) => state.settings.fontSize);
+  const webPubZoom = useAppSelector((state) => state.webPubSettings.zoom);
+  const derivedState = readerProfile === "webPub" ? webPubZoom : fontSize;
+
   const dispatch = useAppDispatch();
   
   const { 
     getSetting, 
     submitPreferences,
     preferencesEditor 
-  } = useEpubNavigator();
+  } = useNavigator();
+
+  const preferenceEditorProperty = readerProfile === "webPub" 
+    ? preferencesEditor?.zoom 
+    : isFXL 
+      ? preferencesEditor?.zoom 
+      : preferencesEditor?.fontSize;
 
   const updatePreference = useCallback(async (value: number | number[]) => {
-    await submitPreferences({ fontSize: Array.isArray(value) ? value[0] : value });
-    dispatch(setFontSize(getSetting("fontSize")));
+    if (readerProfile === "webPub") {
+      await submitPreferences({ zoom: Array.isArray(value) ? value[0] : value });
+      dispatch(setWebPubZoom(getSetting("zoom")));
+    } else {
+      await submitPreferences({ fontSize: Array.isArray(value) ? value[0] : value });
+      dispatch(setFontSize(getSetting("fontSize")));
+    }
   }, [submitPreferences, getSetting, dispatch]);
 
   const getEffectiveRange = (preferred: [number, number], supportedRange: [number, number] | undefined): [number, number] => {
@@ -57,8 +73,8 @@ export const StatefulZoom = () => {
   const zoomRangeConfig = {
     variant: preferences.settings.keys[ThSettingsKeys.zoom].variant,
     placeholder: preferences.settings.keys[ThSettingsKeys.zoom].placeholder,
-    range: preferencesEditor?.fontSize.supportedRange
-      ? getEffectiveRange(preferences.settings.keys[ThSettingsKeys.zoom].range, preferencesEditor?.fontSize.supportedRange)
+    range: preferenceEditorProperty?.supportedRange
+      ? getEffectiveRange(preferences.settings.keys[ThSettingsKeys.zoom].range, preferenceEditorProperty.supportedRange)
       : preferences.settings.keys[ThSettingsKeys.zoom].range,
     step: preferences.settings.keys[ThSettingsKeys.zoom].step
   }
@@ -69,9 +85,9 @@ export const StatefulZoom = () => {
     <>
     { zoomRangeConfig.variant === ThSettingsRangeVariant.numberField 
       ? <StatefulNumberField
-        standalone={ true}
+        standalone={ true }
         defaultValue={ 1 } 
-        value={ fontSize } 
+        value={ derivedState } 
         onChange={ async(value) => await updatePreference(value) } 
         label={ isFXL ? t("reader.settings.zoom.title") : t("reader.settings.fontSize.title") }
         placeholder={ placeholderText }
@@ -91,7 +107,7 @@ export const StatefulZoom = () => {
         standalone={ true }
         displayTicks={ zoomRangeConfig.variant === ThSettingsRangeVariant.incrementedSlider }
         defaultValue={ 1 } 
-        value={ fontSize } 
+        value={ derivedState } 
         onChange={ async(value) => await updatePreference(value as number) } 
         label={ isFXL ? t("reader.settings.zoom.title") : t("reader.settings.fontSize.title") }
         placeholder={ placeholderText }
