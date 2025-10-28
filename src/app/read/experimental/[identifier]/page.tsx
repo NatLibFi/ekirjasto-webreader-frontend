@@ -10,7 +10,8 @@ import { verifyManifestUrl } from "@/app/api/verify-manifest/verifyDomain";
 import "@/app/app.css";
 
 const WEB_MANIFESTS = {
-  "readium-css": "https://readium.org/css/docs/manifest.json"
+  "readium-css": "https://readium.org/css/docs/manifest.json",
+  "molly-hopper": "https://publication-server.readium.org/Z3M6Ly9yZWFkaXVtLXBsYXlncm91bmQtZmlsZXMvZGVtby9tb2xseS1ob3BwZXItdjEud2VicHVi/manifest.json"
 }
 
 type Params = { identifier: string };
