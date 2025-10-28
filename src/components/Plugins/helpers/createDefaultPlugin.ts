@@ -26,7 +26,7 @@ import { StatefulTextGroup } from "../../Epub/Settings/Text/StatefulTextGroup";
 import { StatefulTextNormalize } from "../../Epub/Settings/Text/StatefulTextNormalize";
 import { StatefulTheme } from "../../Epub/Settings/StatefulTheme";
 import { StatefulWordSpacing } from "../../Epub/Settings/Spacing/StatefulWordSpacing";
-import { StatefulZoom } from "../../Epub/Settings/StatefulZoom";
+import { StatefulZoom } from "../../Settings/StatefulZoom";
 
 export const createDefaultPlugin = (): ThPlugin => {
   return {

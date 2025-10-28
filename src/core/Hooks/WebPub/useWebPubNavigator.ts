@@ -9,7 +9,12 @@ import {
 } from "@readium/shared";
 import {
   ExperimentalWebPubNavigator,
-  WebPubNavigatorListeners
+  WebPubNavigatorListeners,
+  WebPubPreferences,
+  WebPubSettings,
+  IWebPubDefaults,
+  IWebPubPreferences,
+
 } from "@readium/navigator";
 
 type cbb = (ok: boolean) => void;
@@ -22,12 +27,22 @@ export interface WebPubNavigatorLoadProps {
   publication: Publication;
   listeners: WebPubNavigatorListeners;
   initialPosition?: Locator;
+  preferences?: IWebPubPreferences;
+  defaults?: IWebPubDefaults;
 }
 
 export const useWebPubNavigator = () => {
   const container = useRef<HTMLDivElement | null>(null);
   const containerParent = useRef<HTMLElement | null>(null);
   const publication = useRef<Publication | null>(null);
+
+  const submitPreferences = useCallback(async (preferences: IWebPubPreferences) => {
+      await navigatorInstance?.submitPreferences(new WebPubPreferences(preferences));
+    }, []);
+  
+    const getSetting = useCallback(<K extends keyof WebPubSettings>(settingKey: K) => {
+      return navigatorInstance?.settings[settingKey] as WebPubSettings[K];
+    }, []);
 
   const WebPubNavigatorLoad = useCallback((config: WebPubNavigatorLoadProps, cb: Function) => {
     if (config.container) {
@@ -37,10 +52,11 @@ export const useWebPubNavigator = () => {
       publication.current = config.publication;
 
       navigatorInstance = new ExperimentalWebPubNavigator(
-        config.container,
-        config.publication,
-        config.listeners,
-        config.initialPosition
+        config.container, 
+        config.publication, 
+        config.listeners, 
+        config.initialPosition, 
+        { preferences: config.preferences || {}, defaults: config.defaults || {} }
       );
 
       navigatorInstance.load().then(() => {
@@ -131,14 +147,14 @@ export const useWebPubNavigator = () => {
   }, []);
 
   return {
-    WebPubNavigatorLoad,
-    WebPubNavigatorDestroy,
-    goRight,
-    goLeft,
-    goBackward,
+    WebPubNavigatorLoad, 
+    WebPubNavigatorDestroy, 
+    goRight, 
+    goLeft, 
+    goBackward, 
     goForward,
-    goLink,
-    go,
+    goLink, 
+    go, 
     currentLocator,
     previousLocator,
     nextLocator,
@@ -146,6 +162,9 @@ export const useWebPubNavigator = () => {
     canGoBackward,
     canGoForward,
     isScrollStart,
-    isScrollEnd
+    isScrollEnd,
+    preferencesEditor: navigatorInstance?.preferencesEditor,
+    getSetting,
+    submitPreferences
   }
 }

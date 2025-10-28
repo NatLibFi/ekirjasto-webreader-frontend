@@ -7,3 +7,5 @@ export * from "./StatefulSlider";
 export * from "./StatefulSwitch";
 export * from "./hooks";
 export * from "./models";
+
+export * from "./StatefulZoom";

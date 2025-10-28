@@ -8,6 +8,7 @@ import themeReducer, { ThemeReducerState } from "@/lib/themeReducer";
 import actionsReducer, { ActionsReducerState } from "@/lib/actionsReducer";
 import publicationReducer, { PublicationReducerState } from "./publicationReducer";
 import preferencesReducer, { PreferencesReducerState } from "./preferencesReducer";
+import webPubSettingsReducer, { WebPubSettingsReducerState } from "./webPubSettings";
 
 import debounce from "debounce";
 
@@ -24,6 +25,7 @@ export type RootState = {
   actions: ActionsReducerState;
   publication: PublicationReducerState;
   preferences: PreferencesReducerState;
+  webPubSettings: WebPubSettingsReducerState;
   [key: string]: any; // For external reducers
 };
 
@@ -72,7 +74,8 @@ const loadState = (storageKey?: string) => {
         actions: undefined, 
         settings: undefined, 
         theming: undefined,
-        preferences: undefined
+        preferences: undefined,
+        webPubSettings: undefined
       };
     }
     const deserializedState = JSON.parse(serializedState);
@@ -88,7 +91,8 @@ const loadState = (storageKey?: string) => {
       actions: undefined, 
       settings: undefined, 
       theming: undefined,
-      preferences: undefined
+      preferences: undefined,
+      webPubSettings: undefined
     };
   }
 };
@@ -105,6 +109,7 @@ const saveState = (state: any, storageKey?: string, externalReducers: Record<str
     if (state.settings) stateToPersist.settings = state.settings;
     if (state.theming) stateToPersist.theming = state.theming;
     if (state.preferences) stateToPersist.preferences = state.preferences;
+    if (state.webPubSettings) stateToPersist.webPubSettings = state.webPubSettings;
     
     // External reducers to persist
     Object.entries(externalReducers).forEach(([key, config]) => {
@@ -129,6 +134,7 @@ export const makeStore = (storageKey?: string, externalReducers: Record<string, 
     actions: actionsReducer,
     publication: publicationReducer,
     preferences: preferencesReducer,
+    webPubSettings: webPubSettingsReducer,
     ...Object.entries(externalReducers).reduce((acc, [key, config]) => ({
       ...acc,
       [key]: config.reducer
@@ -144,6 +150,7 @@ export const makeStore = (storageKey?: string, externalReducers: Record<string, 
     settings: persistedState.settings,
     theming: persistedState.theming,
     preferences: persistedState.preferences,
+    webPubSettings: persistedState.webPubSettings,
     // Include persisted state for external reducers that have it
     ...Object.entries(externalReducers).reduce((acc, [key, config]) => {
       if (config.persist && persistedState[key] !== undefined) {

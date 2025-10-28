@@ -2,38 +2,39 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 
+import { ThemeKeyType, useTheming } from "../../preferences";
+
 import "../assets/styles/reader.css";
 
 import { StatefulReaderProps } from "../Epub/StatefulReader";
+
 import { 
   ThActionsKeys, 
-  ThDocumentTitleFormat, 
-  ThLayoutUI, 
+  ThLayoutUI,
+  ThDocumentTitleFormat,
   ThProgressionFormat, 
   ThThemeKeys
 } from "@/preferences/models/enums";
 
-import { WebPubNavigatorListeners } from "@readium/navigator";
+import { ThPluginRegistry } from "../Plugins/PluginRegistry";
 
-import { 
-  Fetcher, 
-  HttpFetcher, 
-  Locator, 
-  Manifest, 
-  Publication, 
-  ReadingProgression 
-} from "@readium/shared";
+import { I18nProvider } from "react-aria";
+import { ThPluginProvider } from "../Plugins/PluginProvider";
+import { NavigatorProvider } from "@/core/Navigator";
+
 import {
   BasicTextSelection,
   FrameClickEvent,
 } from "@readium/navigator-html-injectables";
-
-import { I18nProvider } from "react-aria";
-import { ThPluginProvider } from "../Plugins/PluginProvider";
-import { ThPluginRegistry } from "../Plugins/PluginRegistry";
-import { NavigatorProvider } from "@/core/Navigator";
-
-import { createDefaultPlugin } from "../Plugins/helpers/createDefaultPlugin";
+import { WebPubNavigatorListeners } from "@readium/navigator";
+import { 
+  Locator, 
+  Manifest, 
+  Publication, 
+  Fetcher, 
+  HttpFetcher, 
+  ReadingProgression
+} from "@readium/shared";
 
 import { StatefulDockingWrapper } from "../Docking/StatefulDockingWrapper";
 import { StatefulReaderHeader } from "../StatefulReaderHeader";
@@ -41,30 +42,14 @@ import { StatefulReaderFooter } from "../StatefulReaderFooter";
 
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useWebPubNavigator } from "@/core/Hooks/WebPub";
-import { useI18n } from "@/i18n/useI18n";
-import { useLocalStorage } from "@/core/Hooks/useLocalStorage";
 import { useFullscreen } from "@/core/Hooks/useFullscreen";
+import { useI18n } from "@/i18n/useI18n";
 import { useTimeline } from "@/core/Hooks/useTimeline";
+import { useLocalStorage } from "@/core/Hooks/useLocalStorage";
 import { useDocumentTitle } from "@/core/Hooks/useDocumentTitle";
-import { ThemeKeyType, useTheming } from "@/preferences";
 
-import { toggleActionOpen, useAppStore } from "@/lib";
-import { useAppSelector, useAppDispatch } from "@/lib/hooks";
-import { 
-  setDirection, 
-  setFullscreen, 
-  setHovering, 
-  setLoading, 
-  setPlatformModifier, 
-  setReaderProfile,
-  toggleImmersive
-} from "@/lib/readerReducer";
-import { 
-  setPublicationEnd, 
-  setPublicationStart, 
-  setRTL, 
-  setTimeline 
-} from "@/lib/publicationReducer";
+import { toggleActionOpen } from "@/lib/actionsReducer";
+import { useAppSelector, useAppDispatch, useAppStore } from "@/lib/hooks";
 import { 
   setBreakpoint, 
   setColorScheme, 
@@ -74,12 +59,35 @@ import {
   setReducedMotion, 
   setReducedTransparency 
 } from "@/lib/themeReducer";
+import { 
+  setLoading,
+  setHovering, 
+  toggleImmersive, 
+  setPlatformModifier, 
+  setDirection, 
+  setFullscreen,
+  setReaderProfile
+} from "@/lib/readerReducer";
+import { 
+  setRTL, 
+  setTimeline,
+  setPublicationStart,
+  setPublicationEnd
+} from "@/lib/publicationReducer";
 
-import Peripherals from "@/helpers/peripherals";
-
+import classNames from "classnames";
+import { createDefaultPlugin } from "../Plugins/helpers/createDefaultPlugin";
+import Peripherals from "../../helpers/peripherals";
 import { getPlatformModifier } from "@/core/Helpers/keyboardUtilities";
 import { propsToCSSVars } from "@/core/Helpers/propsToCSSVars";
-import classNames from "classnames";
+
+export interface WebPubCSSSettings {
+  zoom: number;
+}
+
+export interface WebPubStatelessCache {
+  settings: WebPubCSSSettings;
+}
 
 export const ExperimentalWebPubStatefulReader = ({
   rawManifest,
@@ -113,26 +121,20 @@ export const ExperimentalWebPubStatefulReader = ({
 };
 
 const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; selfHref: string }) => {
+
+  const { preferences } = usePreferences();
+  const { t } = useI18n();
   const [publication, setPublication] = useState<Publication | null>(null);
 
   const container = useRef<HTMLDivElement>(null);
   const localDataKey = useRef(`${selfHref}-current-location`);
 
   const theme = ThThemeKeys.light;
+  const zoom = useAppSelector(state => state.webPubSettings.zoom);
+  const isImmersive = useAppSelector(state => state.reader.isImmersive);
+  const isHovering = useAppSelector(state => state.reader.isHovering);
 
-  const dispatch = useAppDispatch();
-
-  const { preferences } = usePreferences();
-  const { t } = useI18n();
-
-  const webPubNavigator = useWebPubNavigator();
-  const { 
-    WebPubNavigatorLoad, 
-    WebPubNavigatorDestroy,
-    canGoBackward,
-    canGoForward,
-    currentPositions,
-  } = webPubNavigator;
+  const layoutUI = preferences.theming.layout.ui?.webPub || ThLayoutUI.stacked;
 
   // Init theming (breakpoints, theme, media queries…)
   useTheming<ThemeKeyType>({ 
@@ -154,10 +156,21 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
     onReducedTransparencyChange: (reducedTransparency) => dispatch(setReducedTransparency(reducedTransparency))
   });
 
+  const dispatch = useAppDispatch();
+
   const onFsChange = useCallback((isFullscreen: boolean) => {
     dispatch(setFullscreen(isFullscreen));
   }, [dispatch]);
   const fs = useFullscreen(onFsChange);
+
+  const webPubNavigator = useWebPubNavigator();
+  const { 
+    WebPubNavigatorLoad, 
+    WebPubNavigatorDestroy,
+    currentPositions,
+    canGoBackward,
+    canGoForward,
+  } = webPubNavigator;
 
   const { setLocalData, getLocalData, localData } = useLocalStorage(localDataKey.current);
 
@@ -178,8 +191,8 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
   if (documentTitleFormat) {
     if (typeof documentTitleFormat === "object" && "key" in documentTitleFormat) {
       const translatedTitle = t(documentTitleFormat.key);
-      documentTitle = translatedTitle !== documentTitleFormat.key
-        ? translatedTitle
+      documentTitle = translatedTitle !== documentTitleFormat.key 
+        ? translatedTitle 
         : documentTitleFormat.fallback;
     } else {
       switch (documentTitleFormat) {
@@ -191,13 +204,13 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
           break;
         case ThDocumentTitleFormat.titleAndChapter:
           if (timeline?.title && timeline?.progression?.currentChapter) {
-            documentTitle = `${timeline.title} – ${timeline.progression.currentChapter}`;
+            documentTitle = `${ timeline.title } – ${ timeline.progression.currentChapter }`;
           }
           break;
         case ThDocumentTitleFormat.none:
           documentTitle = undefined;
           break;
-        default:
+        default: 
           documentTitle = documentTitleFormat;
           break;
       }
@@ -206,10 +219,17 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
 
   useDocumentTitle(documentTitle);
 
-  const isImmersive = useAppSelector(state => state.reader.isImmersive);
-  const isHovering = useAppSelector(state => state.reader.isHovering);
+  const cache = useRef<WebPubStatelessCache>({
+    settings: {
+      zoom: zoom
+    }
+  });
 
-  const layoutUI = preferences.theming.layout.ui?.webPub || ThLayoutUI.stacked;
+  const toggleIsImmersive = useCallback(() => {
+    // If tap/click in iframe, then header/footer no longer hoovering 
+    dispatch(setHovering(false));
+    dispatch(toggleImmersive());
+  }, [dispatch]);
 
   const p = new Peripherals(useAppStore(), preferences.actions, {
     moveTo: () => {},
@@ -229,12 +249,6 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
       }
     }
   });
-
-  const toggleIsImmersive = useCallback(() => {
-    // If tap/click in iframe, then header/footer no longer hoovering 
-    dispatch(setHovering(false));
-    dispatch(toggleImmersive());
-  }, [dispatch]);
 
   const listeners: WebPubNavigatorListeners = {
     frameLoaded: async function (_wnd: Window): Promise<void> {
@@ -280,8 +294,12 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
       }
       return false;
     },
-    textSelected: function (_selection: BasicTextSelection): void { },
+    textSelected: function (_selection: BasicTextSelection): void {},
   };
+
+  useEffect(() => {
+    cache.current.settings.zoom = zoom;
+  }, [zoom]);
 
   useEffect(() => {
     preferences.direction && dispatch(setDirection(preferences.direction));
@@ -292,7 +310,7 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
     const fetcher: Fetcher = new HttpFetcher(undefined, selfHref);
     const manifest = Manifest.deserialize(rawManifest)!;
     manifest.setSelfLink(selfHref);
-  
+
     setPublication(new Publication({
       manifest: manifest,
       fetcher: fetcher
@@ -303,7 +321,7 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
     if (!publication) return;
 
     dispatch(setReaderProfile("webPub"));
-    
+
     dispatch(setRTL(publication.metadata.effectiveReadingProgression === ReadingProgression.rtl));
 
     const initialPosition: Locator | null = getLocalData();
@@ -313,6 +331,9 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
       publication: publication,
       listeners: listeners,
       initialPosition: initialPosition ? new Locator(initialPosition) : undefined,
+      preferences: {
+        zoom: cache.current.settings.zoom
+      }
     }, () => {
       p.observe(window);
     });
@@ -365,5 +386,4 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
   </NavigatorProvider>
   </I18nProvider>
   </>
-  );
-};
+)};
