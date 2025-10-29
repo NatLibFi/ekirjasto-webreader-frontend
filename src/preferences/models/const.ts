@@ -35,10 +35,10 @@ export const defaultSpacingSettingsMain = [
 export const defaultSpacingSettingsSubpanel = [
   ThSpacingSettingsKeys.spacingPresets,
   ThSpacingSettingsKeys.lineHeight,
-  ThSpacingSettingsKeys.wordSpacing,
-  ThSpacingSettingsKeys.letterSpacing,
   ThSpacingSettingsKeys.paragraphSpacing,
-  ThSpacingSettingsKeys.paragraphIndent
+  ThSpacingSettingsKeys.paragraphIndent,
+  ThSpacingSettingsKeys.wordSpacing,
+  ThSpacingSettingsKeys.letterSpacing
 ];
 
 export const defaultSpacingPresetsOrder = [
