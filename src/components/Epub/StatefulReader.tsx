@@ -715,7 +715,7 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
     }));
 
     dispatch(setReaderProfile("epub"));
-  }, [rawManifest, selfHref]);
+  }, [rawManifest, selfHref, dispatch]);
 
   useEffect(() => {
     if (!publication) return;

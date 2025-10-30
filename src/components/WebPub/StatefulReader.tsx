@@ -393,7 +393,7 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
     }));
 
     dispatch(setReaderProfile("webPub"));
-  }, [rawManifest, selfHref]);
+  }, [rawManifest, selfHref, dispatch]);
 
   useEffect(() => {
     if (!publication) return;
