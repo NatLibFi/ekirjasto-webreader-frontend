@@ -12,8 +12,8 @@ importers:
         specifier: 2.0.0-beta.19
         version: 2.0.0-beta.19
       '@readium/navigator':
-        specifier: ^2.2.1
-        version: 2.2.1
+        specifier: ^2.2.2
+        version: 2.2.2
       '@readium/navigator-html-injectables':
         specifier: ^2.2.1
         version: 2.2.1
@@ -1821,8 +1821,8 @@ packages:
     resolution: {integrity: sha512-U8tiz/45bqchqWsoy1+2rghuudDhI9aBa75cSRl7srT1uv4ukDKRHKLCjlblk6bRizoYMCO1t20mYKA9OVXpfw==}
     engines: {node: '>=18'}
 
-  '@readium/navigator@2.2.1':
-    resolution: {integrity: sha512-jb1uqeFnqKIIw6qU7DwLhWPZvj0bdrODG9m2Zy/t+TRYLR8/P6lnDS9DYD0cnEDfIjhGLVyflzBsKzdVlE5ugA==}
+  '@readium/navigator@2.2.2':
+    resolution: {integrity: sha512-8UJ3rLkGj4YLd9uPAvIbM2OXw1Y6uSD95QJcF7Eko8AFooa0ZBnVBiUQK4fCpmtPbSx80LMLba+WbIVt9qj7SA==}
     engines: {node: '>=18'}
 
   '@readium/shared@2.1.1':
@@ -6229,7 +6229,7 @@ snapshots:
 
   '@readium/navigator-html-injectables@2.2.1': {}
 
-  '@readium/navigator@2.2.1': {}
+  '@readium/navigator@2.2.2': {}
 
   '@readium/shared@2.1.1': {}
 
