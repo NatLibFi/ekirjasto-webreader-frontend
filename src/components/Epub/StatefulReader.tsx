@@ -713,12 +713,12 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
       manifest: manifest,
       fetcher: fetcher
     }));
+
+    dispatch(setReaderProfile("epub"));
   }, [rawManifest, selfHref]);
 
   useEffect(() => {
     if (!publication) return;
-
-    dispatch(setReaderProfile("epub"));
 
     dispatch(setRTL(publication.metadata.effectiveReadingProgression === ReadingProgression.rtl));
     dispatch(setFXL(publication.metadata.effectiveLayout === Layout.fixed));

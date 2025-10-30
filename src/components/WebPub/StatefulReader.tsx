@@ -391,12 +391,12 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
       manifest: manifest,
       fetcher: fetcher
     }));
+
+    dispatch(setReaderProfile("webPub"));
   }, [rawManifest, selfHref]);
 
   useEffect(() => {
     if (!publication) return;
-
-    dispatch(setReaderProfile("webPub"));
 
     dispatch(setRTL(publication.metadata.effectiveReadingProgression === ReadingProgression.rtl));
 
