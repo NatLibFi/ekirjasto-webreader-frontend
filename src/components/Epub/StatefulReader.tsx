@@ -49,7 +49,8 @@ import {
   Fetcher, 
   HttpFetcher, 
   Layout, 
-  ReadingProgression
+  ReadingProgression,
+  Feature
 } from "@readium/shared";
 
 import { StatefulDockingWrapper } from "../Docking/StatefulDockingWrapper";
@@ -65,8 +66,8 @@ import { useI18n } from "@/i18n/useI18n";
 import { useTimeline } from "@/core/Hooks/useTimeline";
 import { useLocalStorage } from "@/core/Hooks/useLocalStorage";
 import { useDocumentTitle } from "@/core/Hooks/useDocumentTitle";
-import { useSpacingPresets } from "./Settings/Spacing/hooks/useSpacingPresets";
-import { useLineHeight } from "./Settings";
+import { useSpacingPresets } from "../Settings/Spacing/hooks/useSpacingPresets";
+import { useLineHeight } from "../Settings/Spacing/hooks/useLineHeight";
 
 import { toggleActionOpen } from "@/lib/actionsReducer";
 import { useAppSelector, useAppDispatch, useAppStore } from "@/lib/hooks";
@@ -99,7 +100,8 @@ import {
   setPositionsList,
   setTimeline,
   setPublicationStart,
-  setPublicationEnd
+  setPublicationEnd,
+  setHasDisplayTransformability
 } from "@/lib/publicationReducer";
 import { LineLengthStateObject } from "@/lib/settingsReducer";
 
@@ -720,6 +722,9 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
 
     dispatch(setRTL(publication.metadata.effectiveReadingProgression === ReadingProgression.rtl));
     dispatch(setFXL(publication.metadata.effectiveLayout === Layout.fixed));
+    
+    const displayTransformability = publication.metadata.accessibility?.feature?.some(feature =>  feature && feature.value === Feature.DISPLAY_TRANSFORMABILITY.value);
+    dispatch(setHasDisplayTransformability(displayTransformability));
 
     let positionsList: Locator[] | undefined;
 
@@ -773,8 +778,8 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
             : (cache.current.settings.lineLength?.min?.chars != null) 
               ? cache.current.settings.lineLength.min.chars 
               : undefined,
-          paragraphIndent: cache.current.settings.publisherStyles ? undefined :cache.current.settings.paragraphIndent,
-          paragraphSpacing: cache.current.settings.publisherStyles ? undefined :cache.current.settings.paragraphSpacing,
+          paragraphIndent: cache.current.settings.publisherStyles ? undefined : cache.current.settings.paragraphIndent,
+          paragraphSpacing: cache.current.settings.publisherStyles ? undefined : cache.current.settings.paragraphSpacing,
           scroll: cache.current.settings.scroll,
           textAlign: cache.current.settings.textAlign as unknown as TextAlignment | null | undefined,
           textNormalization: cache.current.settings.textNormalization,

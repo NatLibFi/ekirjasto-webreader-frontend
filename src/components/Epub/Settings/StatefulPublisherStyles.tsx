@@ -10,8 +10,8 @@ import { StatefulSwitch } from "../../Settings/StatefulSwitch";
 
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
-import { useSpacingPresets } from "./Spacing/hooks/useSpacingPresets";
-import { useLineHeight } from "./Spacing/hooks/useLineHeight";
+import { useSpacingPresets } from "../../Settings/Spacing/hooks/useSpacingPresets";
+import { useLineHeight } from "../../Settings/Spacing/hooks/useLineHeight";
 
 import { useAppSelector } from "@/lib/hooks";
 

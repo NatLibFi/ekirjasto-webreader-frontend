@@ -146,6 +146,10 @@ export const useWebPubNavigator = () => {
     return navigatorInstance?.isScrollEnd;
   }, []);
 
+  const getCframes = useCallback(() => {
+    return // navigatorInstance?._cframes;
+  }, []);
+
   return {
     WebPubNavigatorLoad, 
     WebPubNavigatorDestroy, 
@@ -165,6 +169,7 @@ export const useWebPubNavigator = () => {
     isScrollEnd,
     preferencesEditor: navigatorInstance?.preferencesEditor,
     getSetting,
-    submitPreferences
+    submitPreferences,
+    getCframes
   }
 }

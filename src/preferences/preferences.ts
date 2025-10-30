@@ -76,6 +76,7 @@ export interface ThActionsTokens {
 
 export interface ThSettingsSpacingPresets<K extends CustomizableKeys = DefaultKeys> {
   reflowOrder: Array<ThSpacingPresetKeys>;
+  webPubOrder: Array<ThSpacingPresetKeys>;
   // Not customizable as the component is static radiogroup (icons), unlike themes
   // Publisher and custom are not included as they are special cases
   keys: {

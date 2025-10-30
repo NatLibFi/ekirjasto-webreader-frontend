@@ -15,11 +15,11 @@ import { StatefulNumberField } from "./StatefulNumberField";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useNavigator } from "@/core/Navigator/hooks";
 import { useI18n } from "@/i18n/useI18n";
-import { usePlaceholder } from "../Epub/Settings/hooks/usePlaceholder";
+import { usePlaceholder } from "./hooks/usePlaceholder";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setFontSize } from "@/lib/settingsReducer";
-import { setWebPubZoom } from "@/lib/webPubSettings";
+import { setWebPubZoom } from "@/lib/webPubSettingsReducer";
 
 export const StatefulZoom = () => {
   const { preferences } = usePreferences();
@@ -53,7 +53,7 @@ export const StatefulZoom = () => {
       await submitPreferences({ fontSize: Array.isArray(value) ? value[0] : value });
       dispatch(setFontSize(getSetting("fontSize")));
     }
-  }, [submitPreferences, getSetting, dispatch]);
+  }, [readerProfile, submitPreferences, getSetting, dispatch]);
 
   const getEffectiveRange = (preferred: [number, number], supportedRange: [number, number] | undefined): [number, number] => {
     if (!supportedRange) {

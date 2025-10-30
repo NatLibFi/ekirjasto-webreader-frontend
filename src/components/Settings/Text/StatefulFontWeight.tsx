@@ -2,28 +2,33 @@
 
 import { useMemo, useCallback } from "react";
 
-import { StatefulSettingsItemProps } from "../../../Settings/models/settings";
+import { StatefulSettingsItemProps } from "../models/settings";
 
 import DefaultIcon from "./assets/icons/format_bold_wght200.svg";
 import BolderIcon from "./assets/icons/format_bold_wght500.svg";
 
 import { StatefulRadioGroup } from "@/components/Settings/StatefulRadioGroup";
 
-import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
+import { useNavigator } from "@/core/Navigator";
 import { useI18n } from "@/i18n/useI18n";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setFontWeight } from "@/lib/settingsReducer";
+import { setWebPubFontWeight } from "@/lib/webPubSettingsReducer";
 
 type FontWeight = "default" | "bolder";
 
 export const UnstableStatefulFontWeight = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { t } = useI18n();
-  const fontWeight = useAppSelector(state => state.settings.fontWeight);
+
+  const profile = useAppSelector(state => state.reader.profile);
+  const isWebPub = profile === "webPub";
+  
+  const fontWeight = useAppSelector(state => isWebPub ? state.webPubSettings.fontWeight : state.settings.fontWeight);
 
   const dispatch = useAppDispatch();
 
-  const { getSetting, submitPreferences } = useEpubNavigator();
+  const { getSetting, submitPreferences } = useNavigator();
 
   const items = [
     {
@@ -52,9 +57,14 @@ export const UnstableStatefulFontWeight = ({ standalone = true }: StatefulSettin
   const updatePreference = useCallback(async (value: FontWeight) => {
     const fontWeightValue = value === "default" ? 400 : 700;
     await submitPreferences({ fontWeight: fontWeightValue });
+    const effectiveSetting = getSetting("fontWeight");
 
-    dispatch(setFontWeight(getSetting("fontWeight")));
-  }, [submitPreferences, getSetting, dispatch]);
+    if (isWebPub) {
+      dispatch(setWebPubFontWeight(effectiveSetting));
+    } else {
+      dispatch(setFontWeight(effectiveSetting));
+    }
+  }, [isWebPub, submitPreferences, getSetting, dispatch]);
 
   return(
     <>

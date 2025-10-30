@@ -4,13 +4,13 @@ import { useCallback } from "react";
 
 import { ThSettingsKeys, ThSettingsRangeVariant, ThSpacingSettingsKeys } from "@/preferences";
 
-import { StatefulSettingsItemProps } from "../../../Settings/models/settings";
+import { StatefulSettingsItemProps } from "../models/settings";
 
-import { StatefulNumberField } from "../../../Settings/StatefulNumberField";
-import { StatefulSlider } from "../../../Settings/StatefulSlider";
+import { StatefulNumberField } from "../StatefulNumberField";
+import { StatefulSlider } from "../StatefulSlider";
 
 import { usePreferences } from "@/preferences/hooks/usePreferences";
-import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
+import { useNavigator } from "@/core/Navigator";
 import { useI18n } from "@/i18n/useI18n";
 import { useSpacingPresets } from "./hooks/useSpacingPresets";
 import { usePlaceholder } from "../hooks/usePlaceholder";
@@ -18,6 +18,7 @@ import { usePlaceholder } from "../hooks/usePlaceholder";
 export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { preferences } = usePreferences();
   const { t } = useI18n();
+
   const wordSpacingRangeConfig = {
     variant: preferences.settings.keys[ThSettingsKeys.wordSpacing].variant,
     placeholder: preferences.settings.keys[ThSettingsKeys.wordSpacing].placeholder,
@@ -27,7 +28,7 @@ export const StatefulWordSpacing = ({ standalone = true }: StatefulSettingsItemP
 
   const placeholderText = usePlaceholder(wordSpacingRangeConfig.placeholder, wordSpacingRangeConfig.range, "percent");
   
-  const { getSetting, submitPreferences } = useEpubNavigator();
+  const { getSetting, submitPreferences } = useNavigator();
 
   const { getEffectiveSpacingValue, setWordSpacing, canBeReset } = useSpacingPresets();
 

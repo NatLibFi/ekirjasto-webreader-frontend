@@ -3,7 +3,7 @@
 import React, { useCallback } from "react";
 
 import { ThTextAlignOptions } from "@/preferences/models/enums";
-import { StatefulSettingsItemProps } from "../../../Settings/models/settings";
+import { StatefulSettingsItemProps } from "../models/settings";
 import { TextAlignment } from "@readium/navigator";
 
 import BookIcon from "../assets/icons/book.svg";
@@ -11,21 +11,26 @@ import LeftAlignIcon from "./assets/icons/format_align_left.svg";
 import RightAlignIcon from "./assets/icons/format_align_right.svg";
 import JustifyIcon from "./assets/icons/format_align_justify.svg";
 
-import { StatefulRadioGroup } from "../../../Settings/StatefulRadioGroup";
+import { StatefulRadioGroup } from "../StatefulRadioGroup";
 
-import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
+import { useNavigator } from "@/core/Navigator";
 import { useI18n } from "@/i18n/useI18n";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setTextAlign, setHyphens } from "@/lib/settingsReducer";
+import { setWebPubHyphens, setWebPubTextAlign } from "@/lib/webPubSettingsReducer";
 
 export const StatefulTextAlign = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { t } = useI18n();
+
+  const profile = useAppSelector(state => state.reader.profile);
+  const isWebPub = profile === "webPub";
+  
   const isRTL = useAppSelector(state => state.publication.isRTL);
-  const textAlign = useAppSelector(state => state.settings.textAlign);
+  const textAlign = useAppSelector(state => isWebPub ? state.webPubSettings.textAlign : state.settings.textAlign);
   const dispatch = useAppDispatch();
 
-  const { getSetting, submitPreferences } = useEpubNavigator();
+  const { getSetting, submitPreferences } = useNavigator();
 
   const items = [
     {
@@ -68,10 +73,16 @@ export const StatefulTextAlign = ({ standalone = true }: StatefulSettingsItemPro
       
       const textAlignSetting = getSetting("textAlign") as TextAlignment | null;
       const textAlignValue = textAlignSetting === null ? ThTextAlignOptions.publisher : textAlignSetting as unknown as ThTextAlignOptions;
+      const effectiveHyphens = getSetting("hyphens");
       
-      dispatch(setTextAlign(textAlignValue));
-      dispatch(setHyphens(getSetting("hyphens")));
-  }, [getSetting, submitPreferences, dispatch]);
+      if (isWebPub) {
+        dispatch(setWebPubTextAlign(textAlignValue));
+        dispatch(setWebPubHyphens(effectiveHyphens));
+      } else {
+        dispatch(setTextAlign(textAlignValue));
+        dispatch(setHyphens(effectiveHyphens));
+      }
+  }, [isWebPub, getSetting, submitPreferences, dispatch]);
 
   return (
     <>

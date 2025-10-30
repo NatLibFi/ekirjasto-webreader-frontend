@@ -13,7 +13,10 @@ import {
 import { 
   ThActionsKeys, 
   ThSettingsContainerKeys, 
-  ThSheetHeaderVariant
+  ThSheetHeaderVariant,
+  ThTextSettingsKeys,
+  ThSpacingSettingsKeys,
+  ThSettingsKeys
 } from "@/preferences/models/enums";
 import { StatefulActionContainerProps } from "../models/actions";
 
@@ -21,8 +24,8 @@ import settingsStyles from "../../Settings/assets/styles/settings.module.css";
 
 import { StatefulSheetWrapper } from "../../Sheets/StatefulSheetWrapper";
 
-import { StatefulSpacingGroupContainer } from "../../Epub/Settings/Spacing/StatefulSpacingGroup";
-import { StatefulTextGroupContainer } from "../../Epub/Settings/Text/StatefulTextGroup";
+import { StatefulSpacingGroupContainer } from "../../Settings/Spacing/StatefulSpacingGroup";
+import { StatefulTextGroupContainer } from "../../Settings/Text/StatefulTextGroup";
 
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { usePlugins } from "@/components/Plugins/PluginProvider";
@@ -48,19 +51,20 @@ export const StatefulSettingsContainer = ({
   const { preferences } = usePreferences();
   const { t } = useI18n();
   const { settingsComponentsMap } = usePlugins();
-  const readerProfile = useAppSelector(state => state.reader.profile);
+  const profile = useAppSelector(state => state.reader.profile);
   const isFXL = useAppSelector(state => state.publication.isFXL);
+  const hasDisplayTransformability = useAppSelector(state => state.publication.hasDisplayTransformability);
   const contains = useAppSelector(state => state.reader.settingsContainer);
   const actionState = useAppSelector(state => state.actions.keys[ThActionsKeys.settings]);
   const dispatch = useAppDispatch();
 
   const settingItems = useMemo(() => {
-    return readerProfile === "webPub" 
+    return profile === "webPub" 
       ? webPubSettingsKeys 
       : isFXL 
         ? fxlSettingsKeys 
         : reflowSettingsKeys
-  }, [readerProfile, isFXL, fxlSettingsKeys, reflowSettingsKeys, webPubSettingsKeys]);
+  }, [profile, isFXL, fxlSettingsKeys, reflowSettingsKeys, webPubSettingsKeys]);
   
   const docking = useDocking(ThActionsKeys.settings);
   const sheetType = docking.sheetType;
@@ -96,6 +100,29 @@ export const StatefulSettingsContainer = ({
   
     return spacingSettings.includes(key);
   }, [mainSpacingSettingsKeys, subPanelSpacingSettingsKeys]);
+  
+  const isWebPubDisabled = useCallback((key: string) => {
+    // Only apply to WebPub
+    if (profile !== "webPub") {
+      return false;
+    }
+    
+    // Always allow zoom
+    if (key === "zoom") {
+      return false;
+    }
+    
+    // For text and spacing settings (including group containers), respect hasDisplayTransformability
+    if (Object.values(ThTextSettingsKeys).includes(key as ThTextSettingsKeys) ||
+        Object.values(ThSpacingSettingsKeys).includes(key as ThSpacingSettingsKeys) ||
+        key === ThSettingsKeys.textGroup ||
+        key === ThSettingsKeys.spacingGroup) {
+      return !hasDisplayTransformability;
+    }
+    
+    // Filter out everything else for WebPub
+    return true;
+  }, [profile, hasDisplayTransformability]);
 
   const renderSettings = useCallback(() => {
     switch (contains) {
@@ -111,7 +138,18 @@ export const StatefulSettingsContainer = ({
           <>
             { settingItems.length > 0 && settingsComponentsMap 
               ? settingItems
-                .filter((key) => !(isTextNested(key) || isSpacingNested(key)))
+                .filter((key) => {
+                  // Keep existing filtering logic
+                  if (isTextNested(key) || isSpacingNested(key)) {
+                    return false;
+                  }
+                  
+                  if (isWebPubDisabled(key)) {
+                    return false;
+                  }
+                  
+                  return true;
+                })
                 .map((key) => {
                   const match = settingsComponentsMap[key];
                   if (!match) {
@@ -125,7 +163,7 @@ export const StatefulSettingsContainer = ({
           </>
         );
     }
-  }, [settingsComponentsMap, contains, settingItems, isTextNested, isSpacingNested]);
+  }, [settingsComponentsMap, contains, settingItems, isTextNested, isSpacingNested, isWebPubDisabled]);
 
   const getHeading = useCallback(() => {
     switch (contains) {
