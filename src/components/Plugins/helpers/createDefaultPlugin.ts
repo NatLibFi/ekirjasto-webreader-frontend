@@ -10,22 +10,22 @@ import { StatefulTocTrigger } from "../../Actions/Toc/StatefulTocTrigger";
 import { StatefulTocContainer } from "../../Actions/Toc/StatefulTocContainer";
 
 import { StatefulColumns } from "../../Epub/Settings/StatefulColumns";
-import { StatefulFontFamily } from "../../Epub/Settings/Text/StatefulFontFamily";
-import { UnstableStatefulFontWeight } from "../../Epub/Settings/Text/StatefulFontWeight";
-import { StatefulHyphens } from "../../Epub/Settings/Text/StatefulHyphens";
+import { StatefulFontFamily } from "../../Settings/Text/StatefulFontFamily";
+import { UnstableStatefulFontWeight } from "../../Settings/Text/StatefulFontWeight";
+import { StatefulHyphens } from "../../Settings/Text/StatefulHyphens";
 import { StatefulLayout } from "../../Epub/Settings/StatefulLayout";
-import { StatefulLetterSpacing } from "../../Epub/Settings/Spacing/StatefulLetterSpacing";
-import { StatefulLineHeight } from "../../Epub/Settings/Spacing/StatefulLineHeight";
-import { StatefulParagraphIndent } from "../../Epub/Settings/Spacing/StatefulParagraphIndent";
-import { StatefulParagraphSpacing } from "../../Epub/Settings/Spacing/StatefulParagraphSpacing";
+import { StatefulLetterSpacing } from "../../Settings/Spacing/StatefulLetterSpacing";
+import { StatefulLineHeight } from "../../Settings/Spacing/StatefulLineHeight";
+import { StatefulParagraphIndent } from "../../Settings/Spacing/StatefulParagraphIndent";
+import { StatefulParagraphSpacing } from "../../Settings/Spacing/StatefulParagraphSpacing";
 import { StatefulPublisherStyles } from "../../Epub/Settings/StatefulPublisherStyles";
-import { StatefulSpacingGroup } from "../../Epub/Settings/Spacing/StatefulSpacingGroup";
-import { StatefulSpacingPresets } from "@/components/Epub/Settings/Spacing/StatefulSpacingPresets";
-import { StatefulTextAlign } from "../../Epub/Settings/Text/StatefulTextAlign";
-import { StatefulTextGroup } from "../../Epub/Settings/Text/StatefulTextGroup";
-import { StatefulTextNormalize } from "../../Epub/Settings/Text/StatefulTextNormalize";
+import { StatefulSpacingGroup } from "../../Settings/Spacing/StatefulSpacingGroup";
+import { StatefulSpacingPresets } from "../../Settings/Spacing/StatefulSpacingPresets";
+import { StatefulTextAlign } from "../../Settings/Text/StatefulTextAlign";
+import { StatefulTextGroup } from "../../Settings/Text/StatefulTextGroup";
+import { StatefulTextNormalize } from "../../Settings/Text/StatefulTextNormalize";
 import { StatefulTheme } from "../../Epub/Settings/StatefulTheme";
-import { StatefulWordSpacing } from "../../Epub/Settings/Spacing/StatefulWordSpacing";
+import { StatefulWordSpacing } from "../../Settings/Spacing/StatefulWordSpacing";
 import { StatefulZoom } from "../../Settings/StatefulZoom";
 
 export const createDefaultPlugin = (): ThPlugin => {

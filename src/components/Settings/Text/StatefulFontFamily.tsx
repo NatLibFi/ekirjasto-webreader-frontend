@@ -2,24 +2,29 @@
 
 import { CSSProperties, Key, useCallback, useRef } from "react";
 
-import { StatefulSettingsItemProps } from "../../../Settings/models/settings";
+import { StatefulSettingsItemProps } from "../models/settings";
+import { defaultFontFamilyOptions } from "@/preferences/models/const";
 
-import settingsStyles from "../../../Settings/assets/styles/settings.module.css";
+import settingsStyles from "../assets/styles/settings.module.css";
 
 import { ThDropdown } from "@/core/Components/Settings/ThDropdown";
 
 import { ListBox, ListBoxItem } from "react-aria-components";
 
-import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
+import { useNavigator } from "@/core/Navigator";
 import { useI18n } from "@/i18n/useI18n";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setFontFamily } from "@/lib/settingsReducer";
-import { defaultFontFamilyOptions } from "@/preferences/models/const";
+import { setWebPubFontFamily } from "@/lib/webPubSettingsReducer";
 
 export const StatefulFontFamily = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { t } = useI18n();
-  const fontFamily = useAppSelector(state => state.settings.fontFamily);
+
+  const profile = useAppSelector(state => state.reader.profile);
+  const isWebPub = profile === "webPub";
+
+  const fontFamily = useAppSelector(state => isWebPub ? state.webPubSettings.fontFamily : state.settings.fontFamily);
   const fontFamilyOptions = useRef(Object.entries(defaultFontFamilyOptions).map(([property, stack]) => ({
       id: property,
       label: t(`reader.settings.fontFamily.labels.${ property }`),
@@ -28,7 +33,7 @@ export const StatefulFontFamily = ({ standalone = true }: StatefulSettingsItemPr
   );
   const dispatch = useAppDispatch();
 
-  const { getSetting, submitPreferences } = useEpubNavigator();
+  const { getSetting, submitPreferences } = useNavigator();
 
   const updatePreference = useCallback(async (key: Key | null) => {
     if (!key || key === fontFamily) return;
@@ -44,9 +49,14 @@ export const StatefulFontFamily = ({ standalone = true }: StatefulSettingsItemPr
       
       const currentSetting = getSetting("fontFamily");
       const selectedOptionId = Object.keys(defaultFontFamilyOptions).find(key => defaultFontFamilyOptions[key as keyof typeof defaultFontFamilyOptions] === currentSetting) as keyof typeof defaultFontFamilyOptions;
-      dispatch(setFontFamily(selectedOptionId || defaultFontFamilyOptions.publisher));
+      
+      if (isWebPub) {
+        dispatch(setWebPubFontFamily(selectedOptionId || defaultFontFamilyOptions.publisher));
+      } else {
+        dispatch(setFontFamily(selectedOptionId || defaultFontFamilyOptions.publisher));
+      }
     }
-  }, [fontFamily, submitPreferences, getSetting, dispatch]);
+  }, [isWebPub, fontFamily, submitPreferences, getSetting, dispatch]);
 
   return(
     <>

@@ -2,29 +2,39 @@
 
 import { useCallback } from "react";
 
-import { StatefulSettingsItemProps } from "../../../Settings/models/settings";
+import { StatefulSettingsItemProps } from "../models/settings";
 
-import { StatefulSwitch } from "../../../Settings/StatefulSwitch";
+import { StatefulSwitch } from "../StatefulSwitch";
 
-import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
+import { useNavigator } from "@/core/Navigator";
 import { useI18n } from "@/i18n/useI18n";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setTextNormalization } from "@/lib/settingsReducer";
+import { setWebPubTextNormalization } from "@/lib/webPubSettingsReducer";
 
 // TMP Component that is not meant to be implemented AS-IS, for testing purposes
 export const StatefulTextNormalize = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { t } = useI18n();
-  const textNormalization = useAppSelector(state => state.settings.textNormalization);
+
+  const profile = useAppSelector(state => state.reader.profile);
+  const isWebPub = profile === "webPub";
+  
+  const textNormalization = useAppSelector(state => isWebPub ? state.webPubSettings.textNormalization : state.settings.textNormalization);
   const dispatch = useAppDispatch();
 
-  const { getSetting, submitPreferences } = useEpubNavigator();
+  const { getSetting, submitPreferences } = useNavigator();
 
   const updatePreference = useCallback(async (value: boolean) => {
     await submitPreferences({ textNormalization: value });
+    const effectiveSetting = getSetting("textNormalization");
 
-    dispatch(setTextNormalization(getSetting("textNormalization")));
-  }, [submitPreferences, getSetting, dispatch]);
+    if (isWebPub) {
+      dispatch(setWebPubTextNormalization(effectiveSetting));
+    } else {
+      dispatch(setTextNormalization(effectiveSetting));
+    }
+  }, [isWebPub, submitPreferences, getSetting, dispatch]);
 
   return(
     <>

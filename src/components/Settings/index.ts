@@ -8,4 +8,6 @@ export * from "./StatefulSwitch";
 export * from "./hooks";
 export * from "./models";
 
+export * from "./Spacing";
+export * from "./Text";
 export * from "./StatefulZoom";

@@ -24,6 +24,15 @@ import {
   setSpacingPreset,
   setWordSpacing
 } from "@/lib/settingsReducer";
+import {
+  setWebPubLetterSpacing,
+  setWebPubLineHeight,
+  setWebPubParagraphIndent,
+  setWebPubParagraphSpacing,
+  setWebPubPublisherStyles,
+  setWebPubSpacingPreset,
+  setWebPubWordSpacing
+} from "@/lib/webPubSettingsReducer";
 
 /**
  * Hook to determine if preset system should be active
@@ -32,19 +41,36 @@ import {
  * and states for spacing components
  */
 export const useSpacingPresets = () => {
+  const readerProfile = useAppSelector((state) => state.reader.profile);
+  const isWebPub = readerProfile === "webPub";
   const isFXL = useAppSelector(state => state.publication.isFXL);
-  const spacing = useAppSelector(state => state.settings?.spacing) || { preset: ThSpacingPresetKeys.publisher, custom: {}, baseline: {} };
+  
+  // Select the appropriate settings based on reader profile
+  const settings = useAppSelector(state => 
+    isWebPub ? state.webPubSettings : state.settings
+  );
+  
+  // Get spacing with fallback
+  const spacing = settings?.spacing || { 
+    preset: ThSpacingPresetKeys.publisher, 
+    custom: {}, 
+    baseline: {} 
+  };
 
   const { spacingSettingsComponentsMap } = usePlugins();
-  const { reflowSpacingPresetKeys, fxlSpacingPresetKeys } = usePreferenceKeys();
+  const { reflowSpacingPresetKeys, fxlSpacingPresetKeys, webPubSpacingPresetKeys } = usePreferenceKeys();
 
   const { preferences } = usePreferences();
 
   const dispatch = useAppDispatch();
 
-  const spacingKeys = useMemo(() => {
-    return isFXL ? fxlSpacingPresetKeys : reflowSpacingPresetKeys;
-  }, [isFXL, fxlSpacingPresetKeys, reflowSpacingPresetKeys]);
+   const spacingKeys = useMemo(() => {
+    return isWebPub 
+    ? webPubSpacingPresetKeys
+    : isFXL 
+      ? fxlSpacingPresetKeys 
+      : reflowSpacingPresetKeys;
+  }, [isWebPub, isFXL, webPubSpacingPresetKeys, fxlSpacingPresetKeys, reflowSpacingPresetKeys]);
 
   // 1. Check if preset component is registered
   const isComponentRegistered = !!spacingSettingsComponentsMap?.[ThSettingsKeys.spacingPresets];
@@ -60,13 +86,14 @@ export const useSpacingPresets = () => {
   // 3. Only apply presets if component is both registered AND displayed
   const shouldApplyPresets = isComponentRegistered && isDisplayed;
 
-  // Get current state values at the hook level
-  const letterSpacing = useAppSelector(state => state.settings?.letterSpacing);
-  const lineHeight = useAppSelector(state => state.settings?.lineHeight);
-  const lineLength = useAppSelector(state => state.settings?.lineLength);
-  const paragraphIndent = useAppSelector(state => state.settings?.paragraphIndent);
-  const paragraphSpacing = useAppSelector(state => state.settings?.paragraphSpacing);
-  const wordSpacing = useAppSelector(state => state.settings?.wordSpacing);
+  // Get current state values from the already selected settings
+  const {
+    letterSpacing,
+    lineHeight,
+    paragraphIndent,
+    paragraphSpacing,
+    wordSpacing
+  } = settings || {};
 
   // Helper function to get base Redux state value for a setting key
   const getBaseReduxValue = (key: ThSpacingSettingsKeys): any => {
@@ -195,7 +222,6 @@ export const useSpacingPresets = () => {
     preferences.settings?.spacing?.presets,
     letterSpacing,
     lineHeight,
-    lineLength,
     paragraphIndent,
     paragraphSpacing,
     wordSpacing
@@ -220,47 +246,78 @@ export const useSpacingPresets = () => {
     if (shouldApplyPresets && spacing.preset) {
       payload.preset = spacing.preset;
     }
-    dispatch(setLetterSpacing(payload));
-  }, [dispatch, shouldApplyPresets, spacing.preset]);
+    if (isWebPub) {
+      dispatch(setWebPubLetterSpacing(payload));
+    } else {
+      dispatch(setLetterSpacing(payload));
+    }
+  }, [dispatch, isWebPub, shouldApplyPresets, spacing.preset]);
 
   const setLineHeightAction = useCallback((value: ThLineHeightOptions) => {
     const payload: any = { value };
     if (shouldApplyPresets && spacing.preset) {
       payload.preset = spacing.preset;
     }
-    dispatch(setLineHeight(payload));
-  }, [dispatch, shouldApplyPresets, spacing.preset]);
+    if (isWebPub) {
+      dispatch(setWebPubLineHeight(payload));
+    } else {
+      dispatch(setLineHeight(payload));
+    }
+  }, [dispatch, isWebPub, shouldApplyPresets, spacing.preset]);
 
   const setParagraphIndentAction = useCallback((value: number | null) => {
     const payload: any = { value };
     if (shouldApplyPresets && spacing.preset) {
       payload.preset = spacing.preset;
     }
-    dispatch(setParagraphIndent(payload));
-  }, [dispatch, shouldApplyPresets, spacing.preset]);
+    if (isWebPub) {
+      dispatch(setWebPubParagraphIndent(payload));
+    } else {
+      dispatch(setParagraphIndent(payload));
+    }
+  }, [dispatch, isWebPub, shouldApplyPresets, spacing.preset]);
 
   const setParagraphSpacingAction = useCallback((value: number | null) => {
     const payload: any = { value };
     if (shouldApplyPresets && spacing.preset) {
       payload.preset = spacing.preset;
     }
-    dispatch(setParagraphSpacing(payload));
-  }, [dispatch, shouldApplyPresets, spacing.preset]);
+    if (isWebPub) {
+      dispatch(setWebPubParagraphSpacing(payload));
+    } else {
+      dispatch(setParagraphSpacing(payload));
+    }
+  }, [dispatch, isWebPub, shouldApplyPresets, spacing.preset]);
 
   const setWordSpacingAction = useCallback((value: number | null) => {
     const payload: any = { value };
     if (shouldApplyPresets && spacing.preset) {
       payload.preset = spacing.preset;
     }
-    dispatch(setWordSpacing(payload));
-  }, [dispatch, shouldApplyPresets, spacing.preset]);
+    if (isWebPub) {
+      dispatch(setWebPubWordSpacing(payload));
+    } else {
+      dispatch(setWordSpacing(payload));
+    }
+  }, [dispatch, isWebPub, shouldApplyPresets, spacing.preset]);
 
   const setPublisherStylesAction = useCallback((value: boolean) => {
     if (shouldApplyPresets && value) {
-      dispatch(setSpacingPreset({ preset: ThSpacingPresetKeys.publisher, values: {} }));
+      if (isWebPub) {
+        dispatch(setWebPubSpacingPreset({ 
+          preset: ThSpacingPresetKeys.publisher, 
+          values: {} 
+        }));
+        dispatch(setWebPubPublisherStyles(value));
+      } else {
+        dispatch(setSpacingPreset({ 
+          preset: ThSpacingPresetKeys.publisher, 
+          values: {} 
+        }));
+        dispatch(setPublisherStyles(value));
+      }
     }
-    dispatch(setPublisherStyles(value));
-  }, [dispatch, shouldApplyPresets]);
+  }, [dispatch, isWebPub, shouldApplyPresets]);
 
   return {
     currentPreset: spacing.preset,

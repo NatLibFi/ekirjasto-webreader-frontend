@@ -6,6 +6,7 @@ import { UnstableTimeline } from "@/core/Hooks/useTimeline";
 export interface PublicationReducerState {
   isFXL: boolean;
   isRTL: boolean;
+  hasDisplayTransformability: boolean;
   positionsList: Locator[],
   atPublicationStart: boolean;
   atPublicationEnd: boolean;
@@ -15,6 +16,7 @@ export interface PublicationReducerState {
 const initialState: PublicationReducerState = {
   isFXL: false,
   isRTL: false,
+  hasDisplayTransformability: false,
   positionsList: [],
   atPublicationStart: false,
   atPublicationEnd: false,
@@ -30,6 +32,9 @@ export const publicationSlice = createSlice({
     },
     setRTL: (state, action) => {
       state.isRTL = action.payload
+    },
+    setHasDisplayTransformability: (state, action) => {
+      state.hasDisplayTransformability = action.payload
     },
     setPositionsList: (state, action) => {
       state.positionsList = action.payload
@@ -75,6 +80,7 @@ export const publicationSlice = createSlice({
 export const { 
   setFXL,
   setRTL,
+  setHasDisplayTransformability,
   setPositionsList,
   setPublicationStart,
   setPublicationEnd,

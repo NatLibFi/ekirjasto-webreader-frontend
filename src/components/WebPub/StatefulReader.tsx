@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 
-import { ThemeKeyType, useTheming } from "../../preferences";
+import { defaultFontFamilyOptions, ThemeKeyType, useTheming } from "../../preferences";
 
 import "../assets/styles/reader.css";
 
@@ -13,7 +13,10 @@ import {
   ThLayoutUI,
   ThDocumentTitleFormat,
   ThProgressionFormat, 
-  ThThemeKeys
+  ThThemeKeys,
+  ThLineHeightOptions,
+  ThTextAlignOptions,
+  ThSpacingSettingsKeys
 } from "@/preferences/models/enums";
 
 import { ThPluginRegistry } from "../Plugins/PluginRegistry";
@@ -26,14 +29,15 @@ import {
   BasicTextSelection,
   FrameClickEvent,
 } from "@readium/navigator-html-injectables";
-import { WebPubNavigatorListeners } from "@readium/navigator";
+import { IWebPubPreferences, TextAlignment, WebPubNavigatorListeners } from "@readium/navigator";
 import { 
   Locator, 
   Manifest, 
   Publication, 
   Fetcher, 
   HttpFetcher, 
-  ReadingProgression
+  ReadingProgression,
+  Feature
 } from "@readium/shared";
 
 import { StatefulDockingWrapper } from "../Docking/StatefulDockingWrapper";
@@ -47,6 +51,8 @@ import { useI18n } from "@/i18n/useI18n";
 import { useTimeline } from "@/core/Hooks/useTimeline";
 import { useLocalStorage } from "@/core/Hooks/useLocalStorage";
 import { useDocumentTitle } from "@/core/Hooks/useDocumentTitle";
+import { useSpacingPresets } from "../Settings/Spacing/hooks/useSpacingPresets";
+import { useLineHeight } from "../Settings/Spacing/hooks/useLineHeight";
 
 import { toggleActionOpen } from "@/lib/actionsReducer";
 import { useAppSelector, useAppDispatch, useAppStore } from "@/lib/hooks";
@@ -72,7 +78,8 @@ import {
   setRTL, 
   setTimeline,
   setPublicationStart,
-  setPublicationEnd
+  setPublicationEnd,
+  setHasDisplayTransformability
 } from "@/lib/publicationReducer";
 
 import classNames from "classnames";
@@ -82,6 +89,17 @@ import { getPlatformModifier } from "@/core/Helpers/keyboardUtilities";
 import { propsToCSSVars } from "@/core/Helpers/propsToCSSVars";
 
 export interface WebPubCSSSettings {
+  fontFamily: keyof typeof defaultFontFamilyOptions | null;
+  fontWeight: number;
+  hyphens: boolean | null;
+  letterSpacing: number | null;
+  lineHeight: ThLineHeightOptions | null;
+  paragraphIndent: number | null;
+  paragraphSpacing: number | null;
+  publisherStyles: boolean;
+  textAlign: ThTextAlignOptions | null;
+  textNormalization: boolean;
+  wordSpacing: number | null;
   zoom: number;
 }
 
@@ -124,11 +142,24 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
 
   const { preferences } = usePreferences();
   const { t } = useI18n();
+  const { getEffectiveSpacingValue } = useSpacingPresets();
+
   const [publication, setPublication] = useState<Publication | null>(null);
 
   const container = useRef<HTMLDivElement>(null);
   const localDataKey = useRef(`${selfHref}-current-location`);
 
+  const textAlign = useAppSelector(state => state.webPubSettings.textAlign);
+  const fontFamily = useAppSelector(state => state.webPubSettings.fontFamily);
+  const fontWeight = useAppSelector(state => state.webPubSettings.fontWeight);
+  const hyphens = useAppSelector(state => state.webPubSettings.hyphens);
+  const letterSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.letterSpacing);
+  const lineHeight = getEffectiveSpacingValue(ThSpacingSettingsKeys.lineHeight);
+  const paragraphIndent = getEffectiveSpacingValue(ThSpacingSettingsKeys.paragraphIndent);
+  const paragraphSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.paragraphSpacing);
+  const publisherStyles = useAppSelector(state => state.webPubSettings.publisherStyles);
+  const textNormalization = useAppSelector(state => state.webPubSettings.textNormalization);
+  const wordSpacing = getEffectiveSpacingValue(ThSpacingSettingsKeys.wordSpacing);
   const theme = ThThemeKeys.light;
   const zoom = useAppSelector(state => state.webPubSettings.zoom);
   const isImmersive = useAppSelector(state => state.reader.isImmersive);
@@ -184,6 +215,8 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
     }
   });
 
+  const lineHeightOptions = useLineHeight();
+
   const documentTitleFormat = preferences.metadata?.documentTitle?.format;
 
   let documentTitle: string | undefined;
@@ -221,6 +254,17 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
 
   const cache = useRef<WebPubStatelessCache>({
     settings: {
+      fontFamily: fontFamily,
+      fontWeight: fontWeight,
+      hyphens: hyphens,
+      letterSpacing: letterSpacing,
+      lineHeight: lineHeight,
+      paragraphIndent: paragraphIndent,
+      paragraphSpacing: paragraphSpacing,
+      publisherStyles: publisherStyles,
+      textAlign: textAlign,
+      textNormalization: textNormalization,
+      wordSpacing: wordSpacing,
       zoom: zoom
     }
   });
@@ -239,6 +283,7 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
         case ThActionsKeys.fullscreen:
           fs.handleFullscreen();
           break;
+        case ThActionsKeys.settings:
         case ThActionsKeys.toc:
           dispatch(toggleActionOpen({
             key: actionKey
@@ -298,6 +343,37 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
   };
 
   useEffect(() => {
+    cache.current.settings.fontFamily = fontFamily;
+  }, [fontFamily]);
+  useEffect(() => {
+    cache.current.settings.fontWeight = fontWeight;
+  }, [fontWeight]);
+  useEffect(() => {
+    cache.current.settings.hyphens = hyphens;
+  }, [hyphens]);
+  useEffect(() => {
+    cache.current.settings.letterSpacing = letterSpacing;
+  }, [letterSpacing]);
+  useEffect(() => {
+    cache.current.settings.lineHeight = lineHeight;
+  }, [lineHeight]);
+  useEffect(() => {
+    cache.current.settings.paragraphIndent = paragraphIndent;
+  }, [paragraphIndent]);
+  useEffect(() => {
+    cache.current.settings.paragraphSpacing = paragraphSpacing;
+  }, [paragraphSpacing]);
+  useEffect(() => {
+    cache.current.settings.textAlign = textAlign;
+  }, [textAlign]);
+
+  useEffect(() => {
+    cache.current.settings.textNormalization = textNormalization;
+  }, [textNormalization]);
+  useEffect(() => {
+    cache.current.settings.wordSpacing = wordSpacing;
+  }, [wordSpacing]);
+  useEffect(() => {
     cache.current.settings.zoom = zoom;
   }, [zoom]);
 
@@ -324,16 +400,36 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
 
     dispatch(setRTL(publication.metadata.effectiveReadingProgression === ReadingProgression.rtl));
 
+    const displayTransformability = publication.metadata.accessibility?.feature?.some(feature =>  feature && feature.value === Feature.DISPLAY_TRANSFORMABILITY.value);
+    dispatch(setHasDisplayTransformability(displayTransformability));
+
     const initialPosition: Locator | null = getLocalData();
+
+    const webPubPreferences: IWebPubPreferences = {
+      zoom: cache.current.settings.zoom
+    };
+
+    if (displayTransformability) {
+      webPubPreferences.fontFamily = cache.current.settings.fontFamily && defaultFontFamilyOptions[cache.current.settings.fontFamily];
+      webPubPreferences.fontWeight = cache.current.settings.fontWeight;
+      webPubPreferences.hyphens = cache.current.settings.hyphens;
+      webPubPreferences.letterSpacing = cache.current.settings.letterSpacing;
+      webPubPreferences.lineHeight = cache.current.settings.lineHeight === null 
+        ? null 
+        : lineHeightOptions[cache.current.settings.lineHeight];
+      webPubPreferences.paragraphIndent = cache.current.settings.paragraphIndent;
+      webPubPreferences.paragraphSpacing = cache.current.settings.paragraphSpacing;
+      webPubPreferences.textAlign = cache.current.settings.textAlign as TextAlignment | null | undefined;
+      webPubPreferences.textNormalization = cache.current.settings.textNormalization;
+      webPubPreferences.wordSpacing = cache.current.settings.wordSpacing;
+    }
 
     WebPubNavigatorLoad({
       container: container.current,
       publication: publication,
       listeners: listeners,
       initialPosition: initialPosition ? new Locator(initialPosition) : undefined,
-      preferences: {
-        zoom: cache.current.settings.zoom
-      }
+      preferences: webPubPreferences
     }, () => {
       p.observe(window);
     });

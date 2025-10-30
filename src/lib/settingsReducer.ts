@@ -105,7 +105,7 @@ const checkRootSpacingSettingsAtInit = (state: SettingsReducerState) => {
   );
 }
 
-const handleSpacingSetting = (state: any, action: SetSpacingSettingPayload, settingKey: ThSpacingSettingsKeys) => {
+export const handleSpacingSetting = (state: any, action: SetSpacingSettingPayload, settingKey: ThSpacingSettingsKeys) => {
   const { value, preset } = action.payload;
 
   state.publisherStyles = false;

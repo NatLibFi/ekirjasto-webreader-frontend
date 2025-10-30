@@ -32,6 +32,7 @@ export const usePreferenceKeys = () => {
 
   const reflowSpacingPresetKeys = preferences.settings.spacing?.presets?.reflowOrder ?? defaultSpacingPresetsOrder;
   const fxlSpacingPresetKeys: ThSpacingPresetKeys[] = [];
+  const webPubSpacingPresetKeys = preferences.settings.spacing?.presets?.webPubOrder ?? defaultSpacingPresetsOrder;
 
   return {
     reflowActionKeys,
@@ -47,6 +48,7 @@ export const usePreferenceKeys = () => {
     mainSpacingSettingsKeys,
     subPanelSpacingSettingsKeys,
     reflowSpacingPresetKeys,
-    fxlSpacingPresetKeys
+    fxlSpacingPresetKeys,
+    webPubSpacingPresetKeys
   };
 }

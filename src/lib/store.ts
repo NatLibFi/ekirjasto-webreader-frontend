@@ -8,7 +8,7 @@ import themeReducer, { ThemeReducerState } from "@/lib/themeReducer";
 import actionsReducer, { ActionsReducerState } from "@/lib/actionsReducer";
 import publicationReducer, { PublicationReducerState } from "./publicationReducer";
 import preferencesReducer, { PreferencesReducerState } from "./preferencesReducer";
-import webPubSettingsReducer, { WebPubSettingsReducerState } from "./webPubSettings";
+import webPubSettingsReducer, { WebPubSettingsReducerState } from "./webPubSettingsReducer";
 
 import debounce from "debounce";
 

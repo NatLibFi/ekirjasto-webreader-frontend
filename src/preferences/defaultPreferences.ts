@@ -455,7 +455,9 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
       ThSettingsKeys.columns
     ],
     webPubOrder: [
-      ThSettingsKeys.zoom
+      ThSettingsKeys.zoom,
+      ThSettingsKeys.textGroup,
+      ThSettingsKeys.spacingGroup
     ],
     keys: {
       [ThSettingsKeys.letterSpacing]: defaultLetterSpacing,
@@ -475,6 +477,7 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
       header: ThSheetHeaderVariant.previous,
       presets: {
         reflowOrder: defaultSpacingPresetsOrder,
+        webPubOrder: defaultSpacingPresetsOrder,
         keys: defaultSpacingPresets
       }
     }
