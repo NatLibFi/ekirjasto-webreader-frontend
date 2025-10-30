@@ -50,7 +50,7 @@
   },
   "peerDependencies": {
     "@readium/css": ">=2.0.0-beta.19",
-    "@readium/navigator": "^2.2.1",
+    "@readium/navigator": "^2.2.2",
     "@readium/navigator-html-injectables": "^2.2.1",
     "@readium/shared": "^2.1.1",
     "@reduxjs/toolkit": "^2.9.0",
@@ -70,7 +70,7 @@
   },
   "dependencies": {
     "@readium/css": "2.0.0-beta.19",
-    "@readium/navigator": "^2.2.1",
+    "@readium/navigator": "^2.2.2",
     "@readium/navigator-html-injectables": "^2.2.1",
     "@readium/shared": "^2.1.1",
     "@reduxjs/toolkit": "^2.9.0",

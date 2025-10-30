@@ -147,7 +147,7 @@ export const useWebPubNavigator = () => {
   }, []);
 
   const getCframes = useCallback(() => {
-    return // navigatorInstance?._cframes;
+    return navigatorInstance?._cframes;
   }, []);
 
   return {
