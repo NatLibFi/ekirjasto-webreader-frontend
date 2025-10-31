@@ -21,8 +21,8 @@ export const StatefulHyphens = ({ standalone = true }: StatefulSettingsItemProps
   const profile = useAppSelector(state => state.reader.profile);
   const isWebPub = profile === "webPub";
   
-  const hyphens = useAppSelector(state => isWebPub ? state.webPubSettings.hyphens : state.settings.hyphens);
-  const textAlign = useAppSelector(state => isWebPub ? state.webPubSettings.textAlign : state.settings.textAlign);
+  const hyphens = useAppSelector(state => isWebPub ? state.webPubSettings.hyphens : state.settings.hyphens) ?? false;
+  const textAlign = useAppSelector(state => isWebPub ? state.webPubSettings.textAlign : state.settings.textAlign) ?? ThTextAlignOptions.publisher;
 
   const dispatch = useAppDispatch();
   
