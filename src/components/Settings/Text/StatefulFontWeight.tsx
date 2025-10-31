@@ -24,7 +24,7 @@ export const UnstableStatefulFontWeight = ({ standalone = true }: StatefulSettin
   const profile = useAppSelector(state => state.reader.profile);
   const isWebPub = profile === "webPub";
   
-  const fontWeight = useAppSelector(state => isWebPub ? state.webPubSettings.fontWeight : state.settings.fontWeight);
+  const fontWeight = useAppSelector(state => isWebPub ? state.webPubSettings.fontWeight : state.settings.fontWeight) ?? 400;
 
   const dispatch = useAppDispatch();
 

@@ -20,7 +20,7 @@ export const StatefulTextNormalize = ({ standalone = true }: StatefulSettingsIte
   const profile = useAppSelector(state => state.reader.profile);
   const isWebPub = profile === "webPub";
   
-  const textNormalization = useAppSelector(state => isWebPub ? state.webPubSettings.textNormalization : state.settings.textNormalization);
+  const textNormalization = useAppSelector(state => isWebPub ? state.webPubSettings.textNormalization : state.settings.textNormalization) ?? false;
   const dispatch = useAppDispatch();
 
   const { getSetting, submitPreferences } = useNavigator();

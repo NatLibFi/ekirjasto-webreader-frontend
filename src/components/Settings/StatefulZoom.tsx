@@ -27,10 +27,10 @@ export const StatefulZoom = () => {
 
   const readerProfile = useAppSelector((state) => state.reader.profile);
   const isFXL = useAppSelector((state) => state.publication.isFXL);
-  const fontSize = useAppSelector((state) => state.settings.fontSize);
-  const webPubZoom = useAppSelector((state) => state.webPubSettings.zoom);
+  const fontSize = useAppSelector((state) => state.settings.fontSize) || 1;
+  const webPubZoom = useAppSelector((state) => state.webPubSettings.zoom) || 1;
   const derivedState = readerProfile === "webPub" ? webPubZoom : fontSize;
-
+  
   const dispatch = useAppDispatch();
   
   const { 
