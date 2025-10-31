@@ -25,7 +25,10 @@ export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemPr
   const { t } = useI18n();
   const { preferences } = usePreferences();
 
-  const publisherStyles = useAppSelector(state => state.settings.publisherStyles);
+  const profile = useAppSelector(state => state.reader.profile);
+  const isWebPub = profile === "webPub";
+
+  const publisherStyles = useAppSelector(state => isWebPub ? state.webPubSettings.publisherStyles : state.settings.publisherStyles) ?? true;
 
   const { getSetting, submitPreferences } = useNavigator();
 
@@ -92,7 +95,7 @@ export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemPr
       standalone={ standalone }
       label={ t("reader.settings.lineHeight.title") }
       orientation="horizontal"
-      value={ publisherStyles ? ThLineHeightOptions.publisher : lineHeight }
+      value={ !isWebPub && publisherStyles ? ThLineHeightOptions.publisher : lineHeight }
       onChange={ async (val: string) => await updatePreference(val) }
       items={ items }
     />
