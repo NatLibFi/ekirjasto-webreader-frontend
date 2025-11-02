@@ -1,6 +1,30 @@
 import { PreferencesReducerState } from "../preferencesReducer";
 import { ThPreferences, CustomizableKeys } from "@/preferences/preferences";
-import { ThProgressionFormat, ThRunningHeadFormat } from "@/preferences/models/enums";
+import { ThProgressionFormat, ThRunningHeadFormat, ThBreakpoints } from "@/preferences/models/enums";
+
+const mapRenditionFormat = <T>(
+  format: { default?: { variants: T }, breakpoints?: { [key in ThBreakpoints]?: { variants: T } } } | undefined
+) => {
+  const result: {
+    default?: T;
+    breakpoints?: { [key in ThBreakpoints]?: T };
+  } = {};
+
+  if (format?.default?.variants !== undefined) {
+    result.default = format.default.variants;
+  }
+
+  if (format?.breakpoints) {
+    result.breakpoints = Object.entries(format.breakpoints).reduce((acc, [bp, value]) => {
+      if (value?.variants !== undefined) {
+        acc[bp as ThBreakpoints] = value.variants;
+      }
+      return acc;
+    }, {} as { [key in ThBreakpoints]?: T });
+  }
+
+  return result;
+};
 
 export const mapPreferencesToState = <T extends CustomizableKeys>(prefs: ThPreferences<T>): PreferencesReducerState => {  
   return {
@@ -9,17 +33,28 @@ export const mapPreferencesToState = <T extends CustomizableKeys>(prefs: ThPrefe
       direction: prefs.direction
     },
     progressionFormat: {
-      reflow: prefs.theming?.progression?.format?.reflow?.default?.variants,
-      fxl: prefs.theming?.progression?.format?.fxl?.default?.variants
+      reflow: mapRenditionFormat<ThProgressionFormat | ThProgressionFormat[]>(
+        prefs.theming?.progression?.format?.reflow
+      ),
+      fxl: mapRenditionFormat<ThProgressionFormat | ThProgressionFormat[]>(
+        prefs.theming?.progression?.format?.fxl
+      ),
+      webPub: mapRenditionFormat<ThProgressionFormat | ThProgressionFormat[]>(
+        prefs.theming?.progression?.format?.webPub
+      )
     },
     runningHeadFormat: {
-      reflow: prefs.theming?.header?.runningHead?.format?.reflow?.default?.variants,
-      fxl: prefs.theming?.header?.runningHead?.format?.fxl?.default?.variants
+      reflow: mapRenditionFormat<ThRunningHeadFormat>(
+        prefs.theming?.header?.runningHead?.format?.reflow
+      ),
+      fxl: mapRenditionFormat<ThRunningHeadFormat>(
+        prefs.theming?.header?.runningHead?.format?.fxl
+      ),
+      webPub: mapRenditionFormat<ThRunningHeadFormat>(
+        prefs.theming?.header?.runningHead?.format?.webPub
+      )
     },
-    ui: {
-      reflow: prefs.theming?.layout?.ui?.reflow,
-      fxl: prefs.theming?.layout?.ui?.fxl
-    },
+    ui: prefs.theming?.layout?.ui,
     scrollAffordances: {
       hintInImmersive: prefs.affordances?.scroll?.hintInImmersive ?? false,
       toggleOnMiddlePointer: prefs.affordances?.scroll?.toggleOnMiddlePointer ?? [],
@@ -33,7 +68,27 @@ export const mapStateToPreferences = <T extends CustomizableKeys = CustomizableK
   state: PreferencesReducerState, 
   currentPrefs: ThPreferences<T>
 ): ThPreferences<T> => {
-  const newPrefs: ThPreferences<T> = {
+  const updateVariants = (stateValue: any, prefValue: any) => {
+    if (!stateValue) return prefValue;
+    return {
+      ...prefValue,
+      default: {
+        ...prefValue?.default,
+        variants: stateValue.default
+      },
+      ...(stateValue.breakpoints && {
+        breakpoints: Object.entries(stateValue.breakpoints).reduce((acc, [bp, variants]) => ({
+          ...acc,
+          [bp]: {
+            ...prefValue?.breakpoints?.[bp as ThBreakpoints],
+            variants
+          }
+        }), {})
+      })
+    };
+  };
+
+  return {
     ...currentPrefs,
     locale: state.l10n?.locale ?? currentPrefs.locale,
     direction: state.l10n?.direction ?? currentPrefs.direction,
@@ -45,22 +100,22 @@ export const mapStateToPreferences = <T extends CustomizableKeys = CustomizableK
           format: {
             ...currentPrefs.theming.progression?.format,
             ...(state.progressionFormat.reflow !== undefined && {
-              reflow: {
-                default: {
-                  variants: state.progressionFormat.reflow as ThProgressionFormat | ThProgressionFormat[],
-                  displayInImmersive: currentPrefs.theming.progression?.format?.reflow?.default?.displayInImmersive,
-                  displayInFullscreen: currentPrefs.theming.progression?.format?.reflow?.default?.displayInFullscreen
-                }
-              }
+              reflow: updateVariants(
+                state.progressionFormat.reflow,
+                currentPrefs.theming.progression?.format?.reflow
+              )
             }),
             ...(state.progressionFormat.fxl !== undefined && {
-              fxl: {
-                default: {
-                  variants: state.progressionFormat.fxl as ThProgressionFormat | ThProgressionFormat[],
-                  displayInImmersive: currentPrefs.theming.progression?.format?.fxl?.default?.displayInImmersive,
-                  displayInFullscreen: currentPrefs.theming.progression?.format?.fxl?.default?.displayInFullscreen
-                }
-              }
+              fxl: updateVariants(
+                state.progressionFormat.fxl,
+                currentPrefs.theming.progression?.format?.fxl
+              )
+            }),
+            ...(state.progressionFormat.webPub !== undefined && {
+              webPub: updateVariants(
+                state.progressionFormat.webPub,
+                currentPrefs.theming.progression?.format?.webPub
+              )
             })
           }
         }
@@ -73,22 +128,16 @@ export const mapStateToPreferences = <T extends CustomizableKeys = CustomizableK
             format: {
               ...currentPrefs.theming.header?.runningHead?.format,
               ...(state.runningHeadFormat.reflow !== undefined && {
-                reflow: {
-                  default: {
-                    variants: state.runningHeadFormat.reflow as ThRunningHeadFormat,
-                    displayInImmersive: currentPrefs.theming.header?.runningHead?.format?.reflow?.default?.displayInImmersive,
-                    displayInFullscreen: currentPrefs.theming.header?.runningHead?.format?.reflow?.default?.displayInFullscreen
-                  }
-                }
+                reflow: updateVariants(
+                  state.runningHeadFormat.reflow,
+                  currentPrefs.theming.header?.runningHead?.format?.reflow
+                )
               }),
-              ...(state.runningHeadFormat.fxl !== undefined && {
-                fxl: {
-                  default: {
-                    variants: state.runningHeadFormat.fxl as ThRunningHeadFormat,
-                    displayInImmersive: currentPrefs.theming.header?.runningHead?.format?.fxl?.default?.displayInImmersive,
-                    displayInFullscreen: currentPrefs.theming.header?.runningHead?.format?.fxl?.default?.displayInFullscreen
-                  }
-                }
+              ...(state.runningHeadFormat.fxl && {
+                fxl: updateVariants(
+                  state.runningHeadFormat.fxl,
+                  currentPrefs.theming.header?.runningHead?.format?.fxl
+                )
               })
             }
           }
@@ -96,25 +145,22 @@ export const mapStateToPreferences = <T extends CustomizableKeys = CustomizableK
       }),
       layout: {
         ...currentPrefs.theming.layout,
-        ui: state.ui ? {
-          reflow: state.ui.reflow ?? currentPrefs.theming.layout.ui?.reflow,
-          fxl: state.ui.fxl ?? currentPrefs.theming.layout.ui?.fxl
-        } : currentPrefs.theming.layout.ui
+        ui: state.ui 
+          ? { 
+              ...currentPrefs.theming.layout?.ui,
+              ...state.ui 
+            } 
+          : currentPrefs.theming.layout?.ui
       }
     },
     affordances: {
       ...currentPrefs.affordances,
-      scroll: {
-        ...currentPrefs.affordances.scroll,
-        ...(state.scrollAffordances ? {
-          hintInImmersive: state.scrollAffordances.hintInImmersive,
-          toggleOnMiddlePointer: state.scrollAffordances.toggleOnMiddlePointer,
-          hideOnForwardScroll: state.scrollAffordances.hideOnForwardScroll,
-          showOnBackwardScroll: state.scrollAffordances.showOnBackwardScroll
-        } : {})
-      }
+      ...(state.scrollAffordances && {
+        scroll: {
+          ...currentPrefs.affordances.scroll,
+          ...state.scrollAffordances
+        }
+      })
     }
   };
-
-  return newPrefs;
-}
+};

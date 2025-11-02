@@ -1,7 +1,5 @@
-import { PreferencesReducerState } from "@/lib";
 import { ThPreferences, CustomizableKeys } from "../preferences";
 import { ThPreferencesAdapter } from "./ThPreferencesAdapter";
-import { mapPreferencesToState } from "@/lib/helpers/mapPreferences";
 
 export class ThMemoryPreferencesAdapter<T extends CustomizableKeys = CustomizableKeys> implements ThPreferencesAdapter<T> {
   private currentPreferences: ThPreferences<T>;
