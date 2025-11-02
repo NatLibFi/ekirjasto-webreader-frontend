@@ -1,6 +1,7 @@
 "use client";
 
 export * from "./StatefulGroupWrapper";
+export * from "./StatefulDropdown";
 export * from "./StatefulNumberField";
 export * from "./StatefulRadioGroup";
 export * from "./StatefulSlider";
