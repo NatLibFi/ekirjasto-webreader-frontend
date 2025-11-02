@@ -133,10 +133,16 @@ export const mapStateToPreferences = <T extends CustomizableKeys = CustomizableK
                   currentPrefs.theming.header?.runningHead?.format?.reflow
                 )
               }),
-              ...(state.runningHeadFormat.fxl && {
+              ...(state.runningHeadFormat.fxl !== undefined && {
                 fxl: updateVariants(
                   state.runningHeadFormat.fxl,
                   currentPrefs.theming.header?.runningHead?.format?.fxl
+                )
+              }),
+              ...(state.runningHeadFormat.webPub !== undefined && {
+                webPub: updateVariants(
+                  state.runningHeadFormat.webPub,
+                  currentPrefs.theming.header?.runningHead?.format?.webPub
                 )
               })
             }
