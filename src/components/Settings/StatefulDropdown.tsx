@@ -31,14 +31,21 @@ export const StatefulDropdown = ({
       ) }
         compounds={{
           label: {
-            className: settingsStyles.readerSettingsLabel
+            className: settingsStyles.readerSettingsLabel,
+            ...(compounds?.label || {})
           },
-          button: {
-            className: settingsStyles.readerSettingsDropdownButton
-          },
+          ...(React.isValidElement(compounds?.button) 
+            ? { button: compounds.button }
+            : {
+                button: {
+                  className: settingsStyles.readerSettingsDropdownButton,
+                  ...(compounds?.button || {})
+                }
+              }),
           popover: {
             className: settingsStyles.readerSettingsDropdownPopover,
-            placement: "bottom"
+            placement: "bottom",
+            ...(compounds?.popover || {})
           },
           ...(React.isValidElement(compounds?.listbox) 
             ? { listbox: compounds.listbox }
