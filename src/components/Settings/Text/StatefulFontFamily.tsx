@@ -7,8 +7,7 @@ import { defaultFontFamilyOptions } from "@/preferences/models/const";
 
 import settingsStyles from "../assets/styles/settings.module.css";
 
-import { ThDropdown } from "@/core/Components/Settings/ThDropdown";
-
+import { StatefulDropdown } from "../StatefulDropdown";
 import { ListBox, ListBoxItem } from "react-aria-components";
 
 import { useNavigator } from "@/core/Navigator";
@@ -58,30 +57,13 @@ export const StatefulFontFamily = ({ standalone = true }: StatefulSettingsItemPr
     }
   }, [isWebPub, fontFamily, submitPreferences, getSetting, dispatch]);
 
-  return(
-    <>
-    <ThDropdown 
-      { ...(standalone 
-        ? { 
-          className: settingsStyles.readerSettingsGroup,
-          label: t("reader.settings.fontFamily.title")
-        } 
-        : {
-          "aria-label": t("reader.settings.fontFamily.title")
-        }) }
+  return (
+    <StatefulDropdown
+      standalone={ standalone }
+      label={ t("reader.settings.fontFamily.title") }
       selectedKey={ fontFamily }
       onSelectionChange={ async (key) => await updatePreference(key) }
       compounds={ {
-        label: {
-          className: settingsStyles.readerSettingsLabel
-        },
-        button: {
-          className: settingsStyles.readerSettingsDropdownButton
-        },
-        popover: {
-          className: settingsStyles.readerSettingsDropdownPopover,
-          placement: "bottom"
-        },
         listbox: (
           <ListBox
             className={ settingsStyles.readerSettingsDropdownListbox }
@@ -102,6 +84,5 @@ export const StatefulFontFamily = ({ standalone = true }: StatefulSettingsItemPr
         )
       }}
     />
-    </>
   )
 }
