@@ -70,20 +70,27 @@ export const mapStateToPreferences = <T extends CustomizableKeys = CustomizableK
 ): ThPreferences<T> => {
   const updateVariants = (stateValue: any, prefValue: any) => {
     if (!stateValue) return prefValue;
+    
     return {
       ...prefValue,
       default: {
         ...prefValue?.default,
-        variants: stateValue.default
+        variants: stateValue.default || prefValue?.default?.variants
       },
       ...(stateValue.breakpoints && {
-        breakpoints: Object.entries(stateValue.breakpoints).reduce((acc, [bp, variants]) => ({
-          ...acc,
-          [bp]: {
-            ...prefValue?.breakpoints?.[bp as ThBreakpoints],
-            variants
-          }
-        }), {})
+        breakpoints: {
+          ...prefValue?.breakpoints,
+          ...Object.entries(stateValue.breakpoints).reduce((acc, [bp, value]) => {
+            const existing = prefValue?.breakpoints?.[bp as ThBreakpoints] || {};
+            return {
+              ...acc,
+              [bp]: {
+                ...existing,
+                variants: value
+              }
+            };
+          }, {})
+        }
       })
     };
   };
