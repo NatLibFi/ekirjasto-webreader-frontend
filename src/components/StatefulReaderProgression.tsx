@@ -14,7 +14,7 @@ import { useI18n } from "@/i18n/useI18n";
 import { useAppSelector } from "@/lib/hooks";
 
 import { makeBreakpointsMap } from "@/core/Helpers/breakpointsMap";
-import { getBestMatchingFormat } from "@/core/Helpers/progressionFormat";
+import { getBestMatchingProgressionFormat } from "@/core/Helpers/progressionFormat";
 
 export const StatefulReaderProgression = ({ 
   className,
@@ -75,7 +75,7 @@ export const StatefulReaderProgression = ({
     }
     
     if (Array.isArray(variants)) {
-      return getBestMatchingFormat(variants, unstableTimeline?.progression) || 
+      return getBestMatchingProgressionFormat(variants, unstableTimeline?.progression) || 
         fallbackFormat.variants;
     }
     
