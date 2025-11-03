@@ -95,9 +95,17 @@ export const useTimeline = ({
       relativeProgression: relativeProgression,
       totalProgression: totalProgression,
       currentChapter: currentItem?.title,
-      positionsLeft: currentItem?.positionRange?.[1] && currentPositions?.[0] !== undefined
-        ? Math.max(0, currentItem.positionRange[1] - currentPositions[0])
-        : 0
+      positionsLeft: (() => {
+        const endPosition = currentItem?.positionRange?.[1];
+        const currentPosition = currentPositions?.[0];
+        
+        // Only calculate positionsLeft if we have all required position data
+        if (!positionsList?.length || endPosition === undefined || currentPosition === undefined) {
+          return undefined;
+        }
+        
+        return Math.max(0, endPosition - currentPosition);
+      })()
     }
   }), [
     publication?.metadata.title,
@@ -291,20 +299,21 @@ export const useTimeline = ({
   
       if (positions.length > 0) {
         const start = positions[0].locations;
+        // For single position, use the same location for start and end
         const end = positions.length > 1 
           ? positions[positions.length - 1].locations 
-          : undefined;
+          : start;  // Use start as end for single position
   
         timelineItem.positionRange = start.position !== undefined 
-          ? [start.position, end?.position] 
+          ? [start.position, end.position]
           : undefined;
   
         timelineItem.progressionRange = start.progression !== undefined 
-          ? [start.progression, end?.progression] 
+          ? [start.progression, end.progression]
           : undefined;
   
         timelineItem.totalProgressionRange = start.totalProgression !== undefined 
-          ? [start.totalProgression, end?.totalProgression] 
+          ? [start.totalProgression, end.totalProgression]
           : undefined;
       }
     }

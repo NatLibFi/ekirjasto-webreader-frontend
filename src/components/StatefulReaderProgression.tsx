@@ -14,37 +14,7 @@ import { useI18n } from "@/i18n/useI18n";
 import { useAppSelector } from "@/lib/hooks";
 
 import { makeBreakpointsMap } from "@/core/Helpers/breakpointsMap";
-
-// Helper to get the best matching display format from an array of formats
-const getBestMatchingFormat = (
-  formats: ThProgressionFormat[],
-  hasPositions: boolean,
-  hasProgression: boolean
-): ThProgressionFormat | null => {
-  for (const format of formats) {
-    switch (format) {
-      case ThProgressionFormat.positionsPercentOfTotal:
-      case ThProgressionFormat.positionsOfTotal:
-      case ThProgressionFormat.positions:
-      case ThProgressionFormat.positionsLeft:
-        if (hasPositions) {
-          return format;
-        }
-        break;
-      case ThProgressionFormat.overallProgression:
-      case ThProgressionFormat.resourceProgression:
-      case ThProgressionFormat.progressionOfResource:
-        if (hasProgression) {
-          return format;
-        }
-        break;
-      case ThProgressionFormat.readingOrderIndex:
-      case ThProgressionFormat.none:
-        return format;
-    }
-  }
-  return null;
-};
+import { getBestMatchingFormat } from "@/core/Helpers/progressionFormat";
 
 export const StatefulReaderProgression = ({ 
   className,
@@ -104,16 +74,12 @@ export const StatefulReaderProgression = ({
       return ThProgressionFormat.none;
     }
     
-    const format = Array.isArray(variants) ? variants[0] : variants;
-    const hasPositions = !!unstableTimeline?.progression?.currentPositions?.length;
-    const hasProgression = unstableTimeline?.progression?.relativeProgression !== undefined;
-    
     if (Array.isArray(variants)) {
-      return getBestMatchingFormat(variants, hasPositions, hasProgression) || 
+      return getBestMatchingFormat(variants, unstableTimeline?.progression) || 
         fallbackFormat.variants;
     }
     
-    return format;
+    return variants;
   }, [variants, unstableTimeline?.progression, fallbackFormat, isImmersive, isHovering, isFullscreen, displayInImmersive, displayInFullscreen]);
 
   // Update display text based on current position and timeline
