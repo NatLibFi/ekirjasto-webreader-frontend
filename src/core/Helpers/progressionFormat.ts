@@ -1,7 +1,7 @@
 import { ThProgressionFormat } from "@/preferences/models/enums";
 import { TimelineProgression } from "@/core/Hooks/useTimeline";
 
-export const getSupportedFormats = (timeline?: TimelineProgression): ThProgressionFormat[] => {
+export const getSupportedProgressionFormats = (timeline?: TimelineProgression): ThProgressionFormat[] => {
   if (!timeline) {
     return [ThProgressionFormat.none];
   }
@@ -51,14 +51,14 @@ export const getSupportedFormats = (timeline?: TimelineProgression): ThProgressi
   return supported;
 };
 
-export const canRenderFormat = (
+export const canRenderProgressionFormat = (
   format: ThProgressionFormat,
   supportedFormats: ThProgressionFormat[]
 ): boolean => {
   return supportedFormats.includes(format);
 };
 
-export const getBestMatchingFormat = (
+export const getBestMatchingProgressionFormat = (
   preferredFormats: ThProgressionFormat[],
   timeline?: TimelineProgression
 ): ThProgressionFormat | null => {
@@ -66,11 +66,11 @@ export const getBestMatchingFormat = (
     return null;
   }
 
-  const supportedFormats = getSupportedFormats(timeline);
+  const supportedFormats = getSupportedProgressionFormats(timeline);
   
   // Find the first preferred format that's supported
   const firstSupported = preferredFormats.find(format => 
-    canRenderFormat(format, supportedFormats)
+    canRenderProgressionFormat(format, supportedFormats)
   );
   
   return firstSupported || null;
