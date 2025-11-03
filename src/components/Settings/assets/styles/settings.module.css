@@ -320,6 +320,10 @@
 
 /* Dropdown */
 
+.readerSettingsDropdown[data-disabled] {
+  color: var(--theme-disable);
+}
+
 .readerSettingsDropdownButton {
   margin-top: var(--layout-spacing);
   position: relative;
