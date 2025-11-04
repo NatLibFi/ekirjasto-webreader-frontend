@@ -325,7 +325,7 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
       reflow: {
         default: {
           variant: ThArrowVariant.layered,
-          discard: ["navigation", "immersive", "fullscreen"],
+          discard: ["navigation"],
           hint: ["layoutChange"]
         },
         breakpoints: {

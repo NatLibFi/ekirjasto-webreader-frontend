@@ -1,13 +1,13 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 
 import { ThArrowVariant } from "@/preferences/models/enums";
 import { ThPaginatedAffordancePrefValue } from "@/preferences/preferences";
 
 import { usePreferences } from "@/preferences/hooks/usePreferences";
-import { usePrevious } from "@/core/Hooks/usePrevious";
+import { useReaderTransitions } from "./useReaderTransitions";
 
-import { useAppSelector, useAppDispatch } from "@/lib/hooks";
-import { setHasArrows } from "@/lib/readerReducer";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { setHasArrows, setUserNavigated } from "@/lib/readerReducer";
 
 import { makeBreakpointsMap } from "@/core/Helpers/breakpointsMap";
 
@@ -20,29 +20,20 @@ export interface UsePaginatedArrowsReturn {
 export const usePaginatedArrows = (): UsePaginatedArrowsReturn => {
   const { preferences } = usePreferences();
   const dispatch = useAppDispatch();
-  
-  const isImmersive = useAppSelector(state => state.reader.isImmersive);
-  const isFullscreen = useAppSelector(state => state.reader.isFullscreen);
-  const hasUserNavigated = useAppSelector(state => state.reader.hasUserNavigated);
   const hasArrows = useAppSelector(state => state.reader.hasArrows);
-  const scroll = useAppSelector(state => state.settings.scroll);
   const isFXL = useAppSelector(state => state.publication.isFXL);
   const breakpoint = useAppSelector(state => state.theming.breakpoint);
   
-  // Track previous values
-  const wasImmersive = usePrevious(isImmersive) ?? false;
-  const wasFullscreen = usePrevious(isFullscreen) ?? false;
-  const isScroll = scroll && !isFXL;
-  const wasScrolling = usePrevious(isScroll) ?? false;
-  const wasUserNavigated = usePrevious(hasUserNavigated) ?? false;
-
-  // Track state transitions
-  const fromImmersive = wasImmersive && !isImmersive;
-  const toImmersive = !wasImmersive && isImmersive;
-  const fromFullscreen = wasFullscreen && !isFullscreen;
-  const toFullscreen = !wasFullscreen && isFullscreen;
-  const fromScrolling = wasScrolling && !isScroll;
-  const toNavigation = !wasUserNavigated && hasUserNavigated;
+  // Get reader state transitions
+  const {
+    isScroll,
+    fromImmersive,
+    toImmersive,
+    fromFullscreen,
+    toFullscreen,
+    fromScroll,
+    toUserNavigation
+  } = useReaderTransitions();
 
   // Get preferences
   const { variant, discard, hint } = useMemo(() => {
@@ -64,20 +55,24 @@ export const usePaginatedArrows = (): UsePaginatedArrowsReturn => {
     const shouldHide = 
       (discard?.includes("immersive") && toImmersive) ||
       (discard?.includes("fullscreen") && toFullscreen) ||
-      (discard?.includes("navigation") && toNavigation);
+      (discard?.includes("navigation") && toUserNavigation);
 
     // Check for hint transitions (true -> false)
     const shouldShow = 
       (hint?.includes("immersiveChange") && fromImmersive) ||
       (hint?.includes("fullscreenChange") && fromFullscreen) ||
-      (hint?.includes("layoutChange") && fromScrolling);
+      (hint?.includes("layoutChange") && fromScroll);
 
     if (shouldHide) {
       dispatch(setHasArrows(false));
+      // Reset the navigation flag after handling the transition
+      if (discard?.includes("navigation") && toUserNavigation) {
+        dispatch(setUserNavigated(false));
+      }
     } else if (shouldShow) {
       dispatch(setHasArrows(true));
     }
-  }, [toImmersive, toFullscreen, toNavigation, fromImmersive, fromFullscreen, fromScrolling, discard, hint, dispatch]);
+  }, [toImmersive, toFullscreen, toUserNavigation, fromImmersive, fromFullscreen, fromScroll, discard, hint, dispatch]);
 
   // Early return for special cases
   if (variant === ThArrowVariant.none || isScroll) {
