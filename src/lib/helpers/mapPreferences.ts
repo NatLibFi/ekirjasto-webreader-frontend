@@ -1,6 +1,7 @@
 import { PreferencesReducerState } from "../preferencesReducer";
 import { ThPreferences, CustomizableKeys } from "@/preferences/preferences";
 import { ThProgressionFormat, ThRunningHeadFormat, ThBreakpoints } from "@/preferences/models/enums";
+import { ThPaginatedAffordancePrefValue } from "@/preferences/preferences";
 
 const mapRenditionFormat = <T>(
   format: { default?: { variants: T }, breakpoints?: { [key in ThBreakpoints]?: { variants: T } } } | undefined
@@ -21,6 +22,30 @@ const mapRenditionFormat = <T>(
       }
       return acc;
     }, {} as { [key in ThBreakpoints]?: T });
+  }
+
+  return result;
+};
+
+const mapPaginatedAffordance = (
+  format: { default?: ThPaginatedAffordancePrefValue, breakpoints?: { [key in ThBreakpoints]?: ThPaginatedAffordancePrefValue } } | undefined
+) => {
+  const result: {
+    default?: ThPaginatedAffordancePrefValue;
+    breakpoints?: { [key in ThBreakpoints]?: ThPaginatedAffordancePrefValue };
+  } = {};
+
+  if (format?.default) {
+    result.default = format.default;
+  }
+
+  if (format?.breakpoints) {
+    result.breakpoints = Object.entries(format.breakpoints).reduce((acc, [bp, value]) => {
+      if (value) {
+        acc[bp as ThBreakpoints] = value;
+      }
+      return acc;
+    }, {} as { [key in ThBreakpoints]?: ThPaginatedAffordancePrefValue });
   }
 
   return result;
@@ -60,6 +85,10 @@ export const mapPreferencesToState = <T extends CustomizableKeys>(prefs: ThPrefe
       toggleOnMiddlePointer: prefs.affordances?.scroll?.toggleOnMiddlePointer ?? [],
       hideOnForwardScroll: prefs.affordances?.scroll?.hideOnForwardScroll ?? false,
       showOnBackwardScroll: prefs.affordances?.scroll?.showOnBackwardScroll ?? false
+    },
+    paginatedAffordances: {
+      reflow: mapPaginatedAffordance(prefs.affordances?.paginated?.reflow),
+      fxl: mapPaginatedAffordance(prefs.affordances?.paginated?.fxl)
     }
   };
 }
@@ -90,6 +119,24 @@ export const mapStateToPreferences = <T extends CustomizableKeys = CustomizableK
               }
             };
           }, {})
+        }
+      })
+    };
+  };
+
+  const updatePaginatedAffordance = (stateValue: any, prefValue: any) => {
+    if (!stateValue) return prefValue;
+    
+    return {
+      ...prefValue,
+      default: stateValue.default || prefValue?.default,
+      ...(stateValue.breakpoints && {
+        breakpoints: {
+          ...prefValue?.breakpoints,
+          ...Object.entries(stateValue.breakpoints).reduce((acc, [bp, value]) => ({
+            ...acc,
+            [bp]: value
+          }), {})
         }
       })
     };
@@ -172,6 +219,12 @@ export const mapStateToPreferences = <T extends CustomizableKeys = CustomizableK
         scroll: {
           ...currentPrefs.affordances.scroll,
           ...state.scrollAffordances
+        }
+      }),
+      ...(state.paginatedAffordances && {
+        paginated: {
+          reflow: updatePaginatedAffordance(state.paginatedAffordances.reflow, currentPrefs.affordances?.paginated?.reflow),
+          fxl: updatePaginatedAffordance(state.paginatedAffordances.fxl, currentPrefs.affordances?.paginated?.fxl)
         }
       })
     }

@@ -7,7 +7,8 @@ import {
   ThRunningHeadFormat, 
   ThPreferences,
   CustomizableKeys,
-  ThBreakpoints
+  ThBreakpoints,
+  ThPaginatedAffordancePrefValue
 } from "@/preferences";
 
 import { mapPreferencesToState } from "./helpers/mapPreferences";
@@ -47,6 +48,27 @@ export interface UIChangePayload {
   }
 }
 
+export interface PaginatedAffordanceProperties {
+  default?: ThPaginatedAffordancePrefValue;
+  breakpoints?: {
+    [key in ThBreakpoints]?: ThPaginatedAffordancePrefValue;
+  };
+}
+
+export interface PaginatedAffordanceObject {
+  reflow?: PaginatedAffordanceProperties;
+  fxl?: PaginatedAffordanceProperties;
+}
+
+export interface PaginatedAffordancePayload {
+  type: string;
+  payload: {
+    key: "reflow" | "fxl";
+    value: ThPaginatedAffordancePrefValue;
+    breakpoint?: ThBreakpoints;
+  };
+}
+
 export interface PreferencesReducerState {
   l10n?: {
     locale?: string;
@@ -54,6 +76,7 @@ export interface PreferencesReducerState {
   },
   progressionFormat?: RenditionObject<ThProgressionFormat | Array<ThProgressionFormat>>;
   runningHeadFormat?: RenditionObject<ThRunningHeadFormat>;
+  paginatedAffordances?: PaginatedAffordanceObject;
   ui?: {
     reflow?: ThLayoutUI;
     fxl?: ThLayoutUI;
@@ -114,7 +137,22 @@ export const preferencesSlice = createSlice({
       };
     },
     setScrollAffordances: (state, action) => {
-      state.scrollAffordances = action.payload
+      state.scrollAffordances = action.payload;
+    },
+    setPaginatedAffordance: (state, action: PaginatedAffordancePayload) => {
+      const { key, value, breakpoint } = action.payload;
+      state.paginatedAffordances = {
+        ...state.paginatedAffordances,
+        [key]: {
+          ...state.paginatedAffordances?.[key],
+          ...(breakpoint ? {
+            breakpoints: {
+              ...state.paginatedAffordances?.[key]?.breakpoints,
+              [breakpoint]: value
+            }
+          } : { default: value })
+        }
+      };
     },
     updateFromPreferences(state, action: PayloadAction<ThPreferences<CustomizableKeys>>) {
       const prefs = action.payload;
@@ -130,6 +168,7 @@ export const {
   setRunningHeadFormat,
   setUI,
   setScrollAffordances,
+  setPaginatedAffordance,
   updateFromPreferences
 } = preferencesSlice.actions;
 
