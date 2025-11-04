@@ -21,7 +21,8 @@ import {
   ThBreakpoints,
   ThDocumentTitleFormat,
   ThSpacingPresetKeys,
-  ThSettingsRangePlaceholder
+  ThSettingsRangePlaceholder,
+  ThArrowVariant
 } from "./models/enums";
 import { ThCollapsibility, ThCollapsibilityVisibility } from "@/core/Components/Actions/hooks/useCollapsibility";
 
@@ -207,6 +208,19 @@ export interface ThFormatPref<T extends string | Array<string>> {
   };
 }
 
+export interface ThPaginatedAffordancePrefValue {
+  variant: ThArrowVariant;
+  discard?: Array<"navigation" | "immersive" | "fullscreen"> | "none";
+  hint?: Array<"immersiveChange" | "fullscreenChange" | "layoutChange"> | "none";
+}
+
+export interface ThPaginatedAffordancePref {
+  default: Required<ThPaginatedAffordancePrefValue>;
+  breakpoints?: {
+    [key in ThBreakpoints]?: ThPaginatedAffordancePrefValue;
+  };
+}
+
 // Main preferences interface with simplified generics
 export interface ThPreferences<K extends CustomizableKeys = {}> {
   direction?: ThLayoutDirection;
@@ -285,6 +299,10 @@ export interface ThPreferences<K extends CustomizableKeys = {}> {
       toggleOnMiddlePointer: Array<"tap" | "click">;
       hideOnForwardScroll: boolean;
       showOnBackwardScroll: boolean;
+    },
+    paginated: {
+      reflow: ThPaginatedAffordancePref;
+      fxl: ThPaginatedAffordancePref;
     }
   };
   actions: ThActionsPref<K>;

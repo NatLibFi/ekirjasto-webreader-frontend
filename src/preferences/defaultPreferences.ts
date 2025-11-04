@@ -18,6 +18,7 @@ import {
   ThProgressionFormat,
   ThRunningHeadFormat,
   ThDocumentTitleFormat,
+  ThArrowVariant,
 } from "./models/enums";
 import { createPreferences, ThPreferences, DefaultKeys } from "./preferences";
 
@@ -319,6 +320,38 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
       toggleOnMiddlePointer: ["tap"],
       hideOnForwardScroll: true,
       showOnBackwardScroll: true
+    },
+    paginated: {
+      reflow: {
+        default: {
+          variant: ThArrowVariant.layered,
+          discard: ["navigation", "immersive", "fullscreen"],
+          hint: ["layoutChange"]
+        },
+        breakpoints: {
+          [ThBreakpoints.large]: {
+            variant: ThArrowVariant.stacked
+          },
+          [ThBreakpoints.xLarge]: {
+            variant: ThArrowVariant.stacked
+          }
+        }
+      },
+      fxl: {
+        default: {
+          variant: ThArrowVariant.layered,
+          discard: ["navigation"],
+          hint: "none"
+        },
+        breakpoints: {
+          [ThBreakpoints.large]: {
+            variant: ThArrowVariant.stacked
+          },
+          [ThBreakpoints.xLarge]: {
+            variant: ThArrowVariant.stacked
+          }
+        }
+      }
     }
   },
   shortcuts: {
