@@ -27,7 +27,7 @@ import { useI18n } from "@/i18n/useI18n";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setActionOpen } from "@/lib/actionsReducer";
 import { setTocEntry } from "@/lib/publicationReducer";
-import { setImmersive } from "@/lib/readerReducer";
+import { setImmersive, setUserNavigated } from "@/lib/readerReducer";
 
 import { isActiveElement } from "@/core/Helpers/focusUtilities";
 
@@ -105,10 +105,12 @@ export const StatefulTocContainer = ({ triggerRef }: StatefulActionContainerProp
         ? () => {
           dispatch(setTocEntry(key));
           dispatch(setImmersive(true));
+          dispatch(setUserNavigated(true));
         } 
         : () => {
           dispatch(setTocEntry(key));
           dispatch(setImmersive(true));
+          dispatch(setUserNavigated(true));
           setOpen(false);
         }
 
