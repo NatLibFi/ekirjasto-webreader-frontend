@@ -89,7 +89,8 @@ If it’s `null` then this means it is disabled entirely, and there is no upper 
 
 The `affordances` object can be used to set the following properties:
 
-- `scroll` to configure the scroll affordances.
+- `scroll` to configure the scroll affordances;
+- `pagination` to configure the pagination affordances.
 
 ### Scroll
 
@@ -109,6 +110,60 @@ affordances: {
     toggleOnMiddlePointer: ["tap", "click"],
     hideOnForwardScroll: true,
     showOnBackwardScroll: false
+  }
+}
+```
+
+### Pagination
+
+The `pagination` object configures the behavior of pagination arrows in the reader. It has two main configurations:
+
+1. `reflow`: Settings for reflowable content (standard EPUB)
+2. `fxl`: Settings for fixed-layout content (FXL)
+
+Each configuration (`reflow` and `fxl`) accepts the following properties:
+
+- `default`: the default configuration for the pagination arrows
+- `breakpoints`: the breakpoints configuration for the pagination arrows
+
+When using breakpoints, the configuration will be applied when the reader is in the corresponding breakpoint. It is expecting an object with keys from enum `ThBreakpoints`.
+
+The configuration object can have the following properties:
+
+- `variant`: Controls the visual style of the pagination arrows
+  - `"none"`: No arrows shown
+  - `"stacked"`: Arrows are stacked on each side of the content
+  - `"layered"`: Arrows are layered over the content (default)
+- `discard` (required for `default`, optional for `breakpoints`): 
+  - `"none"`: No conditions
+  - Array of conditions that will hide the arrows when they become true
+    - `"navigation"`: Hide after user navigation
+    - `"immersive"`: Hide when entering immersive mode
+    - `"fullscreen"`: Hide when entering fullscreen
+- `hint` (required for `default`, optional for `breakpoints`): 
+  - `"none"`: No conditions
+  - Array of conditions that will show the arrows when they transition from true to false
+    - `"immersiveChange"`: Show when exiting immersive mode
+    - `"fullscreenChange"`: Show when exiting fullscreen
+    - `"layoutChange"`: Show when layout changes from scroll to paginated
+
+For instance:
+
+```
+affordances: {
+  paginated: {
+    reflow: {
+      default: {
+        variant: "layered",
+        discard: ["navigation", "immersive"],
+        hint: ["layoutChange"]
+      },
+      breakpoints: {
+        [ThBreakpoints.large]: {
+          variant: "stacked"
+        }
+      }
+    }
   }
 }
 ```
