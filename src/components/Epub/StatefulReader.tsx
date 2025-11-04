@@ -68,6 +68,7 @@ import { useLocalStorage } from "@/core/Hooks/useLocalStorage";
 import { useDocumentTitle } from "@/core/Hooks/useDocumentTitle";
 import { useSpacingPresets } from "../Settings/Spacing/hooks/useSpacingPresets";
 import { useLineHeight } from "../Settings/Spacing/hooks/useLineHeight";
+import { usePaginatedArrows } from "@/hooks/usePaginatedArrows";
 
 import { toggleActionOpen } from "@/lib/actionsReducer";
 import { useAppSelector, useAppDispatch, useAppStore } from "@/lib/hooks";
@@ -89,7 +90,6 @@ import {
   toggleImmersive, 
   setPlatformModifier, 
   setDirection, 
-  setArrows, 
   setFullscreen,
   setScrollAffordance,
   setReaderProfile
@@ -190,6 +190,7 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
   const { preferences } = usePreferences();
   const { t } = useI18n();
   const { getEffectiveSpacingValue } = useSpacingPresets();
+  const { occupySpace: arrowsOccupySpace } = usePaginatedArrows();
   
   const [publication, setPublication] = useState<Publication | null>(null);
 
@@ -223,8 +224,6 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
   const reducedMotion = useAppSelector(state => state.theming.prefersReducedMotion);
 
   const breakpoint = useAppSelector(state => state.theming.breakpoint);
-  const arrowsOccupySpace = !isScroll && breakpoint &&
-    (breakpoint === ThBreakpoints.large || breakpoint === ThBreakpoints.xLarge);
   
   const isImmersive = useAppSelector(state => state.reader.isImmersive);
   const isHovering = useAppSelector(state => state.reader.isHovering);
@@ -369,9 +368,8 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
   }, [dispatch]);
 
   const toggleIsImmersive = useCallback(() => {
-    // If tap/click in iframe, then header/footer no longer hoovering 
+    // If tap/click in iframe, then header/footer no longer hovering 
     dispatch(setHovering(false));
-    dispatch(setArrows(false));
     dispatch(toggleImmersive());
   }, [dispatch]);
 
@@ -861,7 +859,6 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
             ? <nav className={ arrowStyles.container } id={ arrowStyles.left }>
                 <StatefulReaderArrowButton 
                   direction="left" 
-                  occupySpace={ arrowsOccupySpace || false }
                   isDisabled={ atPublicationStart } 
                   onPress={ () => goLeft(!reducedMotion, activateImmersiveOnAction) }
                 />
@@ -876,7 +873,6 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
             ? <nav className={ arrowStyles.container } id={ arrowStyles.right }>
                 <StatefulReaderArrowButton 
                   direction="right" 
-                  occupySpace={ arrowsOccupySpace || false }
                   isDisabled={ atPublicationEnd } 
                   onPress={ () => goRight(!reducedMotion, activateImmersiveOnAction) }
                 />
