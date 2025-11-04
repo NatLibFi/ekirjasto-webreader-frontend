@@ -92,6 +92,7 @@ import {
   setDirection, 
   setFullscreen,
   setScrollAffordance,
+  setUserNavigated,
   setReaderProfile
 } from "@/lib/readerReducer";
 import { 
@@ -380,12 +381,17 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
     if (_cframes) {
       if (!cache.current.settings.scroll) {
         const oneQuarter = ((_cframes.length === 2 ? _cframes[0]!.window.innerWidth + _cframes[1]!.window.innerWidth : _cframes![0]!.window.innerWidth) * window.devicePixelRatio) / 4;
+        
+        const navigationCallback = () => {
+          dispatch(setUserNavigated(true));
+          activateImmersiveOnAction();
+        };
     
         if (event.x < oneQuarter) {
-          goLeft(!cache.current.reducedMotion, activateImmersiveOnAction);
+          goLeft(!cache.current.reducedMotion, navigationCallback);
         } 
         else if (event.x > oneQuarter * 3) {
-          goRight(!cache.current.reducedMotion, activateImmersiveOnAction);
+          goRight(!cache.current.reducedMotion, navigationCallback);
         } else if (oneQuarter <= event.x && event.x <= oneQuarter * 3) {
           toggleIsImmersive();
         }
@@ -419,12 +425,21 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
 
   const p = new Peripherals(useAppStore(), preferences.actions, {
     moveTo: (direction) => {
+      const navigationCallback = () => {
+        dispatch(setUserNavigated(true));
+        activateImmersiveOnAction();
+      };
+
       switch(direction) {
         case "right":
-          if (!cache.current.settings.scroll) goRight(!cache.current.reducedMotion, activateImmersiveOnAction);
+          if (!cache.current.settings.scroll) {
+            goRight(!cache.current.reducedMotion, navigationCallback);
+          }
           break;
         case "left":
-          if (!cache.current.settings.scroll) goLeft(!cache.current.reducedMotion, activateImmersiveOnAction);
+          if (!cache.current.settings.scroll) {
+            goLeft(!cache.current.reducedMotion, navigationCallback);
+          }
           break;
         case "up":
         case "home":
@@ -440,9 +455,13 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
     },
     goProgression: (shiftKey) => {
       if (!cache.current.settings?.scroll) {
+        const callback = () => {
+          dispatch(setUserNavigated(true));
+          activateImmersiveOnAction();
+        };
         shiftKey 
-          ? goBackward(!cache.current.reducedMotion, activateImmersiveOnAction) 
-          : goForward(!cache.current.reducedMotion, activateImmersiveOnAction);
+          ? goBackward(!cache.current.reducedMotion, callback)
+          : goForward(!cache.current.reducedMotion, callback);
       }
     },
     toggleAction: (actionKey) => {
@@ -860,7 +879,13 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
                 <StatefulReaderArrowButton 
                   direction="left" 
                   isDisabled={ atPublicationStart } 
-                  onPress={ () => goLeft(!reducedMotion, activateImmersiveOnAction) }
+                  onPress={ () => {
+                    const navigationCallback = () => {
+                      dispatch(setUserNavigated(true));
+                      activateImmersiveOnAction();
+                    };
+                    goLeft(!reducedMotion, navigationCallback);
+                  }}
                 />
             </nav> 
             : <></> }
@@ -874,7 +899,13 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
                 <StatefulReaderArrowButton 
                   direction="right" 
                   isDisabled={ atPublicationEnd } 
-                  onPress={ () => goRight(!reducedMotion, activateImmersiveOnAction) }
+                  onPress={ () => {
+                    const navigationCallback = () => {
+                      dispatch(setUserNavigated(true));
+                      activateImmersiveOnAction();
+                    };
+                    goRight(!reducedMotion, navigationCallback);
+                  }}
                 />
               </nav> 
             : <></> }

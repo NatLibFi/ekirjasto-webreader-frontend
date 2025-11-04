@@ -85,20 +85,13 @@ export const StatefulReaderArrowButton = ({
     }
   };
 
-  const handleOnPress = (e: PressEvent, cb: (e: PressEvent) => void) => {
-    if (shouldTrackNavigation) {
-      dispatch(setUserNavigated(true));
-    }
-    cb(e);
-  }
-
   return (
     <>
     <ThNavigationButton 
       direction={ direction }
       ref= { buttonRef }
       aria-label={ label }
-      onPress={ (e: PressEvent) => onPress && handleOnPress(e, onPress) }
+      onPress={ onPress }
       onHoverChange={ (isHovering: boolean) => setIsHovering(isHovering) } 
       onKeyDown={ blurOnEsc }
       className={ classNames(className, handleClassNameFromSpaceProp(), handleClassNameFromState()) }

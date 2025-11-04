@@ -17,6 +17,7 @@ import { useI18n } from "@/i18n/useI18n";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setActionOpen } from "@/lib/actionsReducer";
+import { setImmersive, setUserNavigated } from "@/lib/readerReducer";
 
 export const StatefulJumpToPositionContainer = ({ 
   triggerRef 
@@ -76,8 +77,14 @@ export const StatefulJumpToPositionContainer = ({
 
     if (!item || positionInRange()) return setOpen(false);
 
-    go(item, !reducedMotion, () => setOpen(false));
-  }, [position, positionsList, reducedMotion, positionInRange, go, setOpen]);
+    const cb = () => {
+      setOpen(false);
+      dispatch(setImmersive(true));
+      dispatch(setUserNavigated(true));
+    };
+    
+    go(item, !reducedMotion, cb);
+  }, [position, positionsList, reducedMotion, positionInRange, go, setOpen, dispatch]);
 
   // Since we are using an intermediary local state, we must keep track when positionNumbers changes
   useEffect(() => {
