@@ -36,7 +36,8 @@
     "./core/lib": "./dist/lib/index.mjs",
     "./core/preferences": "./dist/preferences/index.mjs",
     "./epub": "./dist/components/Epub/index.mjs",
-    "./next": "./dist/next-lib/index.mjs"
+    "./next": "./dist/next-lib/index.mjs",
+    "./webpub": "./dist/components/WebPub/index.mjs"
   },
   "scripts": {
     "dev": "next dev",
