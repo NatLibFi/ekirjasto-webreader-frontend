@@ -403,6 +403,16 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
     }
   };
 
+  const handleClick = (event: FrameClickEvent) => {
+    if (
+      cache.current.layoutUI === ThLayoutUI.layered &&
+      ( !cache.current.settings.scroll ||
+        preferences.affordances.scroll.toggleOnMiddlePointer.includes("click") )
+      ) {
+        toggleIsImmersive();
+      }
+  };
+
   // We need this as a workaround due to positionChanged being unreliable
   // in FXL – if the frame is in the pool hidden and is shown again,
   // positionChanged won’t fire.
@@ -523,14 +533,7 @@ const StatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: object; s
       return true;
     },
     click: function (_e: FrameClickEvent): boolean {
-      if (cache.current.layoutUI === ThLayoutUI.layered) {
-        if (
-          !cache.current.settings.scroll ||
-          preferences.affordances.scroll.toggleOnMiddlePointer.includes("click")
-        ) {
-          handleTap(_e);
-        }
-      }
+      handleClick(_e);
       return true;
     },
     zoom: function (_scale: number): void {},
