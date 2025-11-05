@@ -317,7 +317,7 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
   affordances: { 
     scroll: {
       hintInImmersive: true,
-      toggleOnMiddlePointer: ["tap"],
+      toggleOnMiddlePointer: ["tap", "click"],
       hideOnForwardScroll: true,
       showOnBackwardScroll: true
     },
