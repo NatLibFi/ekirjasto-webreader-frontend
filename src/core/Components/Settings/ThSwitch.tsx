@@ -43,7 +43,7 @@ export const ThSwitch = ({
         { ...props }
       >
         <div { ...compounds?.indicator } />
-        { label }
+        <span>{ label }</span>
       </Switch>
     </div>
     </>
