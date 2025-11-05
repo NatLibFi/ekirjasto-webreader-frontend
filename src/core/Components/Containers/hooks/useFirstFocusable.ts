@@ -62,7 +62,8 @@ export const useFirstFocusable = (props?: UseFirstFocusableProps) => {
     scrollerRef, 
     trackedState, 
     updateState,
-    action = { type: "none" } // Default to no action if not provided
+    action = { type: "none" }, // Default to no action if not provided
+    withSelector
   } = props || {};
 
   // Store action in a ref to avoid triggering useEffect on action change
@@ -94,8 +95,8 @@ export const useFirstFocusable = (props?: UseFirstFocusableProps) => {
       let firstFocusable: HTMLElement | null = null;
 
       // Check withSelector first if provided
-      if (props?.withSelector) {
-        firstFocusable = withinRef.current?.querySelector(props.withSelector) as HTMLElement | null;
+      if (withSelector) {
+        firstFocusable = withinRef.current?.querySelector(withSelector) as HTMLElement | null;
       }
 
       // If withSelector was not provided or didn't find anything, try radio group logic
@@ -201,7 +202,7 @@ export const useFirstFocusable = (props?: UseFirstFocusableProps) => {
         attemptsRef.current = 0;
       };
     }
-  }, [withinRef, fallbackRef, scrollerRef, trackedState, previousUpdateState, updateState, previousTrackedState]);
+  }, [withinRef, fallbackRef, scrollerRef, trackedState, previousUpdateState, updateState, previousTrackedState, withSelector]);
 
   return focusableElement.current;
 };
