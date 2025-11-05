@@ -35,6 +35,7 @@ export const StatefulDockedSheet = ({
     flow,
     children,
     resetFocus,
+    focusSelector,
     focusWithinRef,
     scrollTopOnFocus
   }: StatefulDockedSheetProps) => {
@@ -60,10 +61,11 @@ export const StatefulDockedSheet = ({
       <ThDockedPanel
         isOpen={ isOpen }
         portal={ dockPortal }
-        focusOptions={ {
-          withinRef: focusWithinRef ?? dockedSheetBodyRef, 
-          trackedState: isOpen, 
+        focusOptions={{
+          withinRef: focusWithinRef ?? dockedSheetBodyRef,
+          trackedState: isOpen,
           fallbackRef: dockedSheetCloseRef,
+          withSelector: focusSelector,
           action: {
             type: "scrollIntoView",
             options: {
