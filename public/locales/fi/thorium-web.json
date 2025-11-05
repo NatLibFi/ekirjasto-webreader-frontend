@@ -26,7 +26,8 @@
                 "wrapper": "Edistyminen",
                 "of": "{{ current }} / {{ reference }}",
                 "referenceFallback": "nykyinen luku",
-                "pubFallback": "julkaisu"
+                "pubFallback": "julkaisu",
+                "positionsLeft": "{{ count }} jäljellä kohdassa {{ reference }}"
             },
             "docker": {
                 "wrapper": "Kiinnitysvaihtoehdot",
@@ -142,7 +143,9 @@
             "fontWeight": {
                 "title": "Tekstin korostus",
                 "increase": "Lisää lihavointia",
-                "decrease": "Vähennä lihavointia"
+                "decrease": "Vähennä lihavointia",
+                "default": "Normaali",
+                "bolder": "Lihavampi"
             },
             "normalizeText": {
                 "title": "Palauta teksti normaaliksi",
@@ -201,6 +204,15 @@
                 "advanced": {
                     "tooltip": "Lisää vaihtoehtoja",
                     "trigger": "Lisää välistysasetuksia"
+                },
+                "presets": {
+                    "title": "Esiasetukset",
+                    "publisher": "Oletus",
+                    "tight": "Tiivis",
+                    "balanced": "Tasapainoinen",
+                    "loose": "Väljä",
+                    "accessible": "Helppolukuinen",
+                    "custom": "Mukautettu"
                 }
             },
             "layout": {
@@ -213,7 +225,8 @@
                 "auto": "Automaattinen",
                 "one": "1 sarake",
                 "two": "2 saraketta"
-            }
+            },
+            "reset": "Nollaa"
         }
     }
 }
