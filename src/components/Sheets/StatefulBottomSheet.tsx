@@ -48,6 +48,7 @@ export const StatefulBottomSheet = ({
   children,
   resetFocus,
   focusWithinRef,
+  focusSelector,
   scrollTopOnFocus,
   dismissEscapeKeyClose
 }: StatefulBottomSheetProps) => {
@@ -269,6 +270,7 @@ export const StatefulBottomSheet = ({
           withinRef: focusWithinRef ?? bottomSheetBodyRef,
           trackedState: isOpen,
           fallbackRef: bottomSheetCloseRef,
+          withSelector: focusSelector,
           action: {
             type: "focus",
             options: {

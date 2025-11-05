@@ -33,6 +33,7 @@ export const StatefulFullScreenSheet = ({
     children,
     resetFocus,
     focusWithinRef,
+    focusSelector,
     scrollTopOnFocus,
     dismissEscapeKeyClose
   }: StatefulFullScreenSheetProps) => {
@@ -54,6 +55,7 @@ export const StatefulFullScreenSheet = ({
           withinRef: focusWithinRef ?? fullScreenBodyRef,
           trackedState: isOpen,
           fallbackRef: fullScreenCloseRef,
+          withSelector: focusSelector,
           action: {
             type: "focus",
             options: {
