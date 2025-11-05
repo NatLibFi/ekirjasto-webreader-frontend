@@ -18,7 +18,7 @@ import { StatefulLetterSpacing } from "../../Settings/Spacing/StatefulLetterSpac
 import { StatefulLineHeight } from "../../Settings/Spacing/StatefulLineHeight";
 import { StatefulParagraphIndent } from "../../Settings/Spacing/StatefulParagraphIndent";
 import { StatefulParagraphSpacing } from "../../Settings/Spacing/StatefulParagraphSpacing";
-import { StatefulPublisherStyles } from "../../Epub/Settings/StatefulPublisherStyles";
+import { StatefulPublisherStyles } from "../../Settings/StatefulPublisherStyles";
 import { StatefulSpacingGroup } from "../../Settings/Spacing/StatefulSpacingGroup";
 import { StatefulSpacingPresets } from "../../Settings/Spacing/StatefulSpacingPresets";
 import { StatefulTextAlign } from "../../Settings/Text/StatefulTextAlign";

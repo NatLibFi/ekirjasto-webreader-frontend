@@ -11,4 +11,5 @@ export * from "./models";
 
 export * from "./Spacing";
 export * from "./Text";
+export * from "./StatefulPublisherStyles";
 export * from "./StatefulZoom";
