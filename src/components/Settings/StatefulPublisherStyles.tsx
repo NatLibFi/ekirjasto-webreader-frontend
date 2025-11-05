@@ -4,14 +4,14 @@ import { useCallback } from "react";
 
 import { ThLineHeightOptions, ThSpacingSettingsKeys } from "@/preferences";
 
-import { StatefulSettingsItemProps } from "../../Settings/models/settings";
+import { StatefulSettingsItemProps } from "./models/settings";
 
-import { StatefulSwitch } from "../../Settings/StatefulSwitch";
+import { StatefulSwitch } from "./StatefulSwitch";
 
-import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
+import { useNavigator } from "@/core/Navigator";
 import { useI18n } from "@/i18n/useI18n";
-import { useSpacingPresets } from "../../Settings/Spacing/hooks/useSpacingPresets";
-import { useLineHeight } from "../../Settings/Spacing/hooks/useLineHeight";
+import { useSpacingPresets } from "./Spacing/hooks/useSpacingPresets";
+import { useLineHeight } from "./Spacing/hooks/useLineHeight";
 
 import { useAppSelector } from "@/lib/hooks";
 
@@ -29,7 +29,7 @@ export const StatefulPublisherStyles = ({ standalone = true }: StatefulSettingsI
 
   const lineHeightOptions = useLineHeight();
 
-  const { submitPreferences } = useEpubNavigator();
+  const { submitPreferences } = useNavigator();
 
   const updatePreference = useCallback(async (isSelected: boolean) => {
     const values = isSelected ? 
