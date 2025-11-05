@@ -46,7 +46,9 @@
             "fontWeight": {
                 "title": "Teckentjocklek",
                 "increase": "Öka teckentjocklek",
-                "decrease": "Minska teckentjocklek"
+                "decrease": "Minska teckentjocklek",
+                "default": "Normal",
+                "bolder": "Fetare"
             },
             "normalizeText": {
                 "title": "Textnormalisering",
@@ -105,13 +107,23 @@
                 "advanced": {
                     "tooltip": "Fler alternativ",
                     "trigger": "Fler avståndsalternativ"
+                },
+                "presets": {
+                    "title": "Förinställningar",
+                    "publisher": "Standard",
+                    "tight": "Tät",
+                    "balanced": "Balanserad",
+                    "loose": "Lös",
+                    "accessible": "Tillgänglig",
+                    "custom": "Anpassad"
                 }
             },
             "layout": {
                 "title": "Layout",
                 "scrolled": "Bläddringsbar",
                 "paginated": "Sidnumrerad"
-            }
+            },
+            "reset": "Återställ"
         },
         "app": {
             "loading": "Läser in",
@@ -139,7 +151,8 @@
                 "wrapper": "Aktuellt förlopp",
                 "of": "{{ current }} av {{ reference }}",
                 "referenceFallback": "aktuellt kapitel",
-                "pubFallback": "publikationen"
+                "pubFallback": "publikationen",
+                "positionsLeft": "{{ count }} kvar i {{ reference }}"
             },
             "docker": {
                 "wrapper": "Dockningsalternativ",
