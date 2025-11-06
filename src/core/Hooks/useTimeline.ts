@@ -24,12 +24,12 @@ export interface TimelineItem {
 export interface TimelineProgression {
   totalItems?: number;
   currentIndex?: number;
-  totalPositions: number;
-  currentPositions: number[];
+  totalPositions?: number;
+  currentPositions?: number[];
   relativeProgression?: number;
   totalProgression?: number;
   currentChapter?: string;
-  positionsLeft: number;
+  positionsLeft?: number;
 }
 
 export interface UnstableTimeline {
@@ -58,8 +58,8 @@ export const useTimeline = ({
 }: {
   publication: Publication | null, 
   currentLocation?: Locator, 
-  currentPositions: number[],
-  positionsList: Locator[],
+  currentPositions?: number[],
+  positionsList?: Locator[],
   onChange?: (timeline: UnstableTimeline) => void
 }): UnstableTimeline => {
   const layout = publication?.metadata.effectiveLayout || Layout.reflowable;
@@ -89,15 +89,23 @@ export const useTimeline = ({
     nextItem,
     progression: {
       totalItems: publication?.readingOrder.items.length,
-      currentIndex: currentItem?.readingOrderIndex ? currentItem.readingOrderIndex + 1 : undefined,
-      totalPositions: positionsList.length,
+      currentIndex: currentItem?.readingOrderIndex !== undefined ? currentItem.readingOrderIndex + 1 : undefined,
+      totalPositions: positionsList?.length,
       currentPositions: currentPositions || [],
       relativeProgression: relativeProgression,
       totalProgression: totalProgression,
       currentChapter: currentItem?.title,
-      positionsLeft: currentItem?.positionRange?.[1] && currentPositions[0] !== undefined
-        ? Math.max(0, currentItem.positionRange[1] - currentPositions[0])
-        : 0
+      positionsLeft: (() => {
+        const endPosition = currentItem?.positionRange?.[1];
+        const currentPosition = currentPositions?.[0];
+        
+        // Only calculate positionsLeft if we have all required position data
+        if (!positionsList?.length || endPosition === undefined || currentPosition === undefined) {
+          return undefined;
+        }
+        
+        return Math.max(0, endPosition - currentPosition);
+      })()
     }
   }), [
     publication?.metadata.title,
@@ -117,7 +125,8 @@ export const useTimeline = ({
   const buildTocTree = useCallback((
     links: Link[],
     idGenerator: () => string,
-    positionsList?: Locator[]
+    positionsList?: Locator[],
+    publicationTitle?: string
   ): TocItem[] => {
     return links.map((link) => {
       // Generate a new ID for the current Link
@@ -137,13 +146,17 @@ export const useTimeline = ({
       const treeNode: TocItem = {
         id: newId,
         href: href,
-        title: link.title,
+        title: link.title || (
+          publicationTitle 
+            ? `${ publicationTitle } ${ idCounterRef.current }` 
+            : newId
+        ),
         position: positionsList?.find((position) => position.href === href)?.locations.position
       };
   
       // Recursively process children if they exist
       if (link.children) {
-        treeNode.children = buildTocTree(link.children.items, idGenerator, positionsList);
+        treeNode.children = buildTocTree(link.children.items, idGenerator, positionsList, publicationTitle);
       }
   
       return treeNode;
@@ -177,7 +190,7 @@ export const useTimeline = ({
       const positions = currentPositions;
       if (positions && positions.length === 2) {
         const otherPosition = positions[0] === locator.locations.position ? positions[1] : positions[0];
-        const otherPositionInList = positionsList.find((pos: Locator) => pos.locations.position === otherPosition);
+        const otherPositionInList = positionsList?.find((pos: Locator) => pos.locations.position === otherPosition);
         if (otherPositionInList) {
           const match = findMatch(tocTree, new Link(otherPositionInList));
           if (match) {
@@ -189,9 +202,9 @@ export const useTimeline = ({
     }
 
     // If no match, try to find a match for other positions
-    const otherPositions = currentPositions.filter(pos => pos !== locator.locations.position);
+    const otherPositions = currentPositions?.filter(pos => pos !== locator.locations.position) || [];
     for (const otherPosition of otherPositions) {
-      const otherPositionInList = positionsList.find((pos: Locator) => pos.locations.position === otherPosition);
+      const otherPositionInList = positionsList?.find((pos: Locator) => pos.locations.position === otherPosition);
       if (otherPositionInList) {
         const match = findMatch(tocTree, new Link(otherPositionInList));
         if (match) {
@@ -205,7 +218,9 @@ export const useTimeline = ({
   const buildTimelineItems = useCallback(() => {
     const timelineItems: { [href: string]: TimelineItem } = {};
     const readingOrder = publication?.readingOrder?.items || [];
-    const toc = publication?.toc?.items || [];
+    const toc = publication?.toc?.items && publication?.toc?.items.length > 0
+      ? publication.toc.items
+      : publication?.readingOrder?.items || [];
     const flatToc = toc.flatMap(t => [t, ...(t.children?.items || [])]);
   
     // Helper function to get URL base (without params and fragment)
@@ -277,25 +292,28 @@ export const useTimeline = ({
       if (!timelineItem) continue;
 
       const positions = positionsList
-        .filter(p => p.href === item.href)
-        .sort((a, b) => (a.locations.position || 0) - (b.locations.position || 0));
+        ? positionsList
+          .filter(p => p.href === item.href)
+          .sort((a, b) => (a.locations.position || 0) - (b.locations.position || 0))
+        : [];
   
       if (positions.length > 0) {
         const start = positions[0].locations;
+        // For single position, use the same location for start and end
         const end = positions.length > 1 
           ? positions[positions.length - 1].locations 
-          : undefined;
+          : start;  // Use start as end for single position
   
         timelineItem.positionRange = start.position !== undefined 
-          ? [start.position, end?.position] 
+          ? [start.position, end.position]
           : undefined;
   
         timelineItem.progressionRange = start.progression !== undefined 
-          ? [start.progression, end?.progression] 
+          ? [start.progression, end.progression]
           : undefined;
   
         timelineItem.totalProgressionRange = start.totalProgression !== undefined 
-          ? [start.totalProgression, end?.totalProgression] 
+          ? [start.totalProgression, end.totalProgression]
           : undefined;
       }
     }
@@ -335,9 +353,13 @@ export const useTimeline = ({
 
   useEffect(() => {
     if (!publication) return;
-    
+
     const idGenerator = () => `toc-${ ++idCounterRef.current }`;
-    setTocTree(buildTocTree(publication.toc?.items || [], idGenerator, positionsList));
+    const tocItems = publication.toc?.items && publication.toc.items.length > 0
+      ? publication.toc.items
+      : publication.readingOrder?.items || [];
+    const publicationTitle = publication?.metadata.title.getTranslation("en");
+    setTocTree(buildTocTree(tocItems, idGenerator, positionsList, publicationTitle));
     setTimelineItems(buildTimelineItems());
   }, [publication, positionsList, buildTocTree, buildTimelineItems]);
 

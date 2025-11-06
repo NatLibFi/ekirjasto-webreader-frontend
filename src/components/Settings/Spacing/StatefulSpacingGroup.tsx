@@ -9,10 +9,10 @@ import {
   ThSpacingSettingsKeys 
 } from "@/preferences";
 
-import { StatefulGroupWrapper } from "../../../Settings/StatefulGroupWrapper";
+import { StatefulGroupWrapper } from "../StatefulGroupWrapper";
 
 import { usePreferences } from "@/preferences/hooks/usePreferences";
-import { usePlugins } from "../../../Plugins/PluginProvider";
+import { usePlugins } from "../../Plugins/PluginProvider";
 import { useI18n } from "@/i18n/useI18n";
 
 import { useAppDispatch } from "@/lib/hooks";
@@ -22,6 +22,7 @@ export const StatefulSpacingGroup = () => {
   const { preferences } = usePreferences();
   const { t } = useI18n();
   const { spacingSettingsComponentsMap } = usePlugins();
+
   const dispatch = useAppDispatch();
   
   const setSpacingContainer = useCallback(() => {
@@ -30,7 +31,7 @@ export const StatefulSpacingGroup = () => {
 
   return (
     <>
-    <StatefulGroupWrapper 
+    <StatefulGroupWrapper<ThSpacingSettingsKeys> 
       heading={ t("reader.settings.spacing.title") }
       moreLabel={ t("reader.settings.spacing.advanced.trigger") }
       moreTooltip={ t("reader.settings.spacing.advanced.tooltip") }

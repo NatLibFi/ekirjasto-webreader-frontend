@@ -12,6 +12,12 @@ export enum ThBackLinkVariant {
   custom = "custom"
 }
 
+export enum ThArrowVariant {
+  none = "none",
+  stacked = "stacked",
+  layered = "layered"
+}
+
 export enum ThDocumentTitleFormat {
   title = "title",
   chapter = "chapter",

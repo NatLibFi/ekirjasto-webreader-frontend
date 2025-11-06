@@ -21,7 +21,8 @@ import {
   ThBreakpoints,
   ThDocumentTitleFormat,
   ThSpacingPresetKeys,
-  ThSettingsRangePlaceholder
+  ThSettingsRangePlaceholder,
+  ThArrowVariant
 } from "./models/enums";
 import { ThCollapsibility, ThCollapsibilityVisibility } from "@/core/Components/Actions/hooks/useCollapsibility";
 
@@ -76,6 +77,7 @@ export interface ThActionsTokens {
 
 export interface ThSettingsSpacingPresets<K extends CustomizableKeys = DefaultKeys> {
   reflowOrder: Array<ThSpacingPresetKeys>;
+  webPubOrder: Array<ThSpacingPresetKeys>;
   // Not customizable as the component is static radiogroup (icons), unlike themes
   // Publisher and custom are not included as they are special cases
   keys: {
@@ -142,6 +144,7 @@ export type SpacingSettingsKey<K extends CustomizableKeys> =
 export interface ThActionsPref<K extends CustomizableKeys> {
   reflowOrder: Array<ActionKey<K>>;
   fxlOrder: Array<ActionKey<K>>;
+  webPubOrder: Array<ActionKey<K>>;
   collapse: ThCollapsibility;
   keys: Record<ActionKey<K>, ThActionsTokens>;
 };
@@ -205,6 +208,19 @@ export interface ThFormatPref<T extends string | Array<string>> {
   };
 }
 
+export interface ThPaginatedAffordancePrefValue {
+  variant: ThArrowVariant;
+  discard?: Array<"navigation" | "immersive" | "fullscreen"> | "none";
+  hint?: Array<"immersiveChange" | "fullscreenChange" | "layoutChange"> | "none";
+}
+
+export interface ThPaginatedAffordancePref {
+  default: Required<ThPaginatedAffordancePrefValue>;
+  breakpoints?: {
+    [key in ThBreakpoints]?: ThPaginatedAffordancePrefValue;
+  };
+}
+
 // Main preferences interface with simplified generics
 export interface ThPreferences<K extends CustomizableKeys = {}> {
   direction?: ThLayoutDirection;
@@ -228,6 +244,7 @@ export interface ThPreferences<K extends CustomizableKeys = {}> {
         format?: {
           reflow?: ThFormatPref<ThRunningHeadFormat>;
           fxl?: ThFormatPref<ThRunningHeadFormat>;
+          webPub?: ThFormatPref<ThRunningHeadFormat>;
         }
       }
     };
@@ -235,6 +252,7 @@ export interface ThPreferences<K extends CustomizableKeys = {}> {
       format?: {
         reflow?: ThFormatPref<ThProgressionFormat | Array<ThProgressionFormat>>;
         fxl?: ThFormatPref<ThProgressionFormat | Array<ThProgressionFormat>>;
+        webPub?: ThFormatPref<ThProgressionFormat | Array<ThProgressionFormat>>;
       };
     };
     arrow: {
@@ -250,7 +268,8 @@ export interface ThPreferences<K extends CustomizableKeys = {}> {
     layout: {
       ui?: {
         reflow?: ThLayoutUI,
-        fxl?: ThLayoutUI
+        fxl?: ThLayoutUI,
+        webPub?: ThLayoutUI
       };
       radius: number;
       spacing: number;
@@ -280,6 +299,10 @@ export interface ThPreferences<K extends CustomizableKeys = {}> {
       toggleOnMiddlePointer: Array<"tap" | "click">;
       hideOnForwardScroll: boolean;
       showOnBackwardScroll: boolean;
+    },
+    paginated: {
+      reflow: ThPaginatedAffordancePref;
+      fxl: ThPaginatedAffordancePref;
     }
   };
   actions: ThActionsPref<K>;
@@ -291,6 +314,7 @@ export interface ThPreferences<K extends CustomizableKeys = {}> {
   settings: {
     reflowOrder: Array<SettingsKey<K>>;
     fxlOrder: Array<SettingsKey<K>>;
+    webPubOrder: Array<SettingsKey<K>>;
     keys: ThSettingsKeyTypes<K>;
     text?: ThSettingsGroupPref<TextSettingsKey<K>>;
     spacing?: ThSettingsGroupPref<SpacingSettingsKey<K>> & { presets?: ThSettingsSpacingPresets<K> };
@@ -345,7 +369,7 @@ export const createPreferences = <K extends CustomizableKeys = {}>(
   // Validate actions
   if (params.actions) {
     validateObjectKeys<ActionKey<K>, ThActionsTokens>(
-      [params.actions.reflowOrder as Array<ActionKey<K>>, params.actions.fxlOrder as Array<ActionKey<K>>],
+      [params.actions.reflowOrder as Array<ActionKey<K>>, params.actions.fxlOrder as Array<ActionKey<K>>, params.actions.webPubOrder as Array<ActionKey<K>>],
       params.actions.keys as Record<string, ThActionsTokens>,
       "actions"
     );

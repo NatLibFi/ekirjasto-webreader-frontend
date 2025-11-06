@@ -320,6 +320,10 @@
 
 /* Dropdown */
 
+.readerSettingsDropdown[data-disabled] {
+  color: var(--theme-disable);
+}
+
 .readerSettingsDropdownButton {
   margin-top: var(--layout-spacing);
   position: relative;
@@ -384,7 +388,7 @@
 .readerSettingsSwitch {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: clamp(10px, calc(var(--layout-spacing) / 2), 20px);
   color: var(--theme-text);
   margin: var(--layout-spacing) 0;
 }
@@ -396,6 +400,7 @@
   background: var(--theme-background);
   border-radius: 1.143rem;
   transition: all 200ms;
+  flex-shrink: 0;
 }
 
 .readerSettingsSwitchIndicator::before {

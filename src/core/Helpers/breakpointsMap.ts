@@ -58,7 +58,15 @@ export const makeBreakpointsMap = <T>({
       const isValid = !validateKey || isValidType(value);
         
       if (isValid) {
-        breakpointsMap[key as ThBreakpoints] = value as T;
+        // Merge the default value with the breakpoint-specific overrides
+        if (typeof value === "object" && !Array.isArray(value)) {
+          breakpointsMap[key as ThBreakpoints] = {
+            ...defaultValue,
+            ...value
+          };
+        } else {
+          breakpointsMap[key as ThBreakpoints] = value as T;
+        }
       }
     });
   }

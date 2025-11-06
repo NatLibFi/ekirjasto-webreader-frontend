@@ -20,14 +20,14 @@ import {
   TreeItemContent
 } from "react-aria-components";
 
-import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
+import { useNavigator } from "@/core/Navigator";
 import { useDocking } from "../../Docking/hooks/useDocking";
 import { useI18n } from "@/i18n/useI18n";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setActionOpen } from "@/lib/actionsReducer";
 import { setTocEntry } from "@/lib/publicationReducer";
-import { setImmersive } from "@/lib/readerReducer";
+import { setImmersive, setUserNavigated } from "@/lib/readerReducer";
 
 import { isActiveElement } from "@/core/Helpers/focusUtilities";
 
@@ -47,7 +47,7 @@ export const StatefulTocContainer = ({ triggerRef }: StatefulActionContainerProp
   const actionState = useAppSelector(state => state.actions.keys[ThActionsKeys.toc]);
   const dispatch = useAppDispatch();
 
-  const { goLink } = useEpubNavigator();
+  const { goLink } = useNavigator();
 
   const docking = useDocking(ThActionsKeys.toc);
   const sheetType = docking.sheetType;
@@ -105,10 +105,12 @@ export const StatefulTocContainer = ({ triggerRef }: StatefulActionContainerProp
         ? () => {
           dispatch(setTocEntry(key));
           dispatch(setImmersive(true));
+          dispatch(setUserNavigated(true));
         } 
         : () => {
           dispatch(setTocEntry(key));
           dispatch(setImmersive(true));
+          dispatch(setUserNavigated(true));
           setOpen(false);
         }
 

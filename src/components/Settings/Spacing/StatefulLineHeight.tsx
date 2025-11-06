@@ -4,16 +4,16 @@ import { useCallback, useMemo } from "react";
 
 import { ThLineHeightOptions, ThSpacingSettingsKeys, ThSettingsKeys } from "@/preferences";
 
-import { StatefulSettingsItemProps } from "../../../Settings/models/settings";
+import { StatefulSettingsItemProps } from "../models/settings";
 
 import BookIcon from "../assets/icons/book.svg";
 import SmallIcon from "./assets/icons/density_small.svg";
 import MediumIcon from "./assets/icons/density_medium.svg";
 import LargeIcon from "./assets/icons/density_large.svg";
 
-import { StatefulRadioGroup } from "../../../Settings/StatefulRadioGroup";
+import { StatefulRadioGroup } from "../StatefulRadioGroup";
 
-import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
+import { useNavigator } from "@/core/Navigator";
 import { useI18n } from "@/i18n/useI18n";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 
@@ -25,9 +25,12 @@ export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemPr
   const { t } = useI18n();
   const { preferences } = usePreferences();
 
-  const publisherStyles = useAppSelector(state => state.settings.publisherStyles);
+  const profile = useAppSelector(state => state.reader.profile);
+  const isWebPub = profile === "webPub";
 
-  const { getSetting, submitPreferences } = useEpubNavigator();
+  const publisherStyles = useAppSelector(state => isWebPub ? state.webPubSettings.publisherStyles : state.settings.publisherStyles) ?? true;
+
+  const { getSetting, submitPreferences } = useNavigator();
 
   const { getEffectiveSpacingValue, setLineHeight } = useSpacingPresets();
 
@@ -92,7 +95,7 @@ export const StatefulLineHeight = ({ standalone = true }: StatefulSettingsItemPr
       standalone={ standalone }
       label={ t("reader.settings.lineHeight.title") }
       orientation="horizontal"
-      value={ publisherStyles ? ThLineHeightOptions.publisher : lineHeight }
+      value={ !isWebPub && publisherStyles ? ThLineHeightOptions.publisher : lineHeight }
       onChange={ async (val: string) => await updatePreference(val) }
       items={ items }
     />

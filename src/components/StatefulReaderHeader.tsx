@@ -3,6 +3,8 @@
 import React, { useCallback, useEffect, useRef } from "react";
 
 import { ActionKeyType, usePreferenceKeys } from "@/preferences";
+import { ThRunningHeadFormat } from "@/preferences/models/enums";
+import { ThFormatPref } from "@/preferences";
 
 import { ThLayoutUI } from "@/preferences/models/enums";
 
@@ -10,7 +12,7 @@ import readerHeaderStyles from "./assets/styles/readerHeader.module.css";
 import overflowMenuStyles from "./Actions/assets/styles/overflowMenu.module.css";
 
 import { ThActionEntry } from "@/core/Components/Actions/ThActionsBar";
-import { ThHeader  } from "@/core/Components/Reader/ThHeader";
+import { ThHeader } from "@/core/Components/Reader/ThHeader";
 import { StatefulBackLink } from "./StatefulBackLink";
 import { StatefulReaderRunningHead } from "./StatefulReaderRunningHead";
 import { ThInteractiveOverlay } from "../core/Components/Reader/ThInteractiveOverlay";
@@ -26,19 +28,23 @@ import { setHovering } from "@/lib/readerReducer";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 
 export const StatefulReaderHeader = ({
-  layout
+  actionKeys,
+  actionsOrder, 
+  layout,
+  runningHeadFormatPref
 }: {
+  actionKeys: ActionKeyType[];
+  actionsOrder: ActionKeyType[];
   layout: ThLayoutUI;
+  runningHeadFormatPref?: ThFormatPref<ThRunningHeadFormat>;
 }) => {
   const headerRef = useRef<HTMLDivElement>(null);
-  const { reflowActionKeys, fxlActionKeys } = usePreferenceKeys();
   const { preferences } = usePreferences();
   const { t } = useI18n();
   const { actionsComponentsMap } = usePlugins();
   
   const actionsMap = useAppSelector(state => state.actions.keys);
   const overflowMap = useAppSelector(state => state.actions.overflow);
-  const isFXL = useAppSelector(state => state.publication.isFXL);
   const isScroll = useAppSelector(state => state.settings.scroll);
   const isImmersive = useAppSelector(state => state.reader.isImmersive);
   const isHovering = useAppSelector(state => state.reader.isHovering);
@@ -71,7 +77,6 @@ export const StatefulReaderHeader = ({
   };
 
   const listActionItems = useCallback(() => {
-    const actionKeys = isFXL? fxlActionKeys : reflowActionKeys;
     const actionsItems: ThActionEntry<ActionKeyType>[] = [];
 
     if (actionsComponentsMap && Object.keys(actionsComponentsMap).length > 0) {
@@ -89,7 +94,7 @@ export const StatefulReaderHeader = ({
     }
     
     return actionsItems;
-  }, [isFXL, fxlActionKeys, reflowActionKeys, actionsComponentsMap]);
+  }, [actionKeys, actionsComponentsMap]);
 
   useEffect(() => {
     // Blur any focused element when entering immersive mode
@@ -122,16 +127,14 @@ export const StatefulReaderHeader = ({
     >
       { preferences.theming.header?.backLink && <StatefulBackLink className={ readerHeaderStyles.backLinkWrapper } /> }
       
-      <StatefulReaderRunningHead />
+      <StatefulReaderRunningHead formatPref={ runningHeadFormatPref } />
       
       <StatefulCollapsibleActionsBar 
         id="reader-header-overflowMenu" 
         items={ listActionItems() }
         prefs={{ 
           ...preferences.actions, 
-          displayOrder: isFXL 
-            ? preferences.actions.fxlOrder 
-            : preferences.actions.reflowOrder 
+          displayOrder: actionsOrder 
         }}
         className={ readerHeaderStyles.actionsWrapper } 
         aria-label={ t("reader.app.header.actions") } 

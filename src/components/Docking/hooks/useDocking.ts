@@ -106,6 +106,11 @@ export const useDocking = <T extends string>(key: T) => {
   }, [preferences.docking.displayOrder, currentDockConfig, sheetPref, dockablePref, canBeDocked]);
 
   const getSheetType = useCallback(() => {
+    // Protect against null breakpoint during initialization
+    if (!breakpoint) {
+      return sheetType;
+    }
+    
     // First check the dockable pref is none to return early
     if (dockablePref === ThDockingTypes.none) {
       // Sheet is of docked type, we return the default
@@ -181,7 +186,7 @@ export const useDocking = <T extends string>(key: T) => {
       default:
         return defaultSheet;
     }
-  }, [dockablePref, sheetPref, defaultSheet, actionState?.docking, canBeDocked, isDockedSheetPref]);
+  }, [dockablePref, sheetPref, defaultSheet, actionState?.docking, canBeDocked, isDockedSheetPref, breakpoint, sheetType]);
 
   // When docking or breakpoints-related prefs change, get the correct sheet type
   useEffect(() => {

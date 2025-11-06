@@ -10,11 +10,11 @@ import { PressEvent } from "react-aria";
 import { ThNavigationButton, ThNavigationButtonProps } from "@/core/Components/Buttons/ThNavigationButton";
 
 import { usePreferences } from "@/preferences/hooks/usePreferences";
-import { usePrevious } from "@/core/Hooks/usePrevious";
 import { useI18n } from "@/i18n/useI18n";
+import { usePaginatedArrows } from "@/hooks/usePaginatedArrows";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { setArrows } from "@/lib/readerReducer";
+import { setUserNavigated } from "@/lib/readerReducer";
 
 import { isActiveElement } from "@/core/Helpers/focusUtilities";
 
@@ -23,12 +23,10 @@ import classNames from "classnames";
 
 export interface StatefulReaderArrowButtonProps extends ThNavigationButtonProps {
   direction: "left" | "right";
-  occupySpace: boolean;
 }
 
 export const StatefulReaderArrowButton = ({
   direction,
-  occupySpace,
   className,
   isDisabled,
   onPress,
@@ -41,19 +39,16 @@ export const StatefulReaderArrowButton = ({
   const isRTL = useAppSelector(state => state.publication.isRTL);
   const hasArrows = useAppSelector(state => state.reader.hasArrows);
 
-  const scroll = useAppSelector(state => state.settings.scroll);
-  const isFXL = useAppSelector(state => state.publication.isFXL);
-  const isScroll = scroll && !isFXL;
+  const { 
+    isVisible, 
+    occupySpace, 
+    shouldTrackNavigation 
+  } = usePaginatedArrows();
   
-  const wasScroll = usePrevious(isScroll);
 
   const dispatch = useAppDispatch();
 
   const [isHovering, setIsHovering] = useState(false);
-
-  const switchedFromScrollable = () => {
-    return wasScroll && !isScroll;
-  }
 
   const label = (
     direction === "right" && !isRTL || 
@@ -64,7 +59,7 @@ export const StatefulReaderArrowButton = ({
 
   const handleClassNameFromState = () => {
     let className = "";
-    if (!hasArrows && !switchedFromScrollable()) {
+    if (!isVisible) {
       className = arrowStyles.visuallyHidden;
     }
     return className;
@@ -90,18 +85,13 @@ export const StatefulReaderArrowButton = ({
     }
   };
 
-  const handleOnPress = (e: PressEvent, cb: (e: PressEvent) => void) => {
-    dispatch(setArrows(false));
-    cb(e);
-  }
-
   return (
     <>
     <ThNavigationButton 
       direction={ direction }
       ref= { buttonRef }
       aria-label={ label }
-      onPress={ (e: PressEvent) => onPress && handleOnPress(e, onPress) }
+      onPress={ onPress }
       onHoverChange={ (isHovering: boolean) => setIsHovering(isHovering) } 
       onKeyDown={ blurOnEsc }
       className={ classNames(className, handleClassNameFromSpaceProp(), handleClassNameFromState()) }

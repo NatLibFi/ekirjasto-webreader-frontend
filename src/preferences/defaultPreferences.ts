@@ -18,6 +18,7 @@ import {
   ThProgressionFormat,
   ThRunningHeadFormat,
   ThDocumentTitleFormat,
+  ThArrowVariant,
 } from "./models/enums";
 import { createPreferences, ThPreferences, DefaultKeys } from "./preferences";
 
@@ -83,6 +84,13 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
                 displayInFullscreen: true
               }
             }
+          },
+          webPub: {
+            default: {
+              variants: ThRunningHeadFormat.chapter,
+              displayInImmersive: true,
+              displayInFullscreen: true
+            }
           }
         }
       }
@@ -130,6 +138,16 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
               displayInFullscreen: true
             }
           }
+        },
+        webPub: {
+          default: {
+            variants: [
+              ThProgressionFormat.readingOrderIndex, 
+              ThProgressionFormat.none
+            ],
+            displayInImmersive: true,
+            displayInFullscreen: true
+          }
         }
       }
     },
@@ -144,7 +162,8 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
     layout: {
       ui: {
         reflow: ThLayoutUI.layered,
-        fxl: ThLayoutUI.layered
+        fxl: ThLayoutUI.layered,
+        webPub: ThLayoutUI.stacked
       },
       radius: 5, // border-radius of containers
       spacing: 20, // padding of containers/sheets
@@ -155,7 +174,7 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
       constraints: {
         [ThSheetTypes.bottomSheet]: 600, // Max-width of all bottom sheets
         [ThSheetTypes.popover]: 600, // Max-width of all popover sheets
-        pagination: null // Max-width of pagination component
+        pagination: 1024 // Max-width of pagination component
       }
     },
     breakpoints: {
@@ -298,9 +317,41 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
   affordances: { 
     scroll: {
       hintInImmersive: true,
-      toggleOnMiddlePointer: ["tap"],
+      toggleOnMiddlePointer: ["tap", "click"],
       hideOnForwardScroll: true,
       showOnBackwardScroll: true
+    },
+    paginated: {
+      reflow: {
+        default: {
+          variant: ThArrowVariant.layered,
+          discard: ["navigation"],
+          hint: ["layoutChange"]
+        },
+        breakpoints: {
+          [ThBreakpoints.large]: {
+            variant: ThArrowVariant.stacked
+          },
+          [ThBreakpoints.xLarge]: {
+            variant: ThArrowVariant.stacked
+          }
+        }
+      },
+      fxl: {
+        default: {
+          variant: ThArrowVariant.layered,
+          discard: ["navigation"],
+          hint: "none"
+        },
+        breakpoints: {
+          [ThBreakpoints.large]: {
+            variant: ThArrowVariant.stacked
+          },
+          [ThBreakpoints.xLarge]: {
+            variant: ThArrowVariant.stacked
+          }
+        }
+      }
     }
   },
   shortcuts: {
@@ -319,6 +370,11 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
       ThActionsKeys.toc,
       ThActionsKeys.fullscreen,
       ThActionsKeys.jumpToPosition
+    ],
+    webPubOrder: [
+      ThActionsKeys.settings,
+      ThActionsKeys.toc,
+      ThActionsKeys.fullscreen
     ],
     collapse: {
       // Number of partially icons to display
@@ -431,6 +487,11 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
       ThSettingsKeys.theme,
       ThSettingsKeys.columns
     ],
+    webPubOrder: [
+      ThSettingsKeys.zoom,
+      ThSettingsKeys.textGroup,
+      ThSettingsKeys.spacingGroup
+    ],
     keys: {
       [ThSettingsKeys.letterSpacing]: defaultLetterSpacing,
       [ThSettingsKeys.lineHeight]: {
@@ -449,6 +510,7 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
       header: ThSheetHeaderVariant.previous,
       presets: {
         reflowOrder: defaultSpacingPresetsOrder,
+        webPubOrder: defaultSpacingPresetsOrder,
         keys: defaultSpacingPresets
       }
     }

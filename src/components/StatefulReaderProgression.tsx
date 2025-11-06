@@ -5,58 +5,29 @@ import React, { useEffect, useState, useMemo } from "react";
 import progressionStyles from "./assets/styles/readerProgression.module.css";
 
 import { ThProgressionFormat } from "@/preferences/models/enums";
-import { ThFormatPrefValue } from "@/preferences";
+import { ThFormatPref, ThFormatPrefValue } from "@/preferences";
 
 import { ThProgression } from "@/core/Components/Reader/ThProgression";
 
 import { useI18n } from "@/i18n/useI18n";
-import { usePreferences } from "@/preferences/hooks/usePreferences";
 
 import { useAppSelector } from "@/lib/hooks";
 
 import { makeBreakpointsMap } from "@/core/Helpers/breakpointsMap";
-
-// Helper to get the best matching display format from an array of formats
-const getBestMatchingFormat = (
-  formats: ThProgressionFormat[],
-  hasPositions: boolean,
-  hasProgression: boolean
-): ThProgressionFormat | null => {
-  for (const format of formats) {
-    switch (format) {
-      case ThProgressionFormat.positionsPercentOfTotal:
-      case ThProgressionFormat.positionsOfTotal:
-      case ThProgressionFormat.positions:
-      case ThProgressionFormat.positionsLeft:
-        if (hasPositions) {
-          return format;
-        }
-        break;
-      case ThProgressionFormat.overallProgression:
-      case ThProgressionFormat.resourceProgression:
-      case ThProgressionFormat.progressionOfResource:
-        if (hasProgression) {
-          return format;
-        }
-        break;
-      case ThProgressionFormat.readingOrderIndex:
-      case ThProgressionFormat.none:
-        return format;
-    }
-  }
-  return null;
-};
+import { getBestMatchingProgressionFormat } from "@/core/Helpers/progressionFormat";
 
 export const StatefulReaderProgression = ({ 
-  className 
+  className,
+  formatPref,
+  fallbackVariant
 }: { 
-  className?: string 
+  className?: string,
+  formatPref?: ThFormatPref<ThProgressionFormat | ThProgressionFormat[]>,
+  fallbackVariant: ThProgressionFormat | Array<ThProgressionFormat>
 }) => {
   const { t } = useI18n();
-  const { preferences } = usePreferences();
   
   const unstableTimeline = useAppSelector(state => state.publication.unstableTimeline);
-  const isFXL = useAppSelector(state => state.publication.isFXL);
   const isImmersive = useAppSelector(state => state.reader.isImmersive);
   const isFullscreen = useAppSelector(state => state.reader.isFullscreen);
   const isHovering = useAppSelector(state => state.reader.isHovering);
@@ -64,16 +35,13 @@ export const StatefulReaderProgression = ({
 
   const [displayText, setDisplayText] = useState("");
   
-  const formatPref = isFXL 
-    ? preferences.theming.progression?.format?.fxl
-    : preferences.theming.progression?.format?.reflow;
-
-  // Get the fallback format based on isFXL
-  const fallbackFormat = useMemo<ThFormatPrefValue<ThProgressionFormat>>(() => ({
-    variants: isFXL ? ThProgressionFormat.readingOrderIndex : ThProgressionFormat.resourceProgression,
-    displayInImmersive: true,
-    displayInFullscreen: true
-  }), [isFXL]);
+  const fallbackFormat = useMemo(() => {
+    return {
+      variants: fallbackVariant,
+      displayInImmersive: true,
+      displayInFullscreen: true
+    };
+  }, [fallbackVariant]);
   
   const breakpointsMap = useMemo(() => {
     return makeBreakpointsMap<ThFormatPrefValue<ThProgressionFormat | ThProgressionFormat[]>>({
@@ -106,16 +74,12 @@ export const StatefulReaderProgression = ({
       return ThProgressionFormat.none;
     }
     
-    const format = Array.isArray(variants) ? variants[0] : variants;
-    const hasPositions = !!unstableTimeline?.progression?.currentPositions?.length;
-    const hasProgression = unstableTimeline?.progression?.relativeProgression !== undefined;
-    
     if (Array.isArray(variants)) {
-      return getBestMatchingFormat(variants, hasPositions, hasProgression) || 
+      return getBestMatchingProgressionFormat(variants, unstableTimeline?.progression) || 
         fallbackFormat.variants;
     }
     
-    return format;
+    return variants;
   }, [variants, unstableTimeline?.progression, fallbackFormat, isImmersive, isHovering, isFullscreen, displayInImmersive, displayInFullscreen]);
 
   // Update display text based on current position and timeline

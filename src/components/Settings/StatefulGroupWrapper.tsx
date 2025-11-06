@@ -13,20 +13,20 @@ import { usePreferences } from "@/preferences/hooks/usePreferences";
 
 import classNames from "classnames";
 
-export interface StatefulGroupWrapperProps {
+export interface StatefulGroupWrapperProps<T extends string = ThTextSettingsKeys | ThSpacingSettingsKeys> {
   heading: string;
   moreLabel: string;
   moreTooltip: string;
   onPressMore: (e: PressEvent) => void;
   componentsMap: Record<string, SettingComponent>;
-  prefs?: ThSettingsGroupPref<ThTextSettingsKeys | ThSpacingSettingsKeys>;
+  prefs?: ThSettingsGroupPref<T>;
   defaultPrefs: {
-    main: ThTextSettingsKeys[] | ThSpacingSettingsKeys[];
-    subPanel: ThTextSettingsKeys[] | ThSpacingSettingsKeys[];
+    main: T[];
+    subPanel: T[];
   };
 }
 
-export const StatefulGroupWrapper = ({
+export const StatefulGroupWrapper = <T extends string = ThTextSettingsKeys | ThSpacingSettingsKeys>({
   heading,
   moreLabel,
   moreTooltip,
@@ -34,7 +34,7 @@ export const StatefulGroupWrapper = ({
   componentsMap,
   prefs,
   defaultPrefs
-}: StatefulGroupWrapperProps) => {
+}: StatefulGroupWrapperProps<T>) => {
   const { preferences } = usePreferences();
   
   const main = prefs?.main || defaultPrefs.main;

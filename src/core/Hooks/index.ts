@@ -15,3 +15,4 @@ export * from "./useReducedMotion";
 export * from "./useReducedTransparency";
 export * from "./useTimeline";
 export * from "./Epub";
+export * from "./WebPub";

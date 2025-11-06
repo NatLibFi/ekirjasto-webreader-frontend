@@ -2,34 +2,42 @@
 
 import { useCallback } from "react";
 
-import { StatefulSettingsItemProps } from "../../../Settings/models/settings";
+import { StatefulSettingsItemProps } from "../models/settings";
 import { ThTextAlignOptions } from "@/preferences/models/enums";
 
-import { StatefulSwitch } from "../../../Settings/StatefulSwitch";
+import { StatefulSwitch } from "../StatefulSwitch";
 
-import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
+import { useNavigator } from "@/core/Navigator";
 import { useI18n } from "@/i18n/useI18n";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setHyphens } from "@/lib/settingsReducer";
+import { setWebPubHyphens } from "@/lib/webPubSettingsReducer";
 
 // TMP Component that is not meant to be implemented AS-IS, for testing purposes
 export const StatefulHyphens = ({ standalone = true }: StatefulSettingsItemProps) => {
   const { t } = useI18n();
-  const hyphens = useAppSelector(state => state.settings.hyphens);
-  const textAlign = useAppSelector(state => state.settings.textAlign);
+
+  const profile = useAppSelector(state => state.reader.profile);
+  const isWebPub = profile === "webPub";
+  
+  const hyphens = useAppSelector(state => isWebPub ? state.webPubSettings.hyphens : state.settings.hyphens) ?? false;
+  const textAlign = useAppSelector(state => isWebPub ? state.webPubSettings.textAlign : state.settings.textAlign) ?? ThTextAlignOptions.publisher;
 
   const dispatch = useAppDispatch();
   
-  const { getSetting, submitPreferences } = useEpubNavigator();
+  const { getSetting, submitPreferences } = useNavigator();
   
   const updatePreference = useCallback(async (value: boolean) => {
-    await submitPreferences({ 
-      hyphens: value 
-    });
+    await submitPreferences({ hyphens: value });
+    const effectiveSetting = getSetting("hyphens");
   
-    dispatch(setHyphens(getSetting("hyphens")));
-  }, [submitPreferences, getSetting, dispatch]);
+    if (isWebPub) {
+      dispatch(setWebPubHyphens(effectiveSetting));
+    } else {
+      dispatch(setHyphens(effectiveSetting));
+    }
+  }, [isWebPub, submitPreferences, getSetting, dispatch]);
 
   return(
     <>

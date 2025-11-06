@@ -32,6 +32,7 @@ export interface UseFirstFocusableProps {
   trackedState?: boolean;
   updateState?: unknown;
   action?: Action;
+  withSelector?: string;
 }
 
 const isInViewport = (element: Element, container: Element | null = null): boolean => {
@@ -61,7 +62,8 @@ export const useFirstFocusable = (props?: UseFirstFocusableProps) => {
     scrollerRef, 
     trackedState, 
     updateState,
-    action = { type: "none" } // Default to no action if not provided
+    action = { type: "none" }, // Default to no action if not provided
+    withSelector
   } = props || {};
 
   // Store action in a ref to avoid triggering useEffect on action change
@@ -92,14 +94,19 @@ export const useFirstFocusable = (props?: UseFirstFocusableProps) => {
       const targetElement = withinRef.current?.firstElementChild || withinRef.current;
       let firstFocusable: HTMLElement | null = null;
 
-      if (targetElement?.getAttribute("role") === "radiogroup") {
-        const selectedEl = targetElement?.querySelector("[data-selected]");
+      // Check withSelector first if provided
+      if (withSelector) {
+        firstFocusable = withinRef.current?.querySelector(withSelector) as HTMLElement | null;
+      }
 
+      // If withSelector was not provided or didn't find anything, try radio group logic
+      if (!firstFocusable && targetElement?.getAttribute("role") === "radiogroup") {
+        const selectedEl = targetElement.querySelector("[data-selected]");
         if (selectedEl === null) {
-          const inputs = targetElement?.querySelectorAll("input");
+          const inputs = targetElement.querySelectorAll("input");
           const input = inputs && Array.from(inputs).find(
             (input: HTMLInputElement) => !input.disabled && input.tabIndex >= 0
-        );
+          );
           firstFocusable = input as HTMLElement | null;
         } else if (selectedEl instanceof HTMLElement) {
           firstFocusable = selectedEl;
@@ -195,7 +202,7 @@ export const useFirstFocusable = (props?: UseFirstFocusableProps) => {
         attemptsRef.current = 0;
       };
     }
-  }, [withinRef, fallbackRef, scrollerRef, trackedState, previousUpdateState, updateState, previousTrackedState]);
+  }, [withinRef, fallbackRef, scrollerRef, trackedState, previousUpdateState, updateState, previousTrackedState, withSelector]);
 
   return focusableElement.current;
 };
