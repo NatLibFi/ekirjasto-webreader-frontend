@@ -5,6 +5,7 @@ import { ThPaginatedAffordancePrefValue } from "@/preferences/preferences";
 
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useReaderTransitions } from "./useReaderTransitions";
+import { usePrevious } from "@/core/Hooks/usePrevious";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setHasArrows, setUserNavigated } from "@/lib/readerReducer";
@@ -19,7 +20,6 @@ export interface UsePaginatedArrowsReturn {
 
 export const usePaginatedArrows = (): UsePaginatedArrowsReturn => {
   const { preferences } = usePreferences();
-  const dispatch = useAppDispatch();
   const hasArrows = useAppSelector(state => state.reader.hasArrows);
   const isFXL = useAppSelector(state => state.publication.isFXL);
   const breakpoint = useAppSelector(state => state.theming.breakpoint);
@@ -35,6 +35,8 @@ export const usePaginatedArrows = (): UsePaginatedArrowsReturn => {
     toUserNavigation
   } = useReaderTransitions();
 
+  const dispatch = useAppDispatch();
+
   // Get preferences
   const { variant, discard, hint } = useMemo(() => {
     const prefs = isFXL 
@@ -49,8 +51,17 @@ export const usePaginatedArrows = (): UsePaginatedArrowsReturn => {
     return prefsMap[breakpoint as keyof typeof prefsMap] || prefs.default;
   }, [breakpoint, isFXL, preferences]);
 
+  // Track previous variant
+  const prevVariant = usePrevious(variant);
+
   // Handle state transitions
   useEffect(() => {
+    // Reset hasArrows when changing from "none" to "stacked" or "layered"
+    if (prevVariant === ThArrowVariant.none && variant !== ThArrowVariant.none) {
+      dispatch(setHasArrows(true));
+      return;
+    }
+
     // Check for discard transitions (false -> true)
     const shouldHide = 
       (discard?.includes("immersive") && toImmersive) ||
@@ -72,7 +83,7 @@ export const usePaginatedArrows = (): UsePaginatedArrowsReturn => {
     } else if (shouldShow) {
       dispatch(setHasArrows(true));
     }
-  }, [toImmersive, toFullscreen, toUserNavigation, fromImmersive, fromFullscreen, fromScroll, discard, hint, dispatch]);
+  }, [toImmersive, toFullscreen, toUserNavigation, fromImmersive, fromFullscreen, fromScroll, discard, hint, prevVariant, variant, dispatch]);
 
   // Early return for special cases
   if (variant === ThArrowVariant.none || isScroll) {
@@ -85,7 +96,7 @@ export const usePaginatedArrows = (): UsePaginatedArrowsReturn => {
 
   return {
     isVisible: hasArrows,
-    occupySpace: hasArrows && variant === ThArrowVariant.stacked,
+    occupySpace: variant === ThArrowVariant.stacked,
     shouldTrackNavigation: Array.isArray(discard) && discard.includes("navigation")
   };
 };
