@@ -50,8 +50,8 @@
     "bundle": "tsup --config tsup.config.ts && pnpm copy-locales"
   },
   "peerDependencies": {
-    "@readium/css": ">=2.0.0-beta.20",
-    "@readium/navigator": "^2.2.3",
+    "@readium/css": "2.0.0-beta.22",
+    "@readium/navigator": "^2.2.4",
     "@readium/navigator-html-injectables": "^2.2.1",
     "@readium/shared": "^2.1.1",
     "@reduxjs/toolkit": "^2.9.0",
@@ -70,8 +70,8 @@
     "react-stately": "^3.42.0"
   },
   "dependencies": {
-    "@readium/css": "2.0.0-beta.20",
-    "@readium/navigator": "^2.2.3",
+    "@readium/css": "2.0.0-beta.22",
+    "@readium/navigator": "^2.2.4",
     "@readium/navigator-html-injectables": "^2.2.1",
     "@readium/shared": "^2.1.1",
     "@reduxjs/toolkit": "^2.9.0",
