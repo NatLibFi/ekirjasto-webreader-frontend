@@ -51,14 +51,28 @@ export const usePaginatedArrows = (): UsePaginatedArrowsReturn => {
     return prefsMap[breakpoint as keyof typeof prefsMap] || prefs.default;
   }, [breakpoint, isFXL, preferences]);
 
-  // Track previous variant
+  // Track previous prefs
   const prevVariant = usePrevious(variant);
+  const prevDiscard = usePrevious(discard);
 
   // Handle state transitions
   useEffect(() => {
-    // Reset hasArrows when changing from "none" to "stacked" or "layered"
+    // If navigation was just added to discard, reset navigation state
+    if (!prevDiscard?.includes("navigation") && discard?.includes("navigation")) {
+      dispatch(setUserNavigated(false));
+      return;
+    }
+    
+    // If discard changed to "none", show the arrows and reset navigation state
+    if (discard === "none" && prevDiscard !== "none") {
+      dispatch(setHasArrows(true));
+      dispatch(setUserNavigated(false));
+      return;
+    }
+    // Reset when changing from "none" to "stacked" or "layered"
     if (prevVariant === ThArrowVariant.none && variant !== ThArrowVariant.none) {
       dispatch(setHasArrows(true));
+      dispatch(setUserNavigated(false));
       return;
     }
 
@@ -83,7 +97,7 @@ export const usePaginatedArrows = (): UsePaginatedArrowsReturn => {
     } else if (shouldShow) {
       dispatch(setHasArrows(true));
     }
-  }, [toImmersive, toFullscreen, toUserNavigation, fromImmersive, fromFullscreen, fromScroll, discard, hint, prevVariant, variant, dispatch]);
+  }, [toImmersive, toFullscreen, toUserNavigation, fromImmersive, fromFullscreen, fromScroll, discard, hint, prevVariant, variant, prevDiscard, dispatch]);
 
   // Early return for special cases
   if (variant === ThArrowVariant.none || isScroll) {
