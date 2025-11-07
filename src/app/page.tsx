@@ -14,28 +14,28 @@ const books = [
     author: "Herman Melville",
     cover: "/images/MobyDick.jpg",
     url: "/read/moby-dick",
-    rendition: "Reflowable"
+    rendition: "Reflowable EPUB"
   },
   {
     title: "The House of the Seven Gables",
     author: "Nathaniel Hawthorne",
     cover: "/images/TheHouseOfTheSevenGables.jpg",
     url: "/read/the-house-of-seven-gables",
-    rendition: "Reflowable"
+    rendition: "Reflowable EPUB"
   },
   {
     title: "Les Diaboliques",
     author: "Jules Barbey d'Aurevilly",
     cover: "/images/LesDiaboliques.png",
     url: "/read/les-diaboliques",
-    rendition: "Reflowable"
+    rendition: "Reflowable EPUB"
   },
   {
     title: "Bella the Dragon",
     author: "Barbara Nick, Elaine Steckler",
     cover: "/images/Bella.jpg",
     url: "/read/bella-the-dragon",
-    rendition: "Fixed Layout"
+    rendition: "Fixed-Layout EPUB"
   }
 ];
 
@@ -45,14 +45,14 @@ const onlineBooks = [
     author: "Matt Garrish",
     cover: "/images/accessibleEpub3.jpg",
     url: "/read/manifest/https%3A%2F%2Fpublication-server.readium.org%2Fwebpub%2FaHR0cHM6Ly9naXRodWIuY29tL0lEUEYvZXB1YjMtc2FtcGxlcy9yZWxlYXNlcy9kb3dubG9hZC8yMDIzMDcwNC9hY2Nlc3NpYmxlX2VwdWJfMy5lcHVi%2Fmanifest.json",
-    rendition: "Reflowable"
+    rendition: "Reflowable EPUB"
   },
   {
     title: "Children Literature",
     author: "Charles Madison Curry, Erle Elsworth Clippinger",
     cover: "/images/ChildrensLiterature.png",
     url: "/read/manifest/https%3A%2F%2Fpublication-server.readium.org%2Fwebpub%2FaHR0cHM6Ly9naXRodWIuY29tL0lEUEYvZXB1YjMtc2FtcGxlcy9yZWxlYXNlcy9kb3dubG9hZC8yMDIzMDcwNC9jaGlsZHJlbnMtbGl0ZXJhdHVyZS5lcHVi%2Fmanifest.json",
-    rendition: "Reflowable"
+    rendition: "Reflowable EPUB"
   }
 ];
 
@@ -62,7 +62,7 @@ const webPublications = [
     author: "Jiminy Panoz",
     cover: "/images/readium-css.jpg",
     url: "/read/experimental/readium-css",
-    rendition: "Reflowable"
+    rendition: "Web Publication"
   }
 ];
 
