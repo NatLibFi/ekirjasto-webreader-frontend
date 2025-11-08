@@ -164,11 +164,11 @@
             "fontFamily": {
                 "title": "Tipo de letra",
                 "labels": {
-                    "publisher": "Tipo do editor",
-                    "oldStyle": "Serif clássico",
-                    "modern": "Serif moderno",
-                    "sans": "Sem serifas",
-                    "humanist": "Humanista",
+                    "publisher": "Fonte do editor",
+                    "oldStyle": "Serifa clássica",
+                    "modern": "Serifa moderna",
+                    "sans": "Sem serifa",
+                    "humanist": "Humanista sem serifa",
                     "monospace": "Monoespaçado"
                 }
             },
@@ -185,8 +185,8 @@
             },
             "paraSpacing": {
                 "title": "Espaçamento entre parágrafos",
-                "increase": "Aumentar espaçamento",
-                "decrease": "Diminuir espaçamento"
+                "increase": "Aumentar espaçamento entre parágrafos",
+                "decrease": "Diminuir espaçamento entre parágrafos"
             },
             "paraIndent": {
                 "title": "Indentação do parágrafo",
@@ -195,13 +195,13 @@
             },
             "wordSpacing": {
                 "title": "Espaçamento entre palavras",
-                "increase": "Aumentar espaçamento",
-                "decrease": "Diminuir espaçamento"
+                "increase": "Aumentar espaçamento entre palavras",
+                "decrease": "Diminuir espaçamento entre palavras"
             },
             "letterSpacing": {
                 "title": "Espaçamento entre letras",
-                "increase": "Aumentar espaçamento",
-                "decrease": "Diminuir espaçamento"
+                "increase": "Aumentar espaçamento entre letras",
+                "decrease": "Diminuir espaçamento entre letras"
             },
             "publisherStyles": {
                 "label": "Utilizar formatação original"
