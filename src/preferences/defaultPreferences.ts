@@ -338,18 +338,13 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
         }
       },
       fxl: {
+        // Note FXL arrows are always layered
+        // FXL navigator is using the window width to calculate the layout
+        // so we need to force the layered variant to prevent layout issues
         default: {
           variant: ThArrowVariant.layered,
           discard: ["navigation"],
           hint: "none"
-        },
-        breakpoints: {
-          [ThBreakpoints.large]: {
-            variant: ThArrowVariant.stacked
-          },
-          [ThBreakpoints.xLarge]: {
-            variant: ThArrowVariant.stacked
-          }
         }
       }
     }

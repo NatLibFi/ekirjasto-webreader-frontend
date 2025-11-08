@@ -147,6 +147,9 @@ The configuration object can have the following properties:
     - `"fullscreenChange"`: Show when exiting fullscreen
     - `"layoutChange"`: Show when layout changes from scroll to paginated
 
+> [!NOTE]
+> FXL arrows `variant` is always `layered`, no matter the configuration. FXL navigator is using the window width to calculate the layout, so we need to force the layered variant to prevent layout issues at the time being.
+
 For instance:
 
 ```
