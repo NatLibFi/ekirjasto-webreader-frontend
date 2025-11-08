@@ -175,7 +175,7 @@
             "fontWeight": {
                 "title": "Espessura do tipo de letra",
                 "default": "Normal",
-                "bolder": "Mais negrito",
+                "bolder": "Negrito",
                 "increase": "Aumentar espessura",
                 "decrease": "Diminuir espessura"
             },
