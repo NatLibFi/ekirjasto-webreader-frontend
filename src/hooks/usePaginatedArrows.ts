@@ -16,6 +16,7 @@ export interface UsePaginatedArrowsReturn {
   isVisible: boolean;
   occupySpace: boolean;
   shouldTrackNavigation: boolean;
+  supportsVariant: boolean;
 }
 
 export const usePaginatedArrows = (): UsePaginatedArrowsReturn => {
@@ -37,19 +38,42 @@ export const usePaginatedArrows = (): UsePaginatedArrowsReturn => {
 
   const dispatch = useAppDispatch();
 
-  // Get preferences
-  const { variant, discard, hint } = useMemo(() => {
-    const prefs = isFXL 
+  // Memoize the prefs object to avoid recreating it on every render
+  const prefs = useMemo(() => 
+    isFXL 
       ? preferences.affordances.paginated.fxl 
-      : preferences.affordances.paginated.reflow;
-    const prefsMap = makeBreakpointsMap<ThPaginatedAffordancePrefValue>({
+      : preferences.affordances.paginated.reflow,
+    [isFXL, preferences.affordances.paginated.fxl, preferences.affordances.paginated.reflow]
+  );
+
+  // Memoize the breakpoints map to avoid recreating it on every breakpoint change
+  const prefsMap = useMemo(() => 
+    makeBreakpointsMap<ThPaginatedAffordancePrefValue>({
       defaultValue: prefs.default,
       fromEnum: ThArrowVariant,
       pref: prefs.breakpoints,
       validateKey: "variant"
-    });
-    return prefsMap[breakpoint as keyof typeof prefsMap] || prefs.default;
-  }, [breakpoint, isFXL, preferences]);
+    }),
+    [prefs.default, prefs.breakpoints]
+  );
+
+  // Get the current preferences based on breakpoint
+  const { variant, discard, hint } = useMemo(() => {
+    // Get the current prefs for the breakpoint or fallback to default
+    const result = prefsMap[breakpoint as keyof typeof prefsMap] || prefs.default;
+    
+    // Force layered variant for FXL to prevent layout issues
+    // FXL navigator is using the window width to calculate the layout
+    // so we need to force the layered variant to prevent layout issues
+    if (isFXL) {
+      return {
+        ...result,
+        variant: ThArrowVariant.layered
+      };
+    }
+    
+    return result;
+  }, [breakpoint, prefsMap, isFXL, prefs.default]);
 
   // Track previous prefs
   const prevVariant = usePrevious(variant);
@@ -104,13 +128,15 @@ export const usePaginatedArrows = (): UsePaginatedArrowsReturn => {
     return {
       isVisible: false,
       occupySpace: false,
-      shouldTrackNavigation: false
+      shouldTrackNavigation: false,
+      supportsVariant: !isFXL
     };
   }
 
   return {
     isVisible: hasArrows,
     occupySpace: variant === ThArrowVariant.stacked,
-    shouldTrackNavigation: Array.isArray(discard) && discard.includes("navigation")
+    shouldTrackNavigation: Array.isArray(discard) && discard.includes("navigation"),
+    supportsVariant: !isFXL
   };
 };
