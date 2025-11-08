@@ -73,6 +73,7 @@ Settings components provide user configuration options:
 
 ### Base Components
 - `StatefulGroupWrapper`: Wrapper for settings groups
+- `StatefulDropdown`: Dropdown menu with selectable options
 - `StatefulNumberField`: Numeric input field
 - `StatefulRadioGroup`: Radio button group
 - `StatefulSlider`: Slider control

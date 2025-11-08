@@ -3,18 +3,21 @@
 import readerSharedUI from "../assets/styles/readerSharedUI.module.css";
 import settingsStyles from "./assets/styles/settings.module.css";
 
+import { WithRef } from "@/core/Components/customTypes";
+
 import { ThSettingsGroupPref, ThSpacingSettingsKeys, ThTextSettingsKeys } from "@/preferences";
 import { PressEvent } from "react-aria";
+
 import { SettingComponent } from "@/components/Plugins/PluginRegistry";
 
 import { ThSettingsWrapper } from "@/core/Components/Settings/ThSettingsWrapper";
-
+import { Heading, HeadingProps } from "react-aria-components";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 
 import classNames from "classnames";
 
 export interface StatefulGroupWrapperProps<T extends string = ThTextSettingsKeys | ThSpacingSettingsKeys> {
-  heading: string;
+  label: string;
   moreLabel: string;
   moreTooltip: string;
   onPressMore: (e: PressEvent) => void;
@@ -24,16 +27,27 @@ export interface StatefulGroupWrapperProps<T extends string = ThTextSettingsKeys
     main: T[];
     subPanel: T[];
   };
+  isDisabled?: boolean;
+  compounds?: {
+    /** 
+     * Custom heading. Can be either:
+     * - A React element that will be rendered directly
+     * - Props that will be spread onto the default Heading component
+     */
+    heading?: React.ReactElement<typeof Heading> | WithRef<HeadingProps, HTMLHeadingElement>;
+  };
 }
 
 export const StatefulGroupWrapper = <T extends string = ThTextSettingsKeys | ThSpacingSettingsKeys>({
-  heading,
+  label,
   moreLabel,
   moreTooltip,
   onPressMore,
   componentsMap,
   prefs,
-  defaultPrefs
+  defaultPrefs,
+  isDisabled,
+  compounds
 }: StatefulGroupWrapperProps<T>) => {
   const { preferences } = usePreferences();
   
@@ -51,23 +65,28 @@ export const StatefulGroupWrapper = <T extends string = ThTextSettingsKeys | ThS
     <>
     <ThSettingsWrapper
       className={ classNames(settingsStyles.readerSettingsGroup, settingsStyles.readerSettingsAdvancedGroup) }
+      label={ label }
       items={ componentsMap }
       prefs={ resolvedPrefs }
       compounds={{
-        label: heading,
-        heading: {
-          className: classNames(settingsStyles.readerSettingsLabel, settingsStyles.readerSettingsGroupLabel)
-        },
-        button: {
-          className: classNames(readerSharedUI.icon, settingsStyles.readerSettingsAdvancedIcon),
-          "aria-label": moreLabel,
-          compounds: {
-            tooltipTrigger: {
-              delay: preferences.theming.icon.tooltipDelay,
-              closeDelay: preferences.theming.icon.tooltipDelay
-            },
-            tooltip: {
-              className: readerSharedUI.tooltip,
+        ...(compounds?.heading 
+          ? { heading: compounds.heading }
+          : {
+              heading: {
+                className: classNames(settingsStyles.readerSettingsLabel, settingsStyles.readerSettingsGroupLabel)
+              }
+            }),
+        button: { 
+          className: classNames(readerSharedUI.icon, settingsStyles.readerSettingsAdvancedIcon), 
+          "aria-label": moreLabel, 
+          isDisabled: isDisabled, 
+          compounds: { 
+            tooltipTrigger: { 
+              delay: preferences.theming.icon.tooltipDelay, 
+              closeDelay: preferences.theming.icon.tooltipDelay 
+            }, 
+            tooltip: { 
+              className: readerSharedUI.tooltip, 
               placement: "top",
               offset: preferences.theming.icon.tooltipOffset || 0
             },

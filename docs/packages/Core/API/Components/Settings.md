@@ -187,7 +187,7 @@ interface ThSettingsWrapperProps extends HTMLAttributesWithRef<HTMLDivElement> {
   prefs: ThSettingsPrefs;                         // Display preferences
   compounds?: {
     label?: string;                               // Advanced settings label
-    heading?: HeadingProps;                       // Props for heading
+    heading?: React.ReactElement<typeof Heading> | WithRef<HeadingProps, HTMLHeadingElement>;  // Custom heading element or props for the default Heading component
     button?: ThActionButtonProps;                 // Props for advanced settings button
   }
 }
