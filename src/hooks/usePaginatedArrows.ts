@@ -16,6 +16,7 @@ export interface UsePaginatedArrowsReturn {
   isVisible: boolean;
   occupySpace: boolean;
   shouldTrackNavigation: boolean;
+  supportsVariant: boolean;
 }
 
 export const usePaginatedArrows = (): UsePaginatedArrowsReturn => {
@@ -37,28 +38,65 @@ export const usePaginatedArrows = (): UsePaginatedArrowsReturn => {
 
   const dispatch = useAppDispatch();
 
-  // Get preferences
-  const { variant, discard, hint } = useMemo(() => {
-    const prefs = isFXL 
+  // Memoize the prefs object to avoid recreating it on every render
+  const prefs = useMemo(() => 
+    isFXL 
       ? preferences.affordances.paginated.fxl 
-      : preferences.affordances.paginated.reflow;
-    const prefsMap = makeBreakpointsMap<ThPaginatedAffordancePrefValue>({
+      : preferences.affordances.paginated.reflow,
+    [isFXL, preferences.affordances.paginated.fxl, preferences.affordances.paginated.reflow]
+  );
+
+  // Memoize the breakpoints map to avoid recreating it on every breakpoint change
+  const prefsMap = useMemo(() => 
+    makeBreakpointsMap<ThPaginatedAffordancePrefValue>({
       defaultValue: prefs.default,
       fromEnum: ThArrowVariant,
       pref: prefs.breakpoints,
       validateKey: "variant"
-    });
-    return prefsMap[breakpoint as keyof typeof prefsMap] || prefs.default;
-  }, [breakpoint, isFXL, preferences]);
+    }),
+    [prefs.default, prefs.breakpoints]
+  );
 
-  // Track previous variant
+  // Get the current preferences based on breakpoint
+  const { variant, discard, hint } = useMemo(() => {
+    // Get the current prefs for the breakpoint or fallback to default
+    const result = prefsMap[breakpoint as keyof typeof prefsMap] || prefs.default;
+    
+    // Force layered variant for FXL to prevent layout issues
+    // FXL navigator is using the window width to calculate the layout
+    // so we need to force the layered variant to prevent layout issues
+    if (isFXL) {
+      return {
+        ...result,
+        variant: ThArrowVariant.layered
+      };
+    }
+    
+    return result;
+  }, [breakpoint, prefsMap, isFXL, prefs.default]);
+
+  // Track previous prefs
   const prevVariant = usePrevious(variant);
+  const prevDiscard = usePrevious(discard);
 
   // Handle state transitions
   useEffect(() => {
-    // Reset hasArrows when changing from "none" to "stacked" or "layered"
+    // If navigation was just added to discard, reset navigation state
+    if (!prevDiscard?.includes("navigation") && discard?.includes("navigation")) {
+      dispatch(setUserNavigated(false));
+      return;
+    }
+    
+    // If discard changed to "none", show the arrows and reset navigation state
+    if (discard === "none" && prevDiscard !== "none") {
+      dispatch(setHasArrows(true));
+      dispatch(setUserNavigated(false));
+      return;
+    }
+    // Reset when changing from "none" to "stacked" or "layered"
     if (prevVariant === ThArrowVariant.none && variant !== ThArrowVariant.none) {
       dispatch(setHasArrows(true));
+      dispatch(setUserNavigated(false));
       return;
     }
 
@@ -83,20 +121,22 @@ export const usePaginatedArrows = (): UsePaginatedArrowsReturn => {
     } else if (shouldShow) {
       dispatch(setHasArrows(true));
     }
-  }, [toImmersive, toFullscreen, toUserNavigation, fromImmersive, fromFullscreen, fromScroll, discard, hint, prevVariant, variant, dispatch]);
+  }, [toImmersive, toFullscreen, toUserNavigation, fromImmersive, fromFullscreen, fromScroll, discard, hint, prevVariant, variant, prevDiscard, dispatch]);
 
   // Early return for special cases
   if (variant === ThArrowVariant.none || isScroll) {
     return {
       isVisible: false,
       occupySpace: false,
-      shouldTrackNavigation: false
+      shouldTrackNavigation: false,
+      supportsVariant: !isFXL
     };
   }
 
   return {
     isVisible: hasArrows,
     occupySpace: variant === ThArrowVariant.stacked,
-    shouldTrackNavigation: Array.isArray(discard) && discard.includes("navigation")
+    shouldTrackNavigation: Array.isArray(discard) && discard.includes("navigation"),
+    supportsVariant: !isFXL
   };
 };
