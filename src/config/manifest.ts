@@ -14,7 +14,3 @@ export const MANIFEST_CONFIG = {
   // Requires allowedDomains to be set
   forceEnable: process.env.NEXT_PUBLIC_MANIFEST_FORCE_ENABLE === "true"
 } as const;
-
-export const ENV_CONFIG = {
-  backLinkUrl: process.env.NEXT_PUBLIC_HOME || "error",
-} as const
