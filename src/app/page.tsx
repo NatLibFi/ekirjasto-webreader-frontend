@@ -58,7 +58,7 @@ const onlineBooks = [
 export default function Home() {
   return (
     <main id="home">
-      <header className="header">
+      {/* <header className="header">
         <h1>Welcome to Thorium Web</h1>
 
         <p className="subtitle">An open-source ebook/audiobook/comics Web Reader</p>
@@ -96,7 +96,7 @@ export default function Home() {
           />
         </div>
         </>
-      ) }
+      ) } */}
     </main>
   );
 }
