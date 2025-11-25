@@ -89,6 +89,16 @@ const nextConfig = {
             key: "Access-Control-Allow-Headers",
             value: "Content-Type",
           },
+          { 
+            key: "Cache-Control",
+            value: "no-store, no-cache, must-revalidate, private",
+          },
+          { 
+            key: "Pragma", 
+            value: "no-cache" },
+          { 
+            key: "Expires",
+            value: "0" },
         ],
       },
     ];
