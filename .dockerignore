@@ -1,0 +1,49 @@
+# Node / pnpm
+node_modules
+npm-debug.log
+pnpm-debug.log
+.pnpm-store
+.pnpm-debug.log
+
+# Build outputs
+.next
+.out
+dist
+build
+
+# Git
+.git
+.gitignore
+.gitattributes
+.gitmodules
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+
+# Logs
+logs
+*.log
+
+# Optional: large assets (if not needed in build)
+public/demo-epubs/
+public/assets/large/
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yaml
+
+# Misc
+README.md
