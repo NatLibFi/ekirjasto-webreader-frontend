@@ -11,26 +11,146 @@ import {
   ThSheetTypes, 
   ThThemeKeys,  
   ThLayoutDirection,
-  ThLineHeightOptions,
   ThTextSettingsKeys,
   ThSheetHeaderVariant,
   ThLayoutUI,
-  ThBackLinkVariant
+  ThBackLinkVariant,
+  ThProgressionFormat,
+  ThRunningHeadFormat,
+  ThDocumentTitleFormat,
+  ThArrowVariant,
 } from "./models/enums";
-import { createPreferences } from "./preferences";
+import { createPreferences, ThPreferences, DefaultKeys } from "./preferences";
 
 import ReadiumCSSColors from "@readium/css/css/vars/colors.json";
+import { 
+  defaultLetterSpacing, 
+  defaultLineHeights, 
+  defaultParagraphIndent, 
+  defaultParagraphSpacing, 
+  defaultSpacingPresets, 
+  defaultSpacingPresetsOrder, 
+  defaultWordSpacing, 
+  defaultZoom
+} from "./models/const";
 
-export const eKirjastoPreferences = createPreferences({
+export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<DefaultKeys>({
 //  direction: ThLayoutDirection.ltr,
 //  locale: "en",
+  metadata: {
+    documentTitle: {
+      format: ThDocumentTitleFormat.title
+    }
+  },
   typography: {
     minimalLineLength: 40, // undefined | null | number of characters. If 2 cols will switch to 1 based on this
-    optimalLineLength: 65, // number of characters. If auto layout, picks colCount based on this
-    maximalLineLength: 75, // undefined | null | number of characters.
+    optimalLineLength: 55, // number of characters. If auto layout, picks colCount based on this
+    maximalLineLength: 70, // undefined | null | number of characters.
     pageGutter: 20
   },
   theming: {
+    header: {
+      backLink: {
+        variant: ThBackLinkVariant.arrow,
+        visibility: "partially",
+        href: "/"
+      },
+      runningHead: {
+        format: {
+          reflow: {
+            default: {
+              variants: ThRunningHeadFormat.chapter,
+              displayInImmersive: true,
+              displayInFullscreen: false
+            },
+            breakpoints: {
+              [ThBreakpoints.compact]: {
+                variants: ThRunningHeadFormat.chapter,
+                displayInImmersive: false,
+                displayInFullscreen: false
+              }
+            }
+          },
+          fxl: {
+            default: {
+              variants: ThRunningHeadFormat.title,
+              displayInImmersive: true,
+              displayInFullscreen: true
+            },
+            breakpoints: {
+              [ThBreakpoints.compact]: {
+                variants: ThRunningHeadFormat.title,
+                displayInImmersive: false,
+                displayInFullscreen: true
+              }
+            }
+          },
+          webPub: {
+            default: {
+              variants: ThRunningHeadFormat.chapter,
+              displayInImmersive: true,
+              displayInFullscreen: true
+            }
+          }
+        }
+      }
+    },
+    progression: {
+      format: {
+        reflow: {
+          default: {
+            variants: [
+              ThProgressionFormat.positionsPercentOfTotal,
+              ThProgressionFormat.progressionOfResource
+            ],
+            displayInImmersive: true,
+            displayInFullscreen: false
+          },
+          breakpoints: {
+            [ThBreakpoints.compact]: {
+              variants: [
+                ThProgressionFormat.positionsOfTotal, 
+                ThProgressionFormat.resourceProgression
+              ],
+              displayInImmersive: false,
+              displayInFullscreen: false
+            }
+          }
+        },
+        fxl: {
+          default: {
+            variants: [
+              ThProgressionFormat.positionsOfTotal, 
+              ThProgressionFormat.overallProgression,
+              ThProgressionFormat.none
+            ],
+            displayInImmersive: true,
+            displayInFullscreen: true
+          },
+          breakpoints: {
+            [ThBreakpoints.compact]: {
+              variants: [
+                ThProgressionFormat.positions, 
+                ThProgressionFormat.overallProgression,
+                ThProgressionFormat.none
+              ],
+              displayInImmersive: false,
+              displayInFullscreen: true
+            }
+          }
+        },
+        webPub: {
+          default: {
+            variants: [
+              ThProgressionFormat.readingOrderIndex, 
+              ThProgressionFormat.none
+            ],
+            displayInImmersive: true,
+            displayInFullscreen: true
+          }
+        }
+      }
+    },
     arrow: {
       size: 40, // Size of the left and right arrows in px
       offset: 5 // offset of the arrows from the edges in px
@@ -42,7 +162,8 @@ export const eKirjastoPreferences = createPreferences({
     layout: {
       ui: {
         reflow: ThLayoutUI.layered,
-        fxl: ThLayoutUI.layered
+        fxl: ThLayoutUI.layered,
+        webPub: ThLayoutUI.stacked
       },
       radius: 5, // border-radius of containers
       spacing: 20, // padding of containers/sheets
@@ -53,7 +174,7 @@ export const eKirjastoPreferences = createPreferences({
       constraints: {
         [ThSheetTypes.bottomSheet]: 600, // Max-width of all bottom sheets
         [ThSheetTypes.popover]: 600, // Max-width of all popover sheets
-        pagination: null // Max-width of pagination component
+        pagination: 1024 // Max-width of pagination component
       }
     },
     breakpoints: {
@@ -191,21 +312,41 @@ export const eKirjastoPreferences = createPreferences({
           immerse: "0.45"
         }
       }
-    }
+    },
   },
-  affordances: {
+  affordances: { 
     scroll: {
       hintInImmersive: true,
-      toggleOnMiddlePointer: ["tap"],
+      toggleOnMiddlePointer: ["tap", "click"],
       hideOnForwardScroll: true,
       showOnBackwardScroll: true
-    }
-  },
-  header: {
-    backLink: {
-      variant: ThBackLinkVariant.arrow,
-      visibility: "partially",
-      href: "/"
+    },
+    paginated: {
+      reflow: {
+        default: {
+          variant: ThArrowVariant.layered,
+          discard: ["navigation"],
+          hint: ["layoutChange"]
+        },
+        breakpoints: {
+          [ThBreakpoints.large]: {
+            variant: ThArrowVariant.stacked
+          },
+          [ThBreakpoints.xLarge]: {
+            variant: ThArrowVariant.stacked
+          }
+        }
+      },
+      fxl: {
+        // Note FXL arrows are always layered
+        // FXL navigator is using the window width to calculate the layout
+        // so we need to force the layered variant to prevent layout issues
+        default: {
+          variant: ThArrowVariant.layered,
+          discard: ["navigation"],
+          hint: "none"
+        }
+      }
     }
   },
   shortcuts: {
@@ -224,6 +365,11 @@ export const eKirjastoPreferences = createPreferences({
       ThActionsKeys.toc,
       ThActionsKeys.fullscreen,
       ThActionsKeys.jumpToPosition
+    ],
+    webPubOrder: [
+      ThActionsKeys.settings,
+      ThActionsKeys.toc,
+      ThActionsKeys.fullscreen
     ],
     collapse: {
       // Number of partially icons to display
@@ -336,29 +482,32 @@ export const eKirjastoPreferences = createPreferences({
       ThSettingsKeys.theme,
       ThSettingsKeys.columns
     ],
+    webPubOrder: [
+      ThSettingsKeys.zoom,
+      ThSettingsKeys.textGroup,
+      ThSettingsKeys.spacingGroup
+    ],
     keys: {
+      [ThSettingsKeys.letterSpacing]: defaultLetterSpacing,
       [ThSettingsKeys.lineHeight]: {
-        [ThLineHeightOptions.small]: 1.3,
-        [ThLineHeightOptions.medium]: 1.5,
-        [ThLineHeightOptions.large]: 1.75
+        allowUnset: false,
+        keys: defaultLineHeights
       },
-      [ThSettingsKeys.zoom]: {
-        range: [0.7, 4],
-        step: 0.05
-      }
+      [ThSettingsKeys.paragraphIndent]: defaultParagraphIndent,
+      [ThSettingsKeys.paragraphSpacing]: defaultParagraphSpacing,
+      [ThSettingsKeys.wordSpacing]: defaultWordSpacing,
+      [ThSettingsKeys.zoom]: defaultZoom
     },
     text: {
-      header: ThSheetHeaderVariant.previous,
-      subPanel: [
-        ThTextSettingsKeys.fontFamily,
-        ThTextSettingsKeys.fontWeight,
-        ThTextSettingsKeys.textAlign,
-        ThTextSettingsKeys.hyphens,
-        ThTextSettingsKeys.textNormalize
-      ]
+      header: ThSheetHeaderVariant.previous
     },
     spacing: {
       header: ThSheetHeaderVariant.previous,
+      presets: {
+        reflowOrder: defaultSpacingPresetsOrder,
+        webPubOrder: defaultSpacingPresetsOrder,
+        keys: defaultSpacingPresets
+      }
     }
   }
 })
