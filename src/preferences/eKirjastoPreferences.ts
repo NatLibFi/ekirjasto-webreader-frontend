@@ -34,7 +34,7 @@ import {
   defaultZoom
 } from "./models/const";
 
-export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<DefaultKeys>({
+export const eKirjastoPreferences: ThPreferences<DefaultKeys> = createPreferences<DefaultKeys>({
 //  direction: ThLayoutDirection.ltr,
 //  locale: "en",
   metadata: {
