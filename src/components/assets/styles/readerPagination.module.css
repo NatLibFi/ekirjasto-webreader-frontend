@@ -3,7 +3,7 @@
   display: grid;
   gap: calc(var(--layout-spacing) / 2);
   grid-template-areas: "pagination-start pagination-center pagination-end";
-  grid-template-columns: 1fr minmax(auto, 1fr) 1fr;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   background-color: var(--theme-background);
   color: var(--theme-text);
   align-items: center;
@@ -18,14 +18,17 @@
 
 .paginationListItem:has(.previousButton) {
   grid-area: pagination-start;
+  justify-self: start;
 }
 
 .paginationListItem:has(.progression) {
   grid-area: pagination-center;
+  justify-self: center;
 }
 
 .paginationListItem:has(.nextButton) {
   grid-area: pagination-end;
+  justify-self: end;
 }
 
 .paginationListItem button {

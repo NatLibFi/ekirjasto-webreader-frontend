@@ -4,6 +4,8 @@ The `theming` property is responsible for the look and feel of the app, as it al
 
 - breakpoints;
 - layout UI, defaults and constraints;
+- header’s back link;
+- progression;
 - arrows and icons; 
 - themes.
 
@@ -83,6 +85,189 @@ This means:
 - the default scrim is color black with `20%` alpha;
 - the bottom sheets are constrained to `600px`, unless overridden for an action;
 - the popover sheets are constrained to `400px`.
+
+## Header
+
+The `header` preference allows you to configure the header of the reader. It accepts the following properties:
+
+- `backLink`: The back link configuration
+- `runningHead`: The running head format
+
+### BackLink
+
+The `backLink` preference allows you to configure the back button in the header. It accepts the following properties:
+
+- `href`: (string) The URL to navigate to when the back button is clicked
+- `visibility`: Visibility of the back button. If `always`, the back button will be always visible. If `partially`, the back button will be hidden in immersive mode. It is `partially` by default.
+- `variant?`: Variant for the back link. Can be one of enum `ThBackLinkVariant`:
+  - `arrow`: Shows an arrow icon (the default if `undefined`)
+  - `home`: Shows a home icon
+  - `library`: Shows a library/books icon
+  - `custom`: Use with `content` to provide a custom icon
+- `content?`: Optional custom content for the back button when `variant` is set to `custom`. Can be either:
+  - An image with `{ type: "img"; src: string; alt?: string }`
+  - An SVG with `{ type: "svg"; content: string }` with the `content` string being the raw inline SVG markup
+
+For example:
+
+```typescript
+theming: {
+  ...
+  header: {
+    backLink: {
+      href: "/library",
+      variant: ThBackLinkVariant.custom,
+      visibility: "always",
+      content: {
+        type: "img",
+        src: "/path/to/custom-icon.png",
+        alt: "Back to Library"
+      }
+    }
+  }
+}
+```
+
+Or for a simple home button:
+
+```typescript
+theming: {
+  ...
+  header: {
+    backLink: {
+      href: "/",
+      variant: ThBackLinkVariant.home
+    }
+  }
+}
+```
+
+If `backLink` is `undefined` or `null`, then the back button will not be rendered.
+
+### Running Head
+
+The `runningHead` preference allows you to configure the running head format in the header. It accepts the following properties:
+
+- `format`: Format of the running head, with properties for both reflowable and fixed-layout EPUBs:
+  - `reflow`: Configuration for reflowable EPUBs
+  - `fxl`: Configuration for Fixed-Layout EPUBs
+
+Both `reflow` and `fxl` share the same structure:
+- `default`: Default format configuration
+  - `variants`: The format variant to use (e.g., `ThRunningHeadFormat.chapter` or `ThRunningHeadFormat.title`)
+  - `displayInImmersive`: Whether to show in immersive mode (default: `true`)
+  - `displayInFullscreen`: Whether to show in fullscreen mode (default: `false` for reflow, `true` for fxl)
+- `breakpoints` (optional): Breakpoint-specific configurations
+  - `[breakpoint]`: Breakpoint name (e.g., `ThBreakpoints.compact`)
+    - `variants`: Format variant for this breakpoint
+    - `displayInImmersive`: Whether to show in immersive mode for this breakpoint
+    - `displayInFullscreen`: Whether to show in fullscreen mode for this breakpoint
+
+Available `ThRunningHeadFormat` variants:
+- `title`: Displays the publication title
+- `chapter`: Displays the current chapter/section title
+- `none`: Hides the running head display
+
+Example configuration:
+
+```typescript
+theming: {
+  header: {
+    runningHead: {
+      format: {
+        reflow: {
+          default: {
+            variants: ThRunningHeadFormat.chapter,
+            displayInImmersive: true,
+            displayInFullscreen: false
+          },
+          breakpoints: {
+            [ThBreakpoints.compact]: {
+              variants: ThRunningHeadFormat.chapter,
+              displayInImmersive: false
+            }
+          }
+        },
+        fxl: {
+          default: {
+            variants: ThRunningHeadFormat.title,
+            displayInFullscreen: true
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+## Progression
+
+The `progression` preference allows you to configure the progression display format. It accepts the following properties:
+
+- `format`: Format of the progression display, with properties for both reflowable and fixed-layout EPUBs:
+  - `reflow`: Configuration for reflowable EPUBs
+  - `fxl`: Configuration for Fixed-Layout EPUBs
+
+Both `reflow` and `fxl` share the same structure:
+- `default`: Default format configuration
+  - `variants`: The format variant(s) to use (e.g., `ThProgressionFormat.positionsPercentOfTotal` or an array of formats)
+  - `displayInImmersive`: Whether to show in immersive mode
+  - `displayInFullscreen`: Whether to show in fullscreen mode
+- `breakpoints` (optional): Breakpoint-specific configurations
+  - `[breakpoint]`: Breakpoint name (e.g., `ThBreakpoints.compact`)
+    - `variants`: Format variant(s) for this breakpoint
+    - `displayInImmersive`: Whether to show in immersive mode for this breakpoint
+    - `displayInFullscreen`: Whether to show in fullscreen mode for this breakpoint
+
+Available `ThProgressionFormat` variants:
+- `positionsPercentOfTotal`: "x-y of z (%)" (e.g. "25 of 50 (50%)")
+- `positionsOfTotal`: "x-y of z" (e.g. "10-12 of 50")
+- `positions`: "x-y" (e.g. "10-12")
+- `overallProgression`: "x%" (e.g. "25%")
+- `positionsLeft`: "x left in chapter" (e.g. "5 left in Chapter 1")
+- `readingOrderIndex`: "x of y" (e.g. "1 of 5")
+- `resourceProgression`: "x%" (e.g. "75%")
+- `progressionOfResource`: "x% of y" (e.g. "75% of Chapter 1")
+- `none`: Hides the progression display
+
+Example configuration:
+
+```typescript
+theming: {
+  progression: {
+    format: {
+      reflow: {
+        default: {
+          variants: [
+            ThProgressionFormat.positionsPercentOfTotal,
+            ThProgressionFormat.progressionOfResource
+          ],
+          displayInImmersive: true,
+          displayInFullscreen: false
+        },
+        breakpoints: {
+          [ThBreakpoints.compact]: {
+            variants: [
+              ThProgressionFormat.positionsOfTotal,
+              ThProgressionFormat.resourceProgression
+            ],
+            displayInImmersive: false
+          }
+        }
+      },
+      fxl: {
+        default: {
+          variants: [
+            ThProgressionFormat.positionsOfTotal,
+            ThProgressionFormat.overallProgression
+          ],
+          displayInFullscreen: true
+        }
+      }
+    }
+  }
+}
+```
 
 ## Arrows and icons
 
@@ -171,6 +356,7 @@ theming: {
     }
   }
 }
+```
 
 If you do not, the `auto` theme will not be rendered. In case it was previously selected, it will be set to the first theme in the `fxlOrder` array – excluding value `auto`.
 

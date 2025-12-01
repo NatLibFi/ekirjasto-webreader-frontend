@@ -5,14 +5,16 @@ import React, { useCallback, useEffect, useRef } from "react";
 import readerPaginationStyles from "./assets/styles/readerPagination.module.css";
 
 import { ThBreakpoints, ThLayoutUI } from "@/preferences/models/enums";
+import { ThFormatPref } from "@/preferences";
+import { ThProgressionFormat } from "@/preferences/models/enums";
 
 import { ThFooter } from "@/core/Components/Reader/ThFooter";
 import { StatefulReaderProgression } from "./StatefulReaderProgression";
 import { ThInteractiveOverlay } from "../core/Components/Reader/ThInteractiveOverlay";
-import { StatefulPagination } from "./StatefulPagination";
+import { StatefulReaderPagination } from "./StatefulReaderPagination";
 import { ThPaginationLinkProps } from "@/core/Components/Reader/ThPagination";
 
-import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
+import { useNavigator } from "@/core/Navigator";
 import { useFocusWithin } from "react-aria";
 import { useI18n } from "@/i18n/useI18n";
 
@@ -20,12 +22,17 @@ import { setHovering } from "@/lib/readerReducer";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 
 export const StatefulReaderFooter = ({
-  layout
+  layout,
+  progressionFormatPref,
+  progressionFormatFallback
 }: {
   layout: ThLayoutUI;
+  progressionFormatPref?: ThFormatPref<ThProgressionFormat | ThProgressionFormat[]>;
+  progressionFormatFallback: ThProgressionFormat | ThProgressionFormat[];
 }) => {
   const { t } = useI18n();
   const footerRef = useRef<HTMLDivElement>(null);
+  const readerProfile = useAppSelector(state => state.reader.profile);
   const isImmersive = useAppSelector(state => state.reader.isImmersive);
   const isHovering = useAppSelector(state => state.reader.isHovering);
   const hasScrollAffordance = useAppSelector(state => state.reader.hasScrollAffordance);
@@ -59,7 +66,7 @@ export const StatefulReaderFooter = ({
     }
   };
 
-  const { previousLocator, nextLocator, go } = useEpubNavigator();
+  const { previousLocator, nextLocator, go } = useNavigator();
 
   const updateLinks = useCallback(() => {
     const links: { previous?: ThPaginationLinkProps; next?: ThPaginationLinkProps } = {
@@ -137,8 +144,8 @@ export const StatefulReaderFooter = ({
       onMouseLeave={ removeHover }
       { ...focusWithinProps }
     >
-      { isScroll && !isFXL
-        ? <StatefulPagination 
+      { (isScroll || readerProfile === "webPub")
+        ? <StatefulReaderPagination 
             aria-label={ t("reader.navigation.scroll.wrapper") }
             links={ updateLinks() } 
             compounds={ {
@@ -155,9 +162,16 @@ export const StatefulReaderFooter = ({
               }
             } } 
           >
-            <StatefulReaderProgression className={ readerPaginationStyles.progression } />
-          </StatefulPagination> 
-        : <StatefulReaderProgression /> }
+            <StatefulReaderProgression 
+              className={ readerPaginationStyles.progression } 
+              formatPref={ progressionFormatPref }
+              fallbackVariant={ progressionFormatFallback }
+            />
+          </StatefulReaderPagination> 
+        : <StatefulReaderProgression 
+            formatPref={ progressionFormatPref }
+            fallbackVariant={ progressionFormatFallback }
+          /> }
     </ThFooter>
     </>
   )

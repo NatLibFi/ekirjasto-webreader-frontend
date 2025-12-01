@@ -32,6 +32,7 @@ export interface UseFirstFocusableProps {
   trackedState?: boolean;
   updateState?: unknown;
   action?: Action;
+  withSelector?: string;
 }
 
 const isInViewport = (element: Element, container: Element | null = null): boolean => {
@@ -51,6 +52,9 @@ const isInViewport = (element: Element, container: Element | null = null): boole
   );
 };
 
+// WARNING: This hook is not a general purpose hook, 
+// it is specifically designed to be used with React Aria Components
+// It is not recommended to use it with other libraries or components
 export const useFirstFocusable = (props?: UseFirstFocusableProps) => {
   const { 
     withinRef, 
@@ -58,7 +62,8 @@ export const useFirstFocusable = (props?: UseFirstFocusableProps) => {
     scrollerRef, 
     trackedState, 
     updateState,
-    action = { type: "none" } // Default to no action if not provided
+    action = { type: "none" }, // Default to no action if not provided
+    withSelector
   } = props || {};
 
   // Store action in a ref to avoid triggering useEffect on action change
@@ -71,37 +76,49 @@ export const useFirstFocusable = (props?: UseFirstFocusableProps) => {
   const timeoutRef = useRef<number | null>(null);
 
   const previousUpdateState = usePrevious(updateState);
+  const previousTrackedState = usePrevious(trackedState);
 
   useEffect(() => {
-    if (!withinRef || (!trackedState && updateState === previousUpdateState)) return;
+    if (!withinRef) return;
+    
+    // If trackedState is false and updateState hasn't changed, do nothing
+    if (!trackedState && updateState === previousUpdateState) return;
+    
+    // Determine what triggered this effect
+    const isTrackedStateUpdate = trackedState && (previousTrackedState !== trackedState);
+    const isUpdateStateUpdate = updateState !== previousUpdateState;
 
     attemptsRef.current = 0;
 
     const tryFindAndHandle = () => {
       const targetElement = withinRef.current?.firstElementChild || withinRef.current;
-      const selectedEl = targetElement?.querySelector("[data-selected]");
-
       let firstFocusable: HTMLElement | null = null;
 
-      if (selectedEl === null) {
-        const inputs = targetElement?.querySelectorAll("input");
-        const input = inputs && Array.from(inputs).find(
-          (input: HTMLInputElement) => !input.disabled && input.tabIndex >= 0
-        );
-        firstFocusable = input as HTMLElement | null;
-      } else if (selectedEl instanceof HTMLElement) {
-        firstFocusable = selectedEl;
+      // Check withSelector first if provided
+      if (withSelector) {
+        firstFocusable = withinRef.current?.querySelector(withSelector) as HTMLElement | null;
+      }
+
+      // If withSelector was not provided or didn't find anything, try radio group logic
+      if (!firstFocusable && targetElement?.getAttribute("role") === "radiogroup") {
+        const selectedEl = targetElement.querySelector("[data-selected]");
+        if (selectedEl === null) {
+          const inputs = targetElement.querySelectorAll("input");
+          const input = inputs && Array.from(inputs).find(
+            (input: HTMLInputElement) => !input.disabled && input.tabIndex >= 0
+          );
+          firstFocusable = input as HTMLElement | null;
+        } else if (selectedEl instanceof HTMLElement) {
+          firstFocusable = selectedEl;
+        }
       }
 
       if (!firstFocusable) {
-        firstFocusable = withinRef.current?.querySelector("[data-selected]") as HTMLElement | null;
-      }
-
-      if (!firstFocusable) {
-        const focusableElements = withinRef.current?.querySelectorAll("a, button, input, select");
+        const focusableElements = withinRef.current?.querySelectorAll("a, button, input, select, [data-selected]");
         const element = focusableElements && Array.from(focusableElements).find(el => {
           const htmlEl = el as HTMLAnchorElement | HTMLButtonElement | HTMLInputElement | HTMLSelectElement;
           if (htmlEl instanceof HTMLAnchorElement) return true;
+          if (htmlEl.getAttribute("data-selected") === "true") return true;
           return !htmlEl.disabled && htmlEl.tabIndex >= 0;
         });
         firstFocusable = element as HTMLElement | null;
@@ -150,18 +167,42 @@ export const useFirstFocusable = (props?: UseFirstFocusableProps) => {
       }
     };
 
-    requestAnimationFrame(() => {
-      tryFindAndHandle();
-    });
+    if (isTrackedStateUpdate) {
+      // Store the initial timeout ID
+      // We need this because of the bottom sheet animation
+      // requestAnimationFrame is not enough, and trackingState
+      // from onOpenEnd does not work either for some unknown reason…
+      const initialTimeoutId = window.setTimeout(() => {
+        tryFindAndHandle();
+      }, 100);
 
-    return () => {
-      if (timeoutRef.current !== null) {
-        window.clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
-      }
-      attemptsRef.current = 0;
-    };
-  }, [withinRef, fallbackRef, scrollerRef, trackedState, previousUpdateState, updateState]);
+      return () => {
+        // Clear the initial timeout
+        clearTimeout(initialTimeoutId);
+
+        // Clear any retry timeouts
+        if (timeoutRef.current !== null) {
+          window.clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
+        attemptsRef.current = 0;
+      };
+    } else if (isUpdateStateUpdate) {
+      // For updateState changes, run immediately in the next frame
+      const rafId = requestAnimationFrame(() => {
+        tryFindAndHandle();
+      });
+
+      return () => {
+        cancelAnimationFrame(rafId);
+        if (timeoutRef.current !== null) {
+          window.clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
+        attemptsRef.current = 0;
+      };
+    }
+  }, [withinRef, fallbackRef, scrollerRef, trackedState, previousUpdateState, updateState, previousTrackedState, withSelector]);
 
   return focusableElement.current;
 };

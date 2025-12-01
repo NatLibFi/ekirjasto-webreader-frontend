@@ -6,6 +6,8 @@ const nextConfig = {
   experimental: {
     webpackBuildWorker: true,
   },
+  // Configure asset prefix for CDN or subdirectory support
+  assetPrefix: process.env.ASSET_PREFIX || undefined,
   webpack(config) {
     const fileLoaderRule = config.module.rules.find((rule) =>
       rule.test?.test?.(".svg"),
@@ -34,7 +36,7 @@ const nextConfig = {
   },
   async redirects() {
     const isProduction = process.env.NODE_ENV === "production";
-    const isManifestEnabled = !isProduction || process.env.NEXT_PUBLIC_MANIFEST_FORCE_ENABLE === "true";
+    const isManifestEnabled = !isProduction || process.env.MANIFEST_ROUTE_FORCE_ENABLE === "true";
 
     if (isProduction && !isManifestEnabled) {
       return [

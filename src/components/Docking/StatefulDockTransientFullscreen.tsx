@@ -21,7 +21,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { dockAction } from "@/lib/actionsReducer";
 
 export const StatefulDockTransientFullscreen = ({ variant, associatedKey }: StatefulActionTriggerProps) => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const { t } = useI18n();
   const actionsMap = useAppSelector(state => state.actions.keys);
   const actions = useActions(actionsMap);
@@ -44,7 +44,7 @@ export const StatefulDockTransientFullscreen = ({ variant, associatedKey }: Stat
       ? <StatefulOverflowMenuItem 
           label={ t("reader.app.docker.fullscreen.trigger") }
           SVGIcon={ Dialog } 
-          shortcut={ RSPrefs.docking.keys[ThDockingKeys.transient].shortcut }
+          shortcut={ preferences.docking.keys[ThDockingKeys.transient].shortcut }
           onAction={ handlePress } 
           id={ `${ ThDockingKeys.transient }-${ associatedKey }` } 
           isDisabled={ isDisabled }

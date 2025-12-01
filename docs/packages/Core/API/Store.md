@@ -74,7 +74,6 @@ Manages state for EPUB publication data.
 **State Interface:**
 ```typescript
 interface PublicationReducerState {
-  runningHead?: string;
   isFXL: boolean;
   isRTL: boolean;
   progression: UnstableProgressionObject;
@@ -87,7 +86,6 @@ interface PublicationReducerState {
 ```
 
 **Actions:**
-- `setRunningHead`: Set running head text
 - `setFXL`: Set publication as fixed layout
 - `setRTL`: Set publication as right-to-left
 - `setProgression`: Update progression state
@@ -160,6 +158,7 @@ interface SettingsReducerState {
 - `setLetterSpacing`: Set letter spacing
 - `setLineHeight`: Set line height
 - `setLineLength`: Set one or several line lengths (optimal, min, max)
+- `setLineLengthMultiplier`: Set line length multiplier
 - `setParagraphIndent`: Set paragraph indent
 - `setParagraphSpacing`: Set paragraph spacing
 - `setPublisherStyles`: Set publisher styles
@@ -195,3 +194,34 @@ interface ThemeReducerState {
 - `setContrast`: Set contrast preference
 - `setForcedColors`: Set forced colors mode
 - `setBreakpoint`: Set current breakpoint
+
+### Preferences Reducer
+
+Manages state for reader preferences.
+
+**State Interface:**
+```typescript
+interface PreferencesReducerState {
+  l10n?: {
+    locale?: string;
+    direction?: ThLayoutDirection;
+  };
+  progressionFormat?: RenditionObject<ThProgressionFormat | Array<ThProgressionFormat>>;
+  runningHeadFormat?: RenditionObject<ThRunningHeadFormat>;
+  ui?: RenditionObject<ThLayoutUI>;
+  scrollAffordances?: {
+    hintInImmersive?: boolean;
+    toggleOnMiddlePointer?: Array<"tap" | "click">;
+    hideOnForwardScroll?: boolean;
+    showOnBackwardScroll?: boolean;
+  };
+}
+```
+
+**Actions:**
+- `setL10n`: Update localization settings (locale and direction)
+- `setProgressionFormat`: Update progression format for reflow or FXL modes
+- `setRunningHeadFormat`: Update running head format
+- `setUI`: Update UI settings
+- `setScrollAffordances`: Configure scroll behavior
+- `updateFromPreferences`: Bulk update from a preferences object

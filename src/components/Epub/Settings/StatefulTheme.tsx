@@ -16,20 +16,22 @@ import { Radio } from "react-aria-components";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
 import { useI18n } from "@/i18n/useI18n";
+import { useGridNavigation } from "@/components/Settings/hooks/useGridNavigation";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { setActionOpen } from "@/lib/actionsReducer";
+import { setActionOpen } from "@/lib";
 import { setTheme } from "@/lib/themeReducer";
 
 import classNames from "classnames";
 import { buildThemeObject } from "@/preferences/helpers/buildThemeObject";
 
-export const StatefulTheme = ({ mapArrowNav }: { mapArrowNav?: number }) => {
+export const StatefulTheme = () => {
   const { fxlThemeKeys, reflowThemeKeys } = usePreferenceKeys();
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const { t } = useI18n();
 
   const radioGroupRef = useRef<HTMLDivElement | null>(null);
+  const radioGroupWrapperRef = useRef<HTMLDivElement | null>(null);
 
   const isFXL = useAppSelector(state => state.publication.isFXL);
   const direction = useAppSelector(state => state.reader.direction);
@@ -43,8 +45,8 @@ export const StatefulTheme = ({ mapArrowNav }: { mapArrowNav?: number }) => {
   const themeItems = useRef<(ThemeKeyType | "auto")[]>(
     themeArray.filter((theme: ThemeKeyType | "auto") => {
       if (theme === "auto") {
-        return RSPrefs.theming.themes.systemThemes !== undefined && 
-          Object.values(RSPrefs.theming.themes.systemThemes).every(t => 
+        return preferences.theming.themes.systemThemes !== undefined && 
+          Object.values(preferences.theming.themes.systemThemes).every(t => 
             themeArray.includes(t)
           );
       }
@@ -54,13 +56,33 @@ export const StatefulTheme = ({ mapArrowNav }: { mapArrowNav?: number }) => {
 
   const dispatch = useAppDispatch();
 
+  // Handling grid navigation through StatefulRadioGroup
+  // would add a ton of complexity due to the extensive
+  // logic for handling different types of children (render, node, etc.)
+  // So we handle it here instead for the time being
+  const { onKeyDown } = useGridNavigation({
+    containerRef: radioGroupWrapperRef,
+    items: themeItems,
+    currentValue: theme,
+    onChange: async (val) => await updatePreference(val as ThemeKeyType),
+    isRTL,
+    onEscape: () => dispatch(setActionOpen({ 
+      key: ThActionsKeys.settings,
+      isOpen: false 
+    })),
+    onFocus: (id) => {
+      const element = radioGroupWrapperRef.current?.querySelector(`[id="${ id }"]`);
+    if (element) (element as HTMLElement).focus();
+    }
+  })
+
   const { submitPreferences } = useEpubNavigator();
 
   const updatePreference = useCallback(async (value: ThemeKeyType | "auto") => {
     const themeProps = buildThemeObject<typeof value>({
       theme: value,
-      themeKeys: RSPrefs.theming.themes.keys,
-      systemThemes: RSPrefs.theming.themes.systemThemes,
+      themeKeys: preferences.theming.themes.keys,
+      systemThemes: preferences.theming.themes.systemThemes,
       colorScheme
     })
     await submitPreferences(themeProps);
@@ -69,7 +91,7 @@ export const StatefulTheme = ({ mapArrowNav }: { mapArrowNav?: number }) => {
       key: isFXL ? "fxl" : "reflow", 
       value: value
     }));
-  }, [isFXL, RSPrefs.theming.themes.keys, RSPrefs.theming.themes.systemThemes, submitPreferences, dispatch, colorScheme]);
+  }, [isFXL, preferences.theming.themes.keys, preferences.theming.themes.systemThemes, submitPreferences, dispatch, colorScheme]);
 
   // It’s easier to inline styles from preferences for these
   // than spamming the entire app with all custom properties right now
@@ -82,73 +104,25 @@ export const StatefulTheme = ({ mapArrowNav }: { mapArrowNav?: number }) => {
     };
 
     if (t === "auto") {
-      if (RSPrefs.theming.themes.systemThemes !== undefined) {
+      if (preferences.theming.themes.systemThemes !== undefined) {
         cssProps.background = isRTL 
-        ? `linear-gradient(148deg, ${ RSPrefs.theming.themes.keys[RSPrefs.theming.themes.systemThemes.dark].background } 48%, ${ RSPrefs.theming.themes.keys[RSPrefs.theming.themes.systemThemes.light].background } 100%)` 
-        : `linear-gradient(148deg, ${ RSPrefs.theming.themes.keys[RSPrefs.theming.themes.systemThemes.light].background } 0%, ${ RSPrefs.theming.themes.keys[RSPrefs.theming.themes.systemThemes.dark].background } 48%)`;
+        ? `linear-gradient(148deg, ${ preferences.theming.themes.keys[preferences.theming.themes.systemThemes.dark].background } 48%, ${ preferences.theming.themes.keys[preferences.theming.themes.systemThemes.light].background } 100%)` 
+        : `linear-gradient(148deg, ${ preferences.theming.themes.keys[preferences.theming.themes.systemThemes.light].background } 0%, ${ preferences.theming.themes.keys[preferences.theming.themes.systemThemes.dark].background } 48%)`;
         cssProps.color = "#ffffff";
-        cssProps.border = `1px solid ${ RSPrefs.theming.themes.keys[RSPrefs.theming.themes.systemThemes.light].subdue }`;
+        cssProps.border = `1px solid ${ preferences.theming.themes.keys[preferences.theming.themes.systemThemes.light].subdue }`;
       } else {
         cssProps.display = "none";
       }
     } else {
-      cssProps.background = RSPrefs.theming.themes.keys[t].background;
-      cssProps.color = RSPrefs.theming.themes.keys[t].text;
-      cssProps.border = `1px solid ${ RSPrefs.theming.themes.keys[t].subdue }`;
+      const themeKey = t as keyof typeof preferences.theming.themes.keys;
+      const theme = preferences.theming.themes.keys[themeKey];
+      cssProps.background = theme.background;
+      cssProps.color = theme.text;
+      cssProps.border = `1px solid ${theme.subdue}`;
     };
     
     return cssProps;
-  }, [RSPrefs.theming.themes.keys, RSPrefs.theming.themes.systemThemes, isRTL]);
-
-  // mapArrowNav is the number of columns. This assumption 
-  // should be safe since even in vertical-writing, 
-  // the layout should be horizontal (?)
-  const handleKeyboardNav = async (e: React.KeyboardEvent) => {
-    
-    if (mapArrowNav && !isNaN(mapArrowNav)) {
-      const findNextVisualTheme = async (perRow: number) => {
-        const currentIdx = themeItems.current.findIndex((val) => val === theme);
-        const nextIdx = currentIdx + perRow;
-        if (nextIdx >= 0 && nextIdx < themeItems.current.length) {
-          await updatePreference(themeItems.current[nextIdx]);
-
-          // Focusing here instead of useEffect on theme change so that 
-          // it doesn’t steal focus when themes is not the first radio group in the sheet
-          if (radioGroupRef.current) {
-            const themeToFocus = radioGroupRef.current.querySelector(`#${themeItems.current[nextIdx]}`) as HTMLElement;
-            if (themeToFocus) themeToFocus.focus();
-          }
-        }
-      };
-
-      switch(e.code) {
-        case "Escape":
-          dispatch(setActionOpen({ 
-            key: ThActionsKeys.settings,
-            isOpen: false 
-          })); 
-          break;
-        case "ArrowUp":
-          e.preventDefault();
-          await findNextVisualTheme(-mapArrowNav);
-          break;
-        case "ArrowDown":
-          e.preventDefault();
-          await findNextVisualTheme(mapArrowNav);
-          break;
-        case "ArrowLeft":
-          e.preventDefault();
-          isRTL ? await findNextVisualTheme(1) : await findNextVisualTheme(-1);
-          break;
-        case "ArrowRight":
-          e.preventDefault();
-          isRTL ? await findNextVisualTheme(-1) : await findNextVisualTheme(1);
-          break;
-        default:
-          break;
-      }
-    }
-  };
+  }, [preferences, isRTL]);
 
   // Edge case where the value stored is auto, but the array doesn’t have it
   useEffect(() => {
@@ -165,8 +139,12 @@ export const StatefulTheme = ({ mapArrowNav }: { mapArrowNav?: number }) => {
       label={ t("reader.settings.themes.title") }
       value={ theme }
       onChange={ async (val) => await updatePreference(val as ThemeKeyType) }
+      useGraphicalNavigation={ false }
     >
-      <div className={ classNames(settingsStyles.readerSettingsRadioWrapper, settingsStyles.readerSettingsThemesWrapper) }>
+      <div 
+        ref={ radioGroupWrapperRef }
+        className={ classNames(settingsStyles.readerSettingsRadioWrapper, settingsStyles.readerSettingsThemesWrapper) 
+      }>
         { themeItems.current.map(( themeItem ) => 
           <Radio
             className={ classNames(
@@ -177,9 +155,7 @@ export const StatefulTheme = ({ mapArrowNav }: { mapArrowNav?: number }) => {
             id={ themeItem }
             key={ themeItem }
             style={ doStyles(themeItem) }
-            { ...(mapArrowNav && !isNaN(mapArrowNav) ? {
-              onKeyDown: (async (e: React.KeyboardEvent) => await handleKeyboardNav(e))
-            } : {}) }
+            onKeyDown={ onKeyDown }
           >
           <span>
             { t(`reader.settings.themes.${ themeItem }`, { defaultValue: themeItem }) }

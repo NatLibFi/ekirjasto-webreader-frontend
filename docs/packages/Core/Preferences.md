@@ -13,7 +13,10 @@ import { ThPreferencesProvider } from "@edrlab/thorium-web/core/preferences";
 const App = () => {
   return (
     <ThStoreProvider>
-      <ThPreferencesProvider>
+      <ThPreferencesProvider 
+        adapter={ yourAdapter }  // Optional: custom adapter for persistence
+        initialPreferences={ yourInitialPrefs }  // Optional: initial preferences
+      >
         {/* Your application */}
       </ThPreferencesProvider>
     </ThStoreProvider>
@@ -21,7 +24,11 @@ const App = () => {
 };
 ```
 
-It accepts prop `value` of type `ThPreferences` to provide custom preferences. See [Handling Preferences](../../customization/HandlingPreferences.md) for more information.
+### Provider Props
+
+- `adapter?`: Optional custom adapter for persisting preferences
+- `initialPreferences?`: Optional initial preferences object
+- `children`: Your application components
 
 > [!IMPORTANT]
 > When using stateful components from `@edrlab/thorium-web/epub`, you must use the `<ThPreferencesProvider>` from that package, not from `@edrlab/thorium-web/core`. Otherwise, your app and components will use different preferences.
@@ -35,9 +42,14 @@ import {
   ThPreferences 
 } from "@edrlab/thorium-web/core/preferences";
 
+// Define your custom keys
+type YourCustomKeys = {
+  action: "custom-action" | ThActionsKeys;
+} & CustomizableKeys;
+
 // To override default preferences, you can spread the default preferences
 // and override the ones you want to change.
-const myPreferences: ThPreferences = createPreferences({
+const myPreferences: ThPreferences = createPreferences<YourCustomKeys>({
   ...defaultPreferences,
 
   actions: {
@@ -62,7 +74,7 @@ This will create a new preferences object with the default preferences and the o
 import { ThPreferencesProvider } from "@edrlab/thorium-web/core/preferences";
 const App = () => {
   return (
-      <ThPreferencesProvider value={ myPreferences }>
+      <ThPreferencesProvider initialPreferences={ myPreferences }>
         {/* Your application */}
       </ThPreferencesProvider>
   )
@@ -76,16 +88,18 @@ TBD. buildThemeObject
 The Core package exposes several hooks specific to preferences management:
 
 - `usePreferenceKeys`: returns the keys of the preferences’ object e.g. `actions.reflowOrder`;
-- `usePreferences`: returns the preferences object;
+- `usePreferences`: returns the preferences object and an update method;
 - `useTheming`: sets up responsive breakpoints based on preferences, and accessibility hooks – this can then be stored in the `themeReducer` of `lib`.
 
 For instance, if your component needs to access the preferences, you can use the `usePreferences` hook:
 
 ```tsx
 import { usePreferences } from "@edrlab/thorium-web/core/preferences";
+import { ThLayoutDirection } from "@edrlab/thorium-web/core/preferences/models/enums";
 
 const MyPreferencesComponent = () => {
-  const preferences = usePreferences();
+  const { preferences } = usePreferences<YourCustomKeys>();
+
   return (
     <div>
       <p>Preferences: { JSON.stringify(preferences) }</p>

@@ -17,7 +17,7 @@ import { useI18n } from "@/i18n/useI18n";
 import { setActionOpen, useAppDispatch, useAppSelector } from "@/lib";
 
 export const StatefulJumpToPositionTrigger = ({ variant }: StatefulActionTriggerProps) => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const { t } = useI18n();
   const actionState = useAppSelector(state => state.actions.keys[ThActionsKeys.jumpToPosition]);
   const positionsList = useAppSelector(state => state.publication.positionsList);
@@ -39,12 +39,12 @@ export const StatefulJumpToPositionTrigger = ({ variant }: StatefulActionTrigger
      ? <StatefulOverflowMenuItem 
          label={ t("reader.jumpToPosition.trigger") }
           SVGIcon={ TargetIcon }
-          shortcut={ RSPrefs.actions.keys[ThActionsKeys.jumpToPosition].shortcut }
+          shortcut={ preferences.actions.keys[ThActionsKeys.jumpToPosition].shortcut }
           id={ ThActionsKeys.jumpToPosition }
           onAction={ () => setOpen(!actionState?.isOpen) }
         />
       : <StatefulActionIcon
-          visibility={ RSPrefs.actions.keys[ThActionsKeys.jumpToPosition].visibility } 
+          visibility={ preferences.actions.keys[ThActionsKeys.jumpToPosition].visibility } 
           aria-label={ t("reader.jumpToPosition.trigger") }
           placement="bottom" 
           tooltipLabel={ t("reader.jumpToPosition.tooltip") }

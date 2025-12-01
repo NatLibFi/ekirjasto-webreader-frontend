@@ -15,10 +15,18 @@ import {
   ThThemeKeys, 
   ThLayoutDirection, 
   ThLayoutUI,
-  ThBackLinkVariant
+  ThBackLinkVariant,
+  ThProgressionFormat,
+  ThRunningHeadFormat,
+  ThBreakpoints,
+  ThDocumentTitleFormat,
+  ThSpacingPresetKeys,
+  ThSettingsRangePlaceholder,
+  ThArrowVariant
 } from "./models/enums";
 import { ThCollapsibility, ThCollapsibilityVisibility } from "@/core/Components/Actions/hooks/useCollapsibility";
-import { defaultActionKeysObject } from "./models";
+
+export type I18nValue<T> = T | string | { key: string; fallback?: string };
 
 export type ThBackLinkContent = 
   | { 
@@ -67,13 +75,78 @@ export interface ThActionsTokens {
   snapped?: ThActionsSnappedPref;
 };
 
-export interface ThActionsPref<T extends string> {
-  reflowOrder: T[];
-  fxlOrder: T[];
-  collapse: ThCollapsibility;
+export interface ThSettingsSpacingPresets<K extends CustomizableKeys = DefaultKeys> {
+  reflowOrder: Array<ThSpacingPresetKeys>;
+  webPubOrder: Array<ThSpacingPresetKeys>;
+  // Not customizable as the component is static radiogroup (icons), unlike themes
+  // Publisher and custom are not included as they are special cases
   keys: {
-    [key in T]: ThActionsTokens;
-  }
+    [key in Exclude<ThSpacingPresetKeys, "publisher" | "custom">]?: ThSpacingPreset<K>;
+  };
+}
+
+export type ThSpacingPreset<K extends CustomizableKeys = DefaultKeys> = {
+  [ThSpacingSettingsKeys.letterSpacing]?: number;
+  [ThSpacingSettingsKeys.lineHeight]?: ThLineHeightOptions;
+  [ThSpacingSettingsKeys.paragraphIndent]?: number;
+  [ThSpacingSettingsKeys.paragraphSpacing]?: number;
+  [ThSpacingSettingsKeys.wordSpacing]?: number;
+} & (K extends { spacing: infer S } 
+  ? S extends string 
+      ? { [key in S]?: number | ThLineHeightOptions }
+    : {}
+  : {});
+
+export type CustomizableKeys = {
+  action?: string;
+  theme?: string;
+  settings?: string;
+  text?: string;
+  spacing?: string;
+};
+
+// Key types to better handle custom keys for external consumers
+export type ActionKey<K extends CustomizableKeys> = 
+  K extends { action: infer A } 
+    ? A extends string 
+      ? ThActionsKeys | A 
+      : ThActionsKeys
+    : ThActionsKeys;
+
+export type ThemeKey<K extends CustomizableKeys> = 
+  K extends { theme: infer T } 
+    ? T extends string 
+      ? ThThemeKeys | T 
+      : ThThemeKeys
+    : ThThemeKeys;
+
+export type SettingsKey<K extends CustomizableKeys> = 
+  K extends { settings: infer S } 
+    ? S extends string 
+      ? ThSettingsKeys | S 
+      : ThSettingsKeys
+    : ThSettingsKeys;
+
+export type TextSettingsKey<K extends CustomizableKeys> = 
+  K extends { text: infer T } 
+    ? T extends string 
+      ? ThTextSettingsKeys | T 
+      : ThTextSettingsKeys
+    : ThTextSettingsKeys;
+
+export type SpacingSettingsKey<K extends CustomizableKeys> = 
+  K extends { spacing: infer S } 
+    ? S extends string 
+      ? ThSpacingSettingsKeys | S 
+      : ThSpacingSettingsKeys
+    : ThSpacingSettingsKeys;
+
+export interface ThActionsPref<K extends CustomizableKeys> {
+  reflowOrder: Array<ActionKey<K>>;
+  fxlOrder: Array<ActionKey<K>>;
+  webPubOrder: Array<ActionKey<K>>;
+  collapse: ThCollapsibility;
+  keys: Record<ActionKey<K>, ThActionsTokens>;
 };
 
 export interface ThDockingPref<T extends string> {
@@ -93,54 +166,71 @@ export interface ThSettingsGroupPref<T> {
 
 export interface ThSettingsRangePref {
   variant?: ThSettingsRangeVariant;
+  placeholder?: I18nValue<ThSettingsRangePlaceholder>;
   range?: [number, number];
   step?: number;
 }
 
-export type ThSettingsKeyTypes = {
-  [ThSettingsKeys.letterSpacing]?: ThSettingsRangePref;
-  [ThSettingsKeys.lineHeight]?: {
-      [key in Exclude<ThLineHeightOptions, ThLineHeightOptions.publisher>]: number
-    };
-  [ThSettingsKeys.paragraphIndent]?: ThSettingsRangePref;
-  [ThSettingsKeys.paragraphSpacing]?: ThSettingsRangePref;
-  [ThSettingsKeys.wordSpacing]?: ThSettingsRangePref;
-  [ThSettingsKeys.zoom]?: ThSettingsRangePref;
+export interface ThSettingsRadioPref<T extends string> {
+  allowUnset?: boolean;
+  keys: {
+    [key in T]: number;
+  };
 }
+
+export type ThSettingsKeyTypes<K extends CustomizableKeys = DefaultKeys> = {
+  [ThSettingsKeys.letterSpacing]: ThSettingsRangePref;
+  [ThSettingsKeys.lineHeight]: ThSettingsRadioPref<Exclude<ThLineHeightOptions, ThLineHeightOptions.publisher>>;
+  [ThSettingsKeys.paragraphIndent]: ThSettingsRangePref;
+  [ThSettingsKeys.paragraphSpacing]: ThSettingsRangePref;
+  [ThSettingsKeys.wordSpacing]: ThSettingsRangePref;
+  [ThSettingsKeys.zoom]: ThSettingsRangePref;
+} & (
+  K extends { settings: infer S } 
+    ? S extends string 
+      ? { [key in S]: any }
+      : {}
+    : {}
+);
 
 export type ThConstraintKeys = Extract<ThSheetTypes, ThSheetTypes.bottomSheet | ThSheetTypes.popover> | "pagination";
 
-// Simplified type for customizable keys
-export type CustomKeyType = string;
-
-export interface CustomizableKeys {
-  actionKeys: CustomKeyType;
-  themeKeys: CustomKeyType;
-  settingsKeys: CustomKeyType;
-  textSettingsKeys: CustomKeyType;
-  spacingSettingsKeys: CustomKeyType;
-  constraintsKeys: CustomKeyType;
-  customSettingsKeyTypes: Record<string, unknown>;
+export interface ThFormatPrefValue<T extends string | Array<string>> {
+  variants: T;
+  displayInImmersive?: boolean;
+  displayInFullscreen?: boolean;
 }
 
-// Default keys with standard enum values
-export interface DefaultKeys {
-  actionKeys: ThActionsKeys;
-  themeKeys: ThThemeKeys;
-  settingsKeys: ThSettingsKeys;
-  textSettingsKeys: ThTextSettingsKeys;
-  spacingSettingsKeys: ThSpacingSettingsKeys;
-  constraintsKeys: ThConstraintKeys;
-  customSettingsKeyTypes: ThSettingsKeyTypes;
+export interface ThFormatPref<T extends string | Array<string>> {
+  default: ThFormatPrefValue<T>;
+  breakpoints?: { 
+    [key in ThBreakpoints]?: ThFormatPrefValue<T>;
+  };
 }
 
-// Type helper for key arrays and objects
-export type KeysOf<T, D> = T extends CustomKeyType ? T : D;
+export interface ThPaginatedAffordancePrefValue {
+  variant: ThArrowVariant;
+  discard?: Array<"navigation" | "immersive" | "fullscreen"> | "none";
+  hint?: Array<"immersiveChange" | "fullscreenChange" | "layoutChange"> | "none";
+}
+
+export interface ThPaginatedAffordancePref {
+  default: Required<ThPaginatedAffordancePrefValue>;
+  breakpoints?: {
+    [key in ThBreakpoints]?: ThPaginatedAffordancePrefValue;
+  };
+}
 
 // Main preferences interface with simplified generics
-export interface ThPreferences<T extends Partial<CustomizableKeys> = {}> {
+export interface ThPreferences<K extends CustomizableKeys = {}> {
   direction?: ThLayoutDirection;
   locale?: string;
+  metadata?: {
+    documentTitle?: {
+      // TODO – Templating of custom
+      format: I18nValue<ThDocumentTitleFormat>;
+    };
+  };
   typography: {
     minimalLineLength?: number | null;
     maximalLineLength?: number | null;
@@ -148,6 +238,23 @@ export interface ThPreferences<T extends Partial<CustomizableKeys> = {}> {
     pageGutter: number;
   };
   theming: {
+    header?: {
+      backLink?: ThBackLinkPref | null;
+      runningHead?: {
+        format?: {
+          reflow?: ThFormatPref<ThRunningHeadFormat>;
+          fxl?: ThFormatPref<ThRunningHeadFormat>;
+          webPub?: ThFormatPref<ThRunningHeadFormat>;
+        }
+      }
+    };
+    progression?: {
+      format?: {
+        reflow?: ThFormatPref<ThProgressionFormat | Array<ThProgressionFormat>>;
+        fxl?: ThFormatPref<ThProgressionFormat | Array<ThProgressionFormat>>;
+        webPub?: ThFormatPref<ThProgressionFormat | Array<ThProgressionFormat>>;
+      };
+    };
     arrow: {
       size: number;
       offset: number;
@@ -161,7 +268,8 @@ export interface ThPreferences<T extends Partial<CustomizableKeys> = {}> {
     layout: {
       ui?: {
         reflow?: ThLayoutUI,
-        fxl?: ThLayoutUI
+        fxl?: ThLayoutUI,
+        webPub?: ThLayoutUI
       };
       radius: number;
       spacing: number;
@@ -170,20 +278,19 @@ export interface ThPreferences<T extends Partial<CustomizableKeys> = {}> {
         scrim: string;
       };
       constraints?: {
-        [key in KeysOf<T["constraintsKeys"], ThConstraintKeys>]?: number | null
+        [key in ThConstraintKeys]?: number | null
       }
     };
     breakpoints: BreakpointsMap<number | null>;
     themes: {
-      reflowOrder: Array<KeysOf<T["themeKeys"], ThThemeKeys> | "auto">;
-      fxlOrder: Array<KeysOf<T["themeKeys"], ThThemeKeys> | "auto">;
+      reflowOrder: Array<ThemeKey<K> | "auto">;
+      fxlOrder: Array<ThemeKey<K> | "auto">;
       systemThemes?: {
-        light: KeysOf<T["themeKeys"], ThThemeKeys>;
-        dark: KeysOf<T["themeKeys"], ThThemeKeys>;
+        light: ThemeKey<K>;
+        dark: ThemeKey<K>;
       };
-      keys: {
-        [key in KeysOf<T["themeKeys"], ThThemeKeys>]: ThemeTokens;
-      };
+      // keys never includes "auto"
+      keys: Record<Exclude<ThemeKey<K>, "auto"> & string, ThemeTokens>;
     };
   };
   affordances: {
@@ -192,23 +299,25 @@ export interface ThPreferences<T extends Partial<CustomizableKeys> = {}> {
       toggleOnMiddlePointer: Array<"tap" | "click">;
       hideOnForwardScroll: boolean;
       showOnBackwardScroll: boolean;
+    },
+    paginated: {
+      reflow: ThPaginatedAffordancePref;
+      fxl: ThPaginatedAffordancePref;
     }
   };
-  header: {
-    backLink?: ThBackLinkPref | null;
-  };
-  actions: ThActionsPref<KeysOf<T["actionKeys"], ThActionsKeys>>;
+  actions: ThActionsPref<K>;
   shortcuts: {
     representation: UnstableShortcutRepresentation;
     joiner?: string;
   };
   docking: ThDockingPref<ThDockingKeys>;
   settings: {
-    reflowOrder: Array<KeysOf<T["settingsKeys"], ThSettingsKeys>>;
-    fxlOrder: Array<KeysOf<T["settingsKeys"], ThSettingsKeys>>;
-    keys?: T["customSettingsKeyTypes"] | ThSettingsKeyTypes;
-    text?: ThSettingsGroupPref<KeysOf<T["textSettingsKeys"], ThTextSettingsKeys>>;
-    spacing?: ThSettingsGroupPref<KeysOf<T["spacingSettingsKeys"], ThSpacingSettingsKeys>>;
+    reflowOrder: Array<SettingsKey<K>>;
+    fxlOrder: Array<SettingsKey<K>>;
+    webPubOrder: Array<SettingsKey<K>>;
+    keys: ThSettingsKeyTypes<K>;
+    text?: ThSettingsGroupPref<TextSettingsKey<K>>;
+    spacing?: ThSettingsGroupPref<SpacingSettingsKey<K>> & { presets?: ThSettingsSpacingPresets<K> };
   };
 }
 
@@ -217,20 +326,29 @@ export interface ThPreferences<T extends Partial<CustomizableKeys> = {}> {
  * @param params The preferences object to create
  * @returns A new preferences object
  */
-export const createPreferences = <T extends Partial<CustomizableKeys>>(
-  params: ThPreferences<T>
-): ThPreferences<T> => {
+export const createPreferences = <K extends CustomizableKeys = {}>(
+  params: ThPreferences<K>
+): ThPreferences<K> => {
   // Helper function to validate keys against the provided order arrays
   const validateObjectKeys = <K extends string, V>(
     orderArrays: K[][],
     keysObj: Record<string, V>,
     context: string,
-    specialCase?: string,
+    specialCase?: string | string[],
     fallback?: V
   ): void => {
     // Combine all arrays and filter out special cases if needed
     const allOrders = new Set<K>(
-      orderArrays.flatMap(arr => specialCase ? arr.filter(k => k !== specialCase) : arr)
+      orderArrays.flatMap(arr => {
+        if (!specialCase) return arr;
+        return arr.filter(k => {
+          if (Array.isArray(specialCase)) {
+            return !specialCase.includes(k);
+          } else {
+            return k !== specialCase;
+          }
+        });
+      })
     );
     
     // Get available keys
@@ -250,31 +368,142 @@ export const createPreferences = <T extends Partial<CustomizableKeys>>(
   
   // Validate actions
   if (params.actions) {
-    validateObjectKeys<KeysOf<T["actionKeys"], ThActionsKeys>, ThActionsTokens>(
-      [params.actions.reflowOrder, params.actions.fxlOrder],
+    validateObjectKeys<ActionKey<K>, ThActionsTokens>(
+      [params.actions.reflowOrder as Array<ActionKey<K>>, params.actions.fxlOrder as Array<ActionKey<K>>, params.actions.webPubOrder as Array<ActionKey<K>>],
       params.actions.keys as Record<string, ThActionsTokens>,
-      "actions",
-      undefined,
-      defaultActionKeysObject as ThActionsTokens
+      "actions"
     );
   }
   
   // Validate themes
   if (params.theming?.themes) {
-    validateObjectKeys<KeysOf<T["themeKeys"], ThThemeKeys> | "auto", ThemeTokens>(
-      [params.theming.themes.reflowOrder, params.theming.themes.fxlOrder],
+    validateObjectKeys<ThemeKey<K> | "auto", ThemeTokens>(
+      [params.theming.themes.reflowOrder as Array<ThemeKey<K> | "auto">, params.theming.themes.fxlOrder as Array<ThemeKey<K> | "auto">],
       params.theming.themes.keys as Record<string, ThemeTokens>,
       "theming.themes",
       "auto" // Special case for themes
     );
   }
+
+  // Validate spacing presets
+  if (params.settings.spacing?.presets) {
+    validateObjectKeys<ThSpacingPresetKeys, ThSpacingPreset<K>>(
+      [params.settings.spacing.presets.reflowOrder],
+      params.settings.spacing.presets.keys as Record<string, ThSpacingPreset<K>>,
+      "settings.spacing.presets",
+      ["publisher", "custom"]
+    );
+  }
+
+  // Validate spacing values in theming against settings
+  if (params.settings?.spacing?.presets?.keys && params.settings?.keys) {
+    const spacingSettings = params.settings.spacing.presets.keys;
+    const spacingThemes = params.settings.spacing.presets.keys;
+    
+    // Helper function to adjust a value to the nearest valid step or range boundary
+    const adjustSpacingValue = (key: string, value: number, context: string[]): number => {
+      // Type-safe way to get the setting
+      const settingKey = Object.values(ThSettingsKeys).find((k) => k === key);
+      if (!settingKey) {
+        return value; // Return as-is if no setting found
+      }
+      
+      const setting = (spacingSettings as any)[settingKey];
+      if (!setting) {
+        return value; // Return as-is if no setting found
+      }
+      
+      // Handle different setting types
+      let range: [number, number] | undefined;
+      let step: number | undefined;
+      
+      if (setting && typeof setting === "object" && "range" in setting) {
+        range = setting.range;
+        step = setting.step;
+      } else if (setting && typeof setting === "object") {
+        // Handle nested settings (like lineHeight and margin)
+        // These will be validated when their parent key is validated
+        return value;
+      }
+      
+      let adjustedValue = value;
+      
+      // Adjust to range boundaries if needed
+      if (range) {
+        const [min, max] = range;
+        if (adjustedValue < min) {
+          console.warn(`Adjusting value ${ value } for ${ context.join(".") } to minimum allowed value ${ min }`);
+          adjustedValue = min;
+        } else if (adjustedValue > max) {
+          console.warn(`Adjusting value ${ value } for ${ context.join(".") } to maximum allowed value ${ max }`);
+          adjustedValue = max;
+        }
+      }
+      
+      // Adjust to nearest step if needed
+      if (step && range) {
+        const [min] = range;
+        const steps = Math.round((adjustedValue - min) / step);
+        const steppedValue = parseFloat((min + (steps * step)).toFixed(10));
+        
+        // Ensure the stepped value is within range (in case of floating point precision issues)
+        const finalValue = Math.min(Math.max(steppedValue, range[0]), range[1]);
+        
+        if (Math.abs(finalValue - adjustedValue) > Number.EPSILON) {
+          console.warn(`Adjusting value ${ value } for ${ context.join(".") } to nearest step value ${ finalValue }`);
+          adjustedValue = finalValue;
+        }
+      }
+      
+      return adjustedValue;
+    };
+    
+    // Process each spacing theme to adjust values to valid steps/ranges
+    for (const [themeName, spacingTheme] of Object.entries(spacingThemes)) {
+      if (spacingTheme && typeof spacingTheme === "object") {
+        const adjustedTheme: Record<string, any> = {};
+        let hasAdjustedValues = false;
+        
+        // Process each value in the theme
+        for (const [key, value] of Object.entries(spacingTheme)) {
+          if (typeof value === "number") {
+            const context = ["theming", "spacing", "keys", themeName, key];
+            const adjustedValue = adjustSpacingValue(key, value, context);
+            adjustedTheme[key] = adjustedValue;
+            
+            if (adjustedValue !== value) {
+              hasAdjustedValues = true;
+            }
+          } else {
+            // Keep non-number values as-is
+            adjustedTheme[key] = value;
+          }
+        }
+        
+        // Replace the theme with adjusted values if any changes were made
+        if (hasAdjustedValues) {
+          // @ts-ignore - We know spacingThemes[themeName] is mutable
+          spacingThemes[themeName as keyof typeof spacingThemes] = adjustedTheme;
+        }
+      }
+    }
+  }
   
   return params;
 };
 
-// Simplified type helpers
-export type ActionKeyType = ThActionsKeys | CustomKeyType;
-export type ThemeKeyType = ThThemeKeys | CustomKeyType;
-export type SettingsKeyType = ThSettingsKeys | CustomKeyType;
-export type TextSettingsKeyType = ThTextSettingsKeys | CustomKeyType;
-export type SpacingSettingsKeyType = ThSpacingSettingsKeys | CustomKeyType;
+// Default internal keys alias for convenience
+export type DefaultKeys = {
+  action: ThActionsKeys;
+  theme: ThThemeKeys;
+  settings: ThSettingsKeys;
+  text: ThTextSettingsKeys;
+  spacing: ThSpacingSettingsKeys;
+};
+
+// Type helpers that support both custom and default keys
+export type ActionKeyType<K extends CustomizableKeys = DefaultKeys> = K["action"] extends string ? K["action"] : ThActionsKeys;
+export type ThemeKeyType<K extends CustomizableKeys = DefaultKeys> = K["theme"] extends string ? K["theme"] : ThThemeKeys;
+export type SettingsKeyType<K extends CustomizableKeys = DefaultKeys> = K["settings"] extends string ? K["settings"] : ThSettingsKeys;
+export type TextSettingsKeyType<K extends CustomizableKeys = DefaultKeys> = K["text"] extends string ? K["text"] : ThTextSettingsKeys;
+export type SpacingSettingsKeyType<K extends CustomizableKeys = DefaultKeys> = K["spacing"] extends string ? K["spacing"] : ThSpacingSettingsKeys;

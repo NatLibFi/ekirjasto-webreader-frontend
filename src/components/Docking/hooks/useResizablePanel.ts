@@ -21,10 +21,10 @@ import { useAppSelector } from "@/lib/hooks";
 // it requires using a utility method: getPanelGroupElement(id)
 // See https://github.com/bvaughn/react-resizable-panels/tree/main/packages/react-resizable-panels#can-a-attach-a-ref-to-the-dom-elements
 export const useResizablePanel = (panel: DockStateObject) => {
-  const RSPrefs = usePreferences();
-  const defaultWidth = RSPrefs.theming.layout.defaults.dockingWidth;
+  const { preferences } = usePreferences();
+  const defaultWidth = preferences.theming.layout.defaults.dockingWidth;
   const [pref, setPref] = useState<ThActionsDockedPref | null>(
-    panel.actionKey ? RSPrefs.actions.keys[panel.actionKey as keyof typeof RSPrefs.actions.keys].docked || null : null
+    panel.actionKey ? preferences.actions.keys[panel.actionKey as keyof typeof preferences.actions.keys].docked || null : null
   );
 
   const actionsMap = useAppSelector(state => state.actions.keys);
@@ -98,8 +98,8 @@ export const useResizablePanel = (panel: DockStateObject) => {
 
   // When the docked action changes, we need to update its preferences 
   useEffect(() => {
-    setPref(panel.actionKey ? RSPrefs.actions.keys[panel.actionKey as keyof typeof RSPrefs.actions.keys].docked || null : null);
-  }, [panel.actionKey, RSPrefs]);
+    setPref(panel.actionKey ? preferences.actions.keys[panel.actionKey as keyof typeof preferences.actions.keys].docked || null : null);
+  }, [panel.actionKey, preferences]);
 
   return {
     currentKey, 

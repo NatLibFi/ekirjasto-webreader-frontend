@@ -136,7 +136,10 @@ interface ThBottomSheetProps extends Omit<React.ComponentProps<typeof Sheet>, "c
     header?: React.ComponentProps<typeof Sheet.Header>;
     dragIndicator?: ThDragIndicatorButtonProps;
     content?: React.ComponentProps<typeof Sheet.Content>;
-    scroller?: React.ComponentProps<typeof Sheet.Scroller>;
+    scroller?: {
+      ref?: React.RefObject<HTMLDivElement>;
+      className?: string;
+    };
     backdrop?: React.ComponentProps<typeof Sheet.Backdrop>;
   };
 }

@@ -1,14 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { UnstableProgressionObject } from "@/components/StatefulReaderProgression";
 import { Locator } from "@readium/shared";
 import { UnstableTimeline } from "@/core/Hooks/useTimeline";
 
 export interface PublicationReducerState {
-  runningHead?: string;
   isFXL: boolean;
   isRTL: boolean;
-  progression: UnstableProgressionObject;
+  hasDisplayTransformability: boolean;
   positionsList: Locator[],
   atPublicationStart: boolean;
   atPublicationEnd: boolean;
@@ -16,10 +14,9 @@ export interface PublicationReducerState {
 }
 
 const initialState: PublicationReducerState = {
-  runningHead: undefined,
   isFXL: false,
   isRTL: false,
-  progression: {},
+  hasDisplayTransformability: false,
   positionsList: [],
   atPublicationStart: false,
   atPublicationEnd: false,
@@ -30,17 +27,14 @@ export const publicationSlice = createSlice({
   name: "publication",
   initialState,
   reducers: {
-    setRunningHead: (state, action) => {
-      state.runningHead = action.payload
-    },
     setFXL: (state, action) => {
       state.isFXL = action.payload
     },
     setRTL: (state, action) => {
       state.isRTL = action.payload
     },
-    setProgression: (state, action) => {
-      state.progression = {...state.progression, ...action.payload }
+    setHasDisplayTransformability: (state, action) => {
+      state.hasDisplayTransformability = action.payload
     },
     setPositionsList: (state, action) => {
       state.positionsList = action.payload
@@ -84,10 +78,9 @@ export const publicationSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const { 
-  setRunningHead,
   setFXL,
   setRTL,
-  setProgression,
+  setHasDisplayTransformability,
   setPositionsList,
   setPublicationStart,
   setPublicationEnd,

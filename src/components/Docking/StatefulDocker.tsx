@@ -47,7 +47,7 @@ export const StatefulDocker = ({
   ref,
   onClose
 }: StatefulDockerProps) => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const { t } = useI18n();
   
   const listActionItems = useCallback(() => {
@@ -72,7 +72,7 @@ export const StatefulDocker = ({
         items={ listActionItems() }
         className={ dockingStyles.docker } 
         overflowMenuClassName={ readerSharedUI.dockerButton }
-        prefs={ RSPrefs.docking }
+        prefs={ preferences.docking }
         aria-label={ t("reader.app.docker.wrapper") }
       />
 
@@ -83,8 +83,8 @@ export const StatefulDocker = ({
         onPress={ onClose }
         compounds={ {
           tooltipTrigger: {
-            delay: RSPrefs.theming.icon.tooltipDelay,
-            closeDelay: RSPrefs.theming.icon.tooltipDelay
+            delay: preferences.theming.icon.tooltipDelay,
+            closeDelay: preferences.theming.icon.tooltipDelay
           },
           tooltip: {
             className: readerSharedUI.tooltip

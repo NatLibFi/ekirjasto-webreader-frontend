@@ -14,23 +14,23 @@ export const ThI18nProvider = ({
   children,
   ...options
 }: ThI18nProviderProps) => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const [isInitialized, setIsInitialized] = useState(false);
   
   useEffect(() => {
     if (!i18n.isInitialized) {      
       initI18n({
         ...options,
-        lng: RSPrefs?.locale || options.lng,
+        lng: preferences?.locale || options.lng,
       }).then(() => setIsInitialized(true));
     }
   });
 
   useEffect(() => {
-    if (isInitialized && RSPrefs?.locale) {
-      i18n.changeLanguage(RSPrefs.locale);
+    if (isInitialized && preferences?.locale) {
+      i18n.changeLanguage(preferences.locale);
     }
-  }, [RSPrefs?.locale, isInitialized]);
+  }, [preferences?.locale, isInitialized]);
 
   if (!isInitialized) {
     return null;

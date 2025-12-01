@@ -5,12 +5,14 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import AutoLayoutIcon from "./assets/icons/document_scanner.svg";
 import OneColIcon from "./assets/icons/article.svg";
 import TwoColsIcon from "./assets/icons/menu_book.svg";
+
 import { StatefulRadioGroup } from "../../Settings/StatefulRadioGroup";
+
+import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
+import { useI18n } from "@/i18n/useI18n";
 
 import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 import { setColumnCount } from "@/lib/settingsReducer";
-import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
-import { useI18n } from "@/i18n/useI18n";
 
 import debounce from "debounce";
 
@@ -42,6 +44,31 @@ export const StatefulColumns = () => {
   const dispatch = useAppDispatch();
 
   const { submitPreferences, getSetting } = useEpubNavigator();
+
+  const items = useMemo(() => [
+    {
+      id: "auto",
+      icon: AutoLayoutIcon,
+      label: t("reader.settings.column.auto"), 
+      value: "auto" 
+    },
+    {
+      id: "1",
+      icon: OneColIcon,
+      label: t("reader.settings.column.one"), 
+      value: "1" 
+    },
+    {
+      id: "2",
+      icon: TwoColsIcon,
+      label: t("reader.settings.column.two"), 
+      value: "2",
+      // This is subpar when the columnCount is 1 though because
+      // it won't be disabled, but it's the best we can do with
+      // the preferences API at the moment
+      isDisabled: effectiveValue === "1" && columnCount === "2"
+    }
+  ], [t, effectiveValue, columnCount]);
 
   const updateEffectiveValue = useCallback((preference: string, setting: number | null) => {
     const derivedValue = preference === "auto" || setting === null ? "auto" : setting.toString();
@@ -84,27 +111,7 @@ export const StatefulColumns = () => {
       value={ effectiveValue }
       onChange={ async (val: string) => await updatePreference(val) }
       isDisabled={ isScroll }
-      items={[
-        {
-          icon: AutoLayoutIcon,
-          label: t("reader.settings.column.auto"), 
-          value: "auto" 
-        },
-        {
-          icon: OneColIcon,
-          label: t("reader.settings.column.one"), 
-          value: "1" 
-        },
-        {
-          icon: TwoColsIcon,
-          label: t("reader.settings.column.two"), 
-          value: "2",
-          // This is subpar when the columnCount is 1 though because
-          // it won’t be disabled, but it’s the best we can do with
-          // the preferences API at the moment
-          isDisabled: effectiveValue === "1" && columnCount === "2"
-        }
-      ]}
+      items={ items }
     />
     </>
   );

@@ -44,6 +44,23 @@ type ThCloseButtonProps = ThActionButtonProps
 - Customizable through compounds props
 - Tooltip support inherited from ThActionButton
 
+## ThDeleteButton
+
+A predefined button component for delete actions with a default delete icon.
+
+### Props
+
+```typescript
+type ThDeleteButtonProps = ThActionButtonProps
+```
+
+### Features
+
+- Built-in delete icon
+- Optional label text
+- Customizable through compounds props
+- Tooltip support inherited from ThActionButton
+
 ## ThNavigationButton
 
 A predefined button component for navigation actions with directional icons.
