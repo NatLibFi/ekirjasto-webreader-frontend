@@ -31,7 +31,7 @@ export const StatefulActionIcon = ({
  children,
   ...props
 }: StatefulActionIconProps) => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
 
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -83,13 +83,13 @@ export const StatefulActionIcon = ({
       onFocus={ handleImmersive }
       compounds={ tooltipLabel ? {
         tooltipTrigger: {
-          delay: RSPrefs.theming.icon.tooltipDelay,
-          closeDelay: RSPrefs.theming.icon.tooltipDelay
+          delay: preferences.theming.icon.tooltipDelay,
+          closeDelay: preferences.theming.icon.tooltipDelay
         },
         tooltip: {
           className: readerSharedUI.tooltip,
           placement: placement,
-          offset: RSPrefs.theming.icon.tooltipOffset || 0
+          offset: preferences.theming.icon.tooltipOffset || 0
         },
         label: tooltipLabel
       } : undefined }

@@ -102,7 +102,7 @@ interface ThProgressionProps extends React.HTMLAttributes<HTMLDivElement> {
 
 ## ThRunningHead
 
-A component for displaying the current section heading with optional document title sync.
+A component for displaying the current running head in the top bar.
 
 ### Props
 
@@ -110,7 +110,6 @@ A component for displaying the current section heading with optional document ti
 interface ThRunningHeadProps extends HTMLAttributesWithRef<HTMLHeadingElement> {
   ref?: React.RefObject<HTMLHeadingElement>
   label: string;           // Heading text content
-  syncDocTitle?: boolean;  // Whether to sync with document title
 }
 ```
 

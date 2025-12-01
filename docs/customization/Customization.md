@@ -16,6 +16,29 @@ Values can be `ltr` or `rtl` and a `ThLayoutDirection` enum is available as well
 
 For direction to work properly, the `locale` has to be set as well, since React Aria Components require this locale to derive the correct direction. If you don’t set it, then the user’s system/browser locale will be used, with the risk of resulting to a conflicting `dir` being used. 
 
+## Metadata
+
+### Document Title
+
+The `documentTitle` preference allows you to configure the document title of the reader. It accepts the following properties:
+
+- `format`: The format of the document title. Can be one of enum `ThDocumentTitleFormat`:
+  - `title`: The publication title
+  - `chapter`: The current chapter/section title
+  - `titleAndChapter`: The publication title and the current chapter/section title
+  - `none`: Use the default document title from markup
+
+It can also be an object with property `key` and `fallback` to provide an arbitrary document title. The `key` should be a key from your translation files, and the `fallback` is the default value if the translation key is not found.
+
+For instance:
+
+```
+documentTitle: {
+  key: "documentTitle",
+  fallback: "Default Document Title"
+}
+```
+
 ## Typography
 
 The `typography` object can be used to set the following properties:
@@ -66,7 +89,8 @@ If it’s `null` then this means it is disabled entirely, and there is no upper 
 
 The `affordances` object can be used to set the following properties:
 
-- `scroll` to configure the scroll affordances.
+- `scroll` to configure the scroll affordances;
+- `pagination` to configure the pagination affordances.
 
 ### Scroll
 
@@ -90,52 +114,62 @@ affordances: {
 }
 ```
 
-## Header
+### Pagination
 
-### BackLink
+The `pagination` object configures the behavior of pagination arrows in the reader. It has two main configurations:
 
-The `backLink` preference allows you to configure the back button in the header. It accepts the following properties:
+1. `reflow`: Settings for reflowable content (standard EPUB)
+2. `fxl`: Settings for fixed-layout content (FXL)
 
-- `href`: (string) The URL to navigate to when the back button is clicked
-- `visibility`: Visibility of the back button. If `always`, the back button will be always visible. If `partially`, the back button will be hidden in immersive mode. It is `partially` by default.
-- `variant?`: Variant for the back link. Can be one of enum `ThBackLinkVariant`:
-  - `arrow`: Shows an arrow icon (the default if `undefined`)
-  - `home`: Shows a home icon
-  - `library`: Shows a library/books icon
-  - `custom`: Use with `content` to provide a custom icon
-- `content?`: Optional custom content for the back button when `variant` is set to `custom`. Can be either:
-  - An image with `{ type: "img"; src: string; alt?: string }`
-  - An SVG with `{ type: "svg"; content: string }` with the `content` string being the raw inline SVG markup
+Each configuration (`reflow` and `fxl`) accepts the following properties:
 
-For example:
+- `default`: the default configuration for the pagination arrows
+- `breakpoints`: the breakpoints configuration for the pagination arrows
 
-```typescript
-header: {
-  backLink: {
-    href: "/library",
-    variant: ThBackLinkVariant.custom,
-    visibility: "always",
-    content: {
-      type: "img",
-      src: "/path/to/custom-icon.png",
-      alt: "Back to Library"
+When using breakpoints, the configuration will be applied when the reader is in the corresponding breakpoint. It is expecting an object with keys from enum `ThBreakpoints`.
+
+The configuration object can have the following properties:
+
+- `variant`: Controls the visual style of the pagination arrows
+  - `"none"`: No arrows shown
+  - `"stacked"`: Arrows are stacked on each side of the content
+  - `"layered"`: Arrows are layered over the content (default)
+- `discard` (required for `default`, optional for `breakpoints`): 
+  - `"none"`: No conditions
+  - Array of conditions that will hide the arrows when they become true
+    - `"navigation"`: Hide after user navigation
+    - `"immersive"`: Hide when entering immersive mode
+    - `"fullscreen"`: Hide when entering fullscreen
+- `hint` (required for `default`, optional for `breakpoints`): 
+  - `"none"`: No conditions
+  - Array of conditions that will show the arrows when they transition from true to false
+    - `"immersiveChange"`: Show when exiting immersive mode
+    - `"fullscreenChange"`: Show when exiting fullscreen
+    - `"layoutChange"`: Show when layout changes from scroll to paginated
+
+> [!NOTE]
+> FXL arrows `variant` is always `layered`, no matter the configuration. FXL navigator is using the window width to calculate the layout, so we need to force the layered variant to prevent layout issues at the time being.
+
+For instance:
+
+```
+affordances: {
+  paginated: {
+    reflow: {
+      default: {
+        variant: "layered",
+        discard: ["navigation", "immersive"],
+        hint: ["layoutChange"]
+      },
+      breakpoints: {
+        [ThBreakpoints.large]: {
+          variant: "stacked"
+        }
+      }
     }
   }
 }
 ```
-
-Or for a simple home button:
-
-```typescript
-header: {
-  backLink: {
-    href: "/",
-    variant: ThBackLinkVariant.home
-  }
-}
-```
-
-If `backLink` is `undefined` or `null`, then the back button will not be rendered.
 
 ## Theming
 

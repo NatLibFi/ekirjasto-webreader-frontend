@@ -1,45 +1,54 @@
 "use client";
 
-import { CustomizableKeys, CustomKeyType } from "@/preferences/preferences";
-import { usePreferences } from "./usePreferences";
+import { ThSpacingPresetKeys } from "@/preferences/models/enums";
 import { 
-  ThActionsKeys, 
-  ThThemeKeys, 
-  ThSettingsKeys, 
-  ThTextSettingsKeys, 
-  ThSpacingSettingsKeys 
-} from "../models/enums";
+  defaultSpacingSettingsSubpanel,
+  defaultTextSettingsMain,
+  defaultTextSettingsSubpanel,
+  defaultSpacingSettingsMain,
+  defaultSpacingPresetsOrder
+} from "@/preferences/models/const";
 
-/**
- * Hook to safely access and use preference keys with proper type inference
- * This allows components to use the keys as indexes without type errors
- */
-export function usePreferenceKeys<T extends Partial<CustomizableKeys>>() {
-  const preferences = usePreferences();
-  
-  // Return an object with typed keys for each customizable section
+import { usePreferences } from "./usePreferences";
+
+export const usePreferenceKeys = () => {
+  const { preferences } = usePreferences();
+
+  const reflowActionKeys = preferences.actions.reflowOrder;
+  const fxlActionKeys = preferences.actions.fxlOrder;
+  const webPubActionKeys = preferences.actions.webPubOrder;
+
+  const reflowThemeKeys = preferences.theming.themes.reflowOrder;
+  const fxlThemeKeys = preferences.theming.themes.fxlOrder;
+
+  const reflowSettingsKeys = preferences.settings.reflowOrder;
+  const fxlSettingsKeys = preferences.settings.fxlOrder;
+  const webPubSettingsKeys = preferences.settings.webPubOrder;
+
+  const mainTextSettingsKeys = preferences.settings.text?.main ?? defaultTextSettingsMain;
+  const subPanelTextSettingsKeys = preferences.settings.text?.subPanel ?? defaultTextSettingsSubpanel;
+  const mainSpacingSettingsKeys = preferences.settings.spacing?.main ?? defaultSpacingSettingsMain;
+  const subPanelSpacingSettingsKeys = preferences.settings.spacing?.subPanel ?? defaultSpacingSettingsSubpanel;
+
+  const reflowSpacingPresetKeys = preferences.settings.spacing?.presets?.reflowOrder ?? defaultSpacingPresetsOrder;
+  const fxlSpacingPresetKeys: ThSpacingPresetKeys[] = [];
+  const webPubSpacingPresetKeys = preferences.settings.spacing?.presets?.webPubOrder ?? defaultSpacingPresetsOrder;
+
   return {
-    reflowActionKeys: preferences.actions.reflowOrder as Array<T["actionKeys"] extends CustomKeyType ? T["actionKeys"] : ThActionsKeys>,
-    fxlActionKeys: preferences.actions.fxlOrder as Array<T["actionKeys"] extends CustomKeyType ? T["actionKeys"] : ThActionsKeys>,
-    reflowThemeKeys: preferences.theming.themes.reflowOrder as Array<T["themeKeys"] extends CustomKeyType ? T["themeKeys"] | "auto" : ThThemeKeys | "auto">,
-    fxlThemeKeys: preferences.theming.themes.fxlOrder as Array<T["themeKeys"] extends CustomKeyType ? T["themeKeys"] | "auto" : ThThemeKeys | "auto">,
-    reflowSettingsKeys: preferences.settings.reflowOrder as Array<T["settingsKeys"] extends CustomKeyType ? T["settingsKeys"] : ThSettingsKeys>,
-    fxlSettingsKeys: preferences.settings.fxlOrder as Array<T["settingsKeys"] extends CustomKeyType ? T["settingsKeys"] : ThSettingsKeys>,
-    mainTextSettingsKeys: preferences.settings.text?.main as Array<T["textSettingsKeys"] extends CustomKeyType ? T["textSettingsKeys"] : ThTextSettingsKeys> || [],
-    subPanelTextSettingsKeys: preferences.settings.text?.subPanel as Array<T["textSettingsKeys"] extends CustomKeyType ? T["textSettingsKeys"] : ThTextSettingsKeys> || [],
-    mainSpacingSettingsKeys: preferences.settings.spacing?.main as Array<T["spacingSettingsKeys"] extends CustomKeyType ? T["spacingSettingsKeys"] : ThSpacingSettingsKeys> || [],
-    subPanelSpacingSettingsKeys: preferences.settings.spacing?.subPanel as Array<T["spacingSettingsKeys"] extends CustomKeyType ? T["spacingSettingsKeys"] : ThSpacingSettingsKeys> || [],
-    
-    // Helper functions that use type assertion with unknown as intermediate step
-    asReflowActionKey: <K extends string>(key: K): T["actionKeys"] extends CustomKeyType ? T["actionKeys"] : ThActionsKeys => key as unknown as T["actionKeys"] extends CustomKeyType ? T["actionKeys"] : ThActionsKeys,
-    asFxlActionKey: <K extends string>(key: K): T["actionKeys"] extends CustomKeyType ? T["actionKeys"] : ThActionsKeys => key as unknown as T["actionKeys"] extends CustomKeyType ? T["actionKeys"] : ThActionsKeys,
-    asReflowThemeKey: <K extends string>(key: K): T["themeKeys"] extends CustomKeyType ? T["themeKeys"] | "auto" : ThThemeKeys | "auto" => key as unknown as T["themeKeys"] extends CustomKeyType ? T["themeKeys"] | "auto" : ThThemeKeys | "auto",
-    asFxlThemeKey: <K extends string>(key: K): T["themeKeys"] extends CustomKeyType ? T["themeKeys"] | "auto" : ThThemeKeys | "auto" => key as unknown as T["themeKeys"] extends CustomKeyType ? T["themeKeys"] | "auto" : ThThemeKeys | "auto",
-    asReflowSettingsKey: <K extends string>(key: K): T["settingsKeys"] extends CustomKeyType ? T["settingsKeys"] : ThSettingsKeys => key as unknown as T["settingsKeys"] extends CustomKeyType ? T["settingsKeys"] : ThSettingsKeys,
-    asFxlSettingsKey: <K extends string>(key: K): T["settingsKeys"] extends CustomKeyType ? T["settingsKeys"] : ThSettingsKeys => key as unknown as T["settingsKeys"] extends CustomKeyType ? T["settingsKeys"] : ThSettingsKeys,
-    asMainTextSettingsKey: <K extends string>(key: K): T["textSettingsKeys"] extends CustomKeyType ? T["textSettingsKeys"] : ThTextSettingsKeys => key as unknown as T["textSettingsKeys"] extends CustomKeyType ? T["textSettingsKeys"] : ThTextSettingsKeys,
-    asSubPanelTextSettingsKey: <K extends string>(key: K): T["textSettingsKeys"] extends CustomKeyType ? T["textSettingsKeys"] : ThTextSettingsKeys => key as unknown as T["textSettingsKeys"] extends CustomKeyType ? T["textSettingsKeys"] : ThTextSettingsKeys,
-    asMainSpacingSettingsKey: <K extends string>(key: K): T["spacingSettingsKeys"] extends CustomKeyType ? T["spacingSettingsKeys"] : ThSpacingSettingsKeys => key as unknown as T["spacingSettingsKeys"] extends CustomKeyType ? T["spacingSettingsKeys"] : ThSpacingSettingsKeys,
-    asSubPanelSpacingSettingsKey: <K extends string>(key: K): T["spacingSettingsKeys"] extends CustomKeyType ? T["spacingSettingsKeys"] : ThSpacingSettingsKeys => key as unknown as T["spacingSettingsKeys"] extends CustomKeyType ? T["spacingSettingsKeys"] : ThSpacingSettingsKeys,
+    reflowActionKeys,
+    fxlActionKeys,
+    webPubActionKeys,
+    reflowThemeKeys,
+    fxlThemeKeys,
+    reflowSettingsKeys,
+    fxlSettingsKeys,
+    webPubSettingsKeys,
+    mainTextSettingsKeys,
+    subPanelTextSettingsKeys,
+    mainSpacingSettingsKeys,
+    subPanelSpacingSettingsKeys,
+    reflowSpacingPresetKeys,
+    fxlSpacingPresetKeys,
+    webPubSpacingPresetKeys
   };
 }

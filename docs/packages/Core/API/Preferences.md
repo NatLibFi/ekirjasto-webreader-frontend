@@ -10,8 +10,9 @@ Context provider component for preferences management.
 
 **Props:**
 ```typescript
-interface Props<T extends Partial<CustomizableKeys>> {
-  value?: ThPreferences<T>;
+interface Props<K extends CustomizableKeys = DefaultKeys> {
+  adapter?: ThPreferencesAdapter<K>;
+  initialPreferences?: ThPreferences<K>;
   children: React.ReactNode;
 }
 ```
@@ -21,43 +22,48 @@ interface Props<T extends Partial<CustomizableKeys>> {
 - Default preferences handling
 - Type-safe customization
 - Direction setting
+- Adapter support
 
 ## Hooks
 
 ### usePreferences
 
-Hook for accessing preferences context.
+Hook for accessing the preferences context.
 
 ```typescript
-function usePreferences<T extends Partial<CustomizableKeys>>(): ThPreferences<T>
-```
-
-**Features:**
-- Type-safe preferences access
-- Default values handling
-- Context validation
-
-### usePreferenceKeys
-
-Hook for safely accessing and using preference keys with proper type inference.
-
-```typescript
-function usePreferenceKeys<T extends Partial<CustomizableKeys>>(): {
-  reflowActionKeys: Array<T["actionKeys"] | ThActionsKeys>;
-  fxlActionKeys: Array<T["actionKeys"] | ThActionsKeys>;
-  reflowThemeKeys: Array<T["themeKeys"] | ThThemeKeys>;
-  fxlThemeKeys: Array<T["themeKeys"] | ThThemesKeys>;
-  reflowSettingsKeys: Array<T["settingsKeys"] | ThSettingsKeys>;
-  fxlSettingsKeys: Array<T["settingsKeys"] | ThSettingsKeys>;
-  mainTextSettingsKeys: Array<T["textSettingsKeys"] | ThSettingsKeys>;
-  subPanelTextSettingsKeys: Array<T["textSettingsKeys"] | ThSettingsKeys>;
-  mainSpacingSettingsKeys: Array<T["spacingSettingsKeys"] | ThSettingsKeys>;
-  subPanelSpacingSettingsKeys: Array<T["spacingSettingsKeys"] | ThSettingsKeys>;
+function usePreferences<K extends CustomizableKeys = DefaultKeys>(): {
+  preferences: ThPreferences<K>;
 }
 ```
 
 **Features:**
-- Type-safe key access
+- Type-safe read-only access to preferences
+- Context validation
+- Automatic type inference for custom preferences
+
+### usePreferenceKeys
+
+Hook for accessing ordered preference keys from the current preferences.
+
+```typescript
+function usePreferenceKeys(): {
+  reflowActionKeys: string[];
+  fxlActionKeys: string[];
+  reflowThemeKeys: string[];
+  fxlThemeKeys: string[];
+  reflowSettingsKeys: string[];
+  fxlSettingsKeys: string[];
+  mainTextSettingsKeys: string[];
+  subPanelTextSettingsKeys: string[];
+  mainSpacingSettingsKeys: string[];
+  subPanelSpacingSettingsKeys: string[];
+}
+```
+
+**Features:**
+- Read-only access to ordered preference keys
+- Automatically updates when preferences change
+- Provides access to both reflowable and fixed-layout (FXL) keys
 - Custom key support
 - Helper functions for type assertion
 

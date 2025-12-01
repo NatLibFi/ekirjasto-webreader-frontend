@@ -9,7 +9,7 @@ import { StatefulSheet } from "./models/sheets";
 import sheetStyles from "./assets/styles/sheets.module.css";
 import readerSharedUI from "../assets/styles/readerSharedUI.module.css";
 
-import { SheetRef } from "react-modal-sheet";
+import { SheetRef, SheetDetent } from "react-modal-sheet";
 
 import { ThBottomSheet } from "@/core/Components/Containers/ThBottomSheet";
 import { ThContainerHeader } from "@/core/Components/Containers/ThContainerHeader";
@@ -48,10 +48,11 @@ export const StatefulBottomSheet = ({
   children,
   resetFocus,
   focusWithinRef,
+  focusSelector,
   scrollTopOnFocus,
   dismissEscapeKeyClose
 }: StatefulBottomSheetProps) => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const { t } = useI18n()
   const direction = useAppSelector((state) => state.reader.direction);
   const prefersReducedMotion = useAppSelector(state => state.theming.prefersReducedMotion);
@@ -74,12 +75,12 @@ export const StatefulBottomSheet = ({
       }
     };
 
-    // Array needs max @ index 0 and min @ index 2 when complete
-    // If it doesn’t have a max, then peek is @ index 0. This means
-    // the initialProp should always be one item from last
-    let snapArray: number[] = [];
+    // Since v5
+    // Array needs min @ index and max @ index 2 when complete
+    // If it doesn’t have a max, then peek is @ index 1.
+    let snapArray: number[] = [0];
 
-    const snapPref = RSPrefs.actions.keys[id as keyof typeof RSPrefs.actions.keys].snapped;
+    const snapPref = preferences.actions.keys[id as keyof typeof preferences.actions.keys].snapped;
     if (snapPref) {
       // We must start with minHeight to see if it’s 
       // constrained by a detent as it means
@@ -97,13 +98,13 @@ export const StatefulBottomSheet = ({
             const minVal = snapPref.minHeight / 100;
             // Protecting against pref > 100
             minVal > 0 && minVal < 1 
-              ? snapArray.unshift(minVal) 
-              : snapArray.unshift(DEFAULT_SNAPPOINTS.min);
+              ? snapArray.push(minVal) 
+              : snapArray.push(DEFAULT_SNAPPOINTS.min);
             break;
         }
       } else {
         // Fallback value
-        snapArray.unshift(DEFAULT_SNAPPOINTS.min);
+        snapArray.push(DEFAULT_SNAPPOINTS.min);
       }
 
       // From now on, check if value is greater than the previous one in array
@@ -118,20 +119,20 @@ export const StatefulBottomSheet = ({
           case "full-height":
           case 100:
             detent.current = snapPref.peekHeight === 100 ? "full-height" : snapPref.peekHeight;
-            snapArray.unshift(1);
+            snapArray.push(1);
             return snapArray;
           default:
             const peekVal = snapPref.peekHeight / 100;
             const prevVal = snapArray[0];
 
             peekVal > 0 && peekVal < 1
-              ? snapArray.unshift(getSecureVal(peekVal, prevVal)) 
-              : snapArray.unshift(getSecureVal(DEFAULT_SNAPPOINTS.peek, prevVal))
+              ? snapArray.push(getSecureVal(peekVal, prevVal)) 
+              : snapArray.push(getSecureVal(DEFAULT_SNAPPOINTS.peek, prevVal))
             break;
         }
       } else {
         // Fallback value
-        snapArray.unshift(getSecureVal(DEFAULT_SNAPPOINTS.peek, snapArray[0]));
+        snapArray.push(getSecureVal(DEFAULT_SNAPPOINTS.peek, snapArray[0]));
       }
 
       // If max-height is constrained by a content-height detent
@@ -143,63 +144,60 @@ export const StatefulBottomSheet = ({
           case "full-height":
           case 100:
             detent.current = snapPref.maxHeight === 100 ? "full-height" : snapPref.maxHeight;
-            snapArray.unshift(1);
+            snapArray.push(1);
             return snapArray;
           default:
             const maxVal = snapPref.maxHeight / 100;
             const prevVal = snapArray[0];
 
             maxVal > 0 && maxVal < 1 
-              ? snapArray.unshift(getSecureVal(maxVal, prevVal)) 
-              : snapArray.unshift(getSecureVal(DEFAULT_SNAPPOINTS.max, prevVal));
+              ? snapArray.push(getSecureVal(maxVal, prevVal)) 
+              : snapArray.push(getSecureVal(DEFAULT_SNAPPOINTS.max, prevVal));
             break;
         }
       } else {
         // Fallback value
-        snapArray.unshift(getSecureVal(DEFAULT_SNAPPOINTS.max, snapArray[0]));
+        snapArray.push(getSecureVal(DEFAULT_SNAPPOINTS.max, snapArray[0]));
       }
     } else {
       // There is no pref set
-      // Reminder: order of React Modal Sheet is descending so max, peek, min
-      snapArray.push(DEFAULT_SNAPPOINTS.max, DEFAULT_SNAPPOINTS.peek, DEFAULT_SNAPPOINTS.min);
+      // Reminder: order of React Modal Sheet is descending so min, peek, max
+      snapArray.push(DEFAULT_SNAPPOINTS.min, DEFAULT_SNAPPOINTS.peek, DEFAULT_SNAPPOINTS.max);
     }
 
     return snapArray;
-  }, [id, RSPrefs]);
+  }, [id, preferences]);
 
   const snapIdx = useRef<number | null>(null);
 
   const onDragPressCallback = useCallback(() => {
     if (snapIdx.current !== null) {
-      // Don’t forget we’re having to handle max @ 0 and min @ 2 (decreasing order)
-      const nextIdx = snapIdx.current === 0 ? snapArray.length - 1 : (snapIdx.current - 1);
+      // In [0, min, peek, max] order, cycle to next index but skip index 0
+      const nextIdx = snapIdx.current === snapArray.length - 1 ? 1 : snapIdx.current + 1;
       sheetRef.current?.snapTo(nextIdx);
     }
   }, [snapArray]);
 
   const onDragKeyCallback = useCallback((e: KeyboardEvent) => {
     if (snapIdx.current !== null) {
-      // Don’t forget we’re having to handle max @ 0 and min @ 2 (decreasing order)
-      // Implementation is being kept consistent with React Resizable Panels, which
-      // implements this logic by default for PanelResizeHandle when focused
       switch(e.code) {
         case "PageUp":
-          if (snapIdx.current === 0) return;
-          sheetRef.current?.snapTo(0);
+          if (snapIdx.current === snapArray.length - 1) return;
+          sheetRef.current?.snapTo(snapArray.length - 1);
           break;
         case "ArrowUp":
-          if (snapIdx.current === 0) return;
-          sheetRef.current?.snapTo(snapIdx.current - 1);
+          if (snapIdx.current === snapArray.length - 1) return;
+          sheetRef.current?.snapTo(snapIdx.current + 1);
           break;
         case "PageDown":
           onClosePress();
           break;
         case "ArrowDown":
-          if (snapIdx.current === snapArray.length - 1) {
+          if (snapIdx.current === 1) {
             onClosePress();
             break;
           }
-          sheetRef.current?.snapTo(snapIdx.current + 1)
+          sheetRef.current?.snapTo(snapIdx.current - 1)
           break;
         default:
           break;
@@ -208,7 +206,7 @@ export const StatefulBottomSheet = ({
   }, [snapArray, onClosePress]);
 
   const maxWidthPref = useMemo(() => {
-    const maxWidth = RSPrefs.actions.keys[id as keyof typeof RSPrefs.actions.keys].snapped?.maxWidth;
+    const maxWidth = preferences.actions.keys[id as keyof typeof preferences.actions.keys].snapped?.maxWidth;
     if (typeof maxWidth === "undefined") {
       return undefined;
     } else if (maxWidth === null) {
@@ -216,14 +214,14 @@ export const StatefulBottomSheet = ({
     } else {
       return `${ maxWidth }px`;
     }
-  }, [id, RSPrefs]);
+  }, [id, preferences]);
 
   const scrimPref = useMemo(() => {
     let scrimPref: ScrimPref = {
       active: false,
       override: undefined
     }
-    const scrim = RSPrefs.actions.keys[id as keyof typeof RSPrefs.actions.keys].snapped?.scrim;
+    const scrim = preferences.actions.keys[id as keyof typeof preferences.actions.keys].snapped?.scrim;
     if (scrim) {
       scrimPref.active = true;
 
@@ -233,7 +231,7 @@ export const StatefulBottomSheet = ({
     }
 
     return scrimPref;
-  }, [id, RSPrefs]);
+  }, [id, preferences]);
 
   const detentClassName = useMemo(() => {
     let className = "";
@@ -249,17 +247,14 @@ export const StatefulBottomSheet = ({
     return scrimPref.active ? sheetStyles.bottomSheetScrim : "";
   }, [scrimPref]);
 
-  // On focus within triggered by the keyboard,
-  // snap to the largest value (first in the array).
-  // This is getting around a bug in Safari,
-  // where the parent of the sheet’s scroller
-  // is shifted by the padding added at the bottom
-  // on focus().
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (["Tab", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) {
-      if (snapArray.length > 0) {
-        sheetRef.current?.snapTo?.(0);
-      }
+  const convertDetent = (detent: ThBottomSheetDetent): SheetDetent => {
+    switch(detent) {
+      case "content-height":
+        return "content";
+      case "full-height":
+        return "default";
+      default:
+        return "default";
     }
   };
 
@@ -269,12 +264,13 @@ export const StatefulBottomSheet = ({
       <ThBottomSheet
         id={ id }
         ref={ sheetRef }
+        className={ sheetStyles.bottomSheetRoot }
         isOpen={ isOpen }
-        onKeyDown={ handleKeyDown }
         focusOptions={{
           withinRef: focusWithinRef ?? bottomSheetBodyRef,
           trackedState: isOpen,
           fallbackRef: bottomSheetCloseRef,
+          withSelector: focusSelector,
           action: {
             type: "focus",
             options: {
@@ -286,14 +282,14 @@ export const StatefulBottomSheet = ({
         }}
         onOpenChange={ onOpenChange }
         isKeyboardDismissDisabled={ dismissEscapeKeyClose }
-        { ...(snapArray.length > 1 
+        { ...(snapArray.length > 2 
           ? { 
             snapPoints: snapArray, 
-            initialSnap: snapArray.length - 2,
-            detent: detent.current
+            initialSnap: 2,
+            detent: convertDetent(detent.current)
           } 
           : {
-            detent: detent.current
+            detent: convertDetent(detent.current)
           }) 
         }
         onSnap={ (index) => { snapIdx.current = index }}
@@ -316,8 +312,7 @@ export const StatefulBottomSheet = ({
             disableDrag: true
           },
           scroller: {
-            className: classNames(sheetStyles.bottomSheetScroller, sheetStyles.sheetBody),
-            draggable: false
+            className: sheetStyles.bottomSheetScroller
           },
           backdrop: {
             className: classNames(sheetStyles.bottomSheetBackdrop, scrimClassName),
@@ -353,6 +348,7 @@ export const StatefulBottomSheet = ({
         </ThContainerHeader>
         <ThContainerBody 
           ref={ bottomSheetBodyRef }
+          className={ sheetStyles.sheetBody }
         >
           { children }
         </ThContainerBody>

@@ -13,7 +13,9 @@ export default defineConfig({
     "src/components/Epub/index.ts",
     "src/i18n/index.ts",
     "src/lib/index.ts",
-    "src/preferences/index.ts"
+    "src/preferences/index.ts",
+    "src/next-lib/index.ts",
+    "src/components/WebPub/index.ts"
   ],
   loader: {
     ".css": "copy"

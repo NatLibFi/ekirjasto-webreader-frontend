@@ -4,24 +4,28 @@ import { defaultPlatformModifier, UnstablePlatformModifier } from "@/core/Helper
 import { ThSettingsContainerKeys, ThLayoutDirection } from "@/preferences/models/enums";
 
 export interface ReaderReducerState {
+  profile: "epub" | "webPub" | undefined;
   direction: ThLayoutDirection;
   isLoading: boolean;
   isImmersive: boolean;
   isHovering: boolean;
   hasScrollAffordance: boolean;
   hasArrows: boolean;
+  hasUserNavigated: boolean;
   isFullscreen: boolean;
   settingsContainer: ThSettingsContainerKeys;
   platformModifier: UnstablePlatformModifier;
 }
 
 const initialState: ReaderReducerState = {
+  profile: undefined,
   direction: ThLayoutDirection.ltr,
   isLoading: true,
   isImmersive: false,
   isHovering: false,
   hasScrollAffordance: false,
   hasArrows: true,
+  hasUserNavigated: false,
   isFullscreen: false,
   settingsContainer: ThSettingsContainerKeys.initial,
   platformModifier: defaultPlatformModifier
@@ -31,6 +35,9 @@ export const readerSlice = createSlice({
   name: "reader",
   initialState,
   reducers: {
+    setReaderProfile: (state, action) => {
+      state.profile = action.payload
+    },
     setDirection: (state, action) => {
       state.direction = action.payload
     },
@@ -64,8 +71,11 @@ export const readerSlice = createSlice({
         state.isImmersive = false;
       }
     },
-    setArrows: (state, action) => {
+    setHasArrows: (state, action) => {
       state.hasArrows = action.payload
+    },
+    setUserNavigated: (state, action) => {
+      state.hasUserNavigated = action.payload;
     },
     setFullscreen: (state, action) => {
       state.isFullscreen = action.payload
@@ -78,15 +88,17 @@ export const readerSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const { 
+  setReaderProfile, 
   setDirection, 
   setLoading,
   setPlatformModifier, 
   setImmersive, 
   toggleImmersive, 
-  setHovering, 
-  setScrollAffordance, 
-  setArrows, 
-  setFullscreen, 
+  setHovering,
+  setScrollAffordance,
+  setHasArrows,  
+  setUserNavigated,
+  setFullscreen,
   setSettingsContainer
 } = readerSlice.actions;
 

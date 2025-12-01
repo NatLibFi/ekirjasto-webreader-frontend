@@ -10,7 +10,7 @@ A wrapper component for grouping related settings with advanced options.
 
 ```typescript
 interface StatefulGroupWrapperProps {
-  heading: string;
+  label: string;
   moreLabel: string;
   moreTooltip: string;
   onPressMore: (e: PressEvent) => void;
@@ -20,14 +20,34 @@ interface StatefulGroupWrapperProps {
     main: ThTextSettingsKeys[] | ThSpacingSettingsKeys[];
     subPanel: ThTextSettingsKeys[] | ThSpacingSettingsKeys[];
   };
+  compounds?: {
+    heading?: React.ReactElement<typeof Heading> | WithRef<HeadingProps, HTMLHeadingElement>;
+  };
 }
 ```
 
 **Features:**
 - Groups related settings components
 - Provides advanced options subpanel
+- Custom heading support
 - Manages preferences and defaults
 - Integrates with the plugin system
+
+### StatefulDropdown
+
+A dropdown menu component for selecting from predefined options.
+
+```typescript
+interface StatefulDropdownProps extends Omit<ThDropdownProps, "classNames"> {
+  standalone?: boolean;
+}
+```
+
+**Features:**
+- Dropdown menu with selectable options
+- Keyboard navigation
+- Accessibility support
+
 
 ### StatefulNumberField
 
@@ -280,6 +300,43 @@ interface StatefulSpacingGroupProps {}
 **Example:**
 ```typescript
 <StatefulSpacingGroup />
+```
+
+#### StatefulSpacingPresets
+
+```typescript
+interface StatefulSpacingPresetsProps extends StatefulSettingsItemProps {
+  standalone?: boolean;
+}
+```
+
+**Features:**
+- Spacing presets toggle
+- Integration with spacing settings
+- State persistence
+- Accessibility labels
+- Real-time spacing updates
+
+**Example:**
+```typescript
+<StatefulSpacingPresets />
+```
+
+#### StatefulLineHeight
+
+```typescript
+interface StatefulLineHeightProps extends StatefulSettingsItemProps {
+  standalone?: boolean;
+}
+```
+
+**Features:**
+- Line height control (radio group)
+- Publisher style integration
+
+**Example:**
+```typescript
+<StatefulLineHeight />
 ```
 
 #### StatefulLetterSpacing

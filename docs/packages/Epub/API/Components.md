@@ -53,6 +53,7 @@ Settings components provide user configuration options:
 ### Text Settings
 - `StatefulFontFamily`: Font family selection
 - `StatefulFontWeight`: Font weight control
+- `StatefulHyphens`: Hyphenation control
 - `StatefulTextAlign`: Text alignment options
 - `StatefulTextGroup`: Text-related settings group
 - `StatefulTextNormalize`: Text normalization options
@@ -63,15 +64,16 @@ Settings components provide user configuration options:
 - `StatefulParagraphIndent`: Paragraph indentation
 - `StatefulParagraphSpacing`: Spacing between paragraphs
 - `StatefulSpacingGroup`: Spacing-related settings group
+- `StatefulSpacingPresets`: Spacing presets
 - `StatefulWordSpacing`: Word spacing control
 
 ### Other Settings
-- `StatefulHyphens`: Hyphenation control
 - `StatefulPublisherStyles`: Publisher style preferences
 - `StatefulTheme`: Theme selection
 
 ### Base Components
 - `StatefulGroupWrapper`: Wrapper for settings groups
+- `StatefulDropdown`: Dropdown menu with selectable options
 - `StatefulNumberField`: Numeric input field
 - `StatefulRadioGroup`: Radio button group
 - `StatefulSlider`: Slider control
@@ -95,6 +97,8 @@ Core reader interface components:
 - `StatefulReaderArrowButton`: Navigation arrow buttons
 - `StatefulReaderFooter`: Reader footer component
 - `StatefulReaderHeader`: Reader header component
+- `StatefulReaderRunningHead`: Reader running head component
+- `StatefulReaderPagination`: Reader pagination component
 - `StatefulReaderProgression`: Reading progress indicator
 - `StatefulBackLink`: Back link component
 

@@ -16,11 +16,11 @@ export const UnstableStatefulShortcut = ({
   representation,
   joiner
 }: UnstableShortcut) => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const platformModifier = useAppSelector(state => state.reader.platformModifier);
 
-  representation = representation ? representation : RSPrefs.shortcuts.representation || UnstableShortcutRepresentation.symbol;
-  joiner = joiner ? joiner : RSPrefs.shortcuts.joiner || " + ";
+  representation = representation ? representation : preferences.shortcuts.representation || UnstableShortcutRepresentation.symbol;
+  joiner = joiner ? joiner : preferences.shortcuts.joiner || " + ";
 
   const shortcutObj = buildShortcut(rawForm);
 

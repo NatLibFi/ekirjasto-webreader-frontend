@@ -74,6 +74,18 @@ export const useTheming = <T extends string>({
   const reducedMotion = useReducedMotion(onReducedMotionChange);
   const reducedTransparency = useReducedTransparency(onReducedTransparencyChange);
 
+  const updateThemeColorMetaTag = useCallback((color: string): void => {
+    if (typeof document === "undefined") return;
+    
+    let metaTag = document.querySelector("meta[name='theme-color']");
+    if (!metaTag) {
+      metaTag = document.createElement("meta");
+      metaTag.setAttribute("name", "theme-color");
+      document.head.appendChild(metaTag);
+    }
+    metaTag.setAttribute("content", color);
+  }, []);
+
   const inferThemeAuto = useCallback(() => {
     return colorSchemeRef.current === ThColorScheme.dark ? systemKeys?.dark : systemKeys?.light;
   }, [systemKeys]);
@@ -113,7 +125,9 @@ export const useTheming = <T extends string>({
     for (let p in props) {
       document.documentElement.style.setProperty(p, props[p])
     }
-  }, [inferThemeAuto, themeKeys]);
+
+    updateThemeColorMetaTag(themeTokens.background);
+  }, [inferThemeAuto, updateThemeColorMetaTag, themeKeys]);
 
   // On mount add custom props to :root/html
   useEffect(() => {

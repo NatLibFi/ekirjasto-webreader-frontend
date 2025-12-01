@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { useEpubNavigator } from "@/core/Hooks/Epub/useEpubNavigator";
+import { useNavigator } from "@/core/Navigator";
 
 import { useAppSelector } from "@/lib";
 
@@ -16,13 +16,15 @@ import { useAppSelector } from "@/lib";
  *  when the resources are loaded into the iframe directly as scroll. 
 */
 export const useWebkitPatch = (isOpen: boolean) => {
+  const profile = useAppSelector(state => state.reader.profile);
+  const isWebPub = profile === "webPub";
   const scroll = useAppSelector(state => state.settings.scroll);
   const isFXL = useAppSelector(state => state.publication.isFXL);
-  const isScroll = scroll && !isFXL;
+  const isScroll = isWebPub || (scroll && !isFXL);
 
   const {
     getCframes
-  } = useEpubNavigator();
+  } = useNavigator();
 
   useEffect(() => {
     if (isScroll && !isOpen) {

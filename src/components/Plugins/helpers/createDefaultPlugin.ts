@@ -10,29 +10,30 @@ import { StatefulTocTrigger } from "../../Actions/Toc/StatefulTocTrigger";
 import { StatefulTocContainer } from "../../Actions/Toc/StatefulTocContainer";
 
 import { StatefulColumns } from "../../Epub/Settings/StatefulColumns";
-import { StatefulFontFamily } from "../../Epub/Settings/StatefulFontFamily";
-import { StatefulFontWeight } from "../../Epub/Settings/StatefulFontWeight";
-import { StatefulHyphens } from "../../Epub/Settings/StatefulHyphens";
+import { StatefulFontFamily } from "../../Settings/Text/StatefulFontFamily";
+import { UnstableStatefulFontWeight } from "../../Settings/Text/StatefulFontWeight";
+import { StatefulHyphens } from "../../Settings/Text/StatefulHyphens";
 import { StatefulLayout } from "../../Epub/Settings/StatefulLayout";
-import { StatefulLetterSpacing } from "../../Epub/Settings/StatefulLetterSpacing";
-import { StatefulLineHeight } from "../../Epub/Settings/StatefulLineHeight";
-import { StatefulParagraphIndent } from "../../Epub/Settings/StatefulParagraphIndent";
-import { StatefulParagraphSpacing } from "../../Epub/Settings/StatefulParagraphSpacing";
-import { StatefulPublisherStyles } from "../../Epub/Settings/StatefulPublisherStyles";
-import { StatefulSpacingGroup } from "../../Epub/Settings/StatefulSpacingGroup";
-import { StatefulTextAlign } from "../../Epub/Settings/StatefulTextAlign";
-import { StatefulTextGroup } from "../../Epub/Settings/StatefulTextGroup";
-import { StatefulTextNormalize } from "../../Epub/Settings/StatefulTextNormalize";
+import { StatefulLetterSpacing } from "../../Settings/Spacing/StatefulLetterSpacing";
+import { StatefulLineHeight } from "../../Settings/Spacing/StatefulLineHeight";
+import { StatefulParagraphIndent } from "../../Settings/Spacing/StatefulParagraphIndent";
+import { StatefulParagraphSpacing } from "../../Settings/Spacing/StatefulParagraphSpacing";
+import { StatefulPublisherStyles } from "../../Settings/StatefulPublisherStyles";
+import { StatefulSpacingGroup } from "../../Settings/Spacing/StatefulSpacingGroup";
+import { StatefulSpacingPresets } from "../../Settings/Spacing/StatefulSpacingPresets";
+import { StatefulTextAlign } from "../../Settings/Text/StatefulTextAlign";
+import { StatefulTextGroup } from "../../Settings/Text/StatefulTextGroup";
+import { StatefulTextNormalize } from "../../Settings/Text/StatefulTextNormalize";
 import { StatefulTheme } from "../../Epub/Settings/StatefulTheme";
-import { StatefulWordSpacing } from "../../Epub/Settings/StatefulWordSpacing";
-import { StatefulZoom } from "../../Epub/Settings/StatefulZoom";
+import { StatefulWordSpacing } from "../../Settings/Spacing/StatefulWordSpacing";
+import { StatefulZoom } from "../../Settings/StatefulZoom";
 
 export const createDefaultPlugin = (): ThPlugin => {
   return {
     id: "core",
     name: "Core Components",
-    description: "Default components for Thorium Web StatefulReader",
-    version: "1.0.0",
+    description: "Default components for Thorium Web Epub StatefulReader",
+    version: "1.0.8",
     components: {
       actions: {
         [ThActionsKeys.fullscreen]: {
@@ -60,7 +61,7 @@ export const createDefaultPlugin = (): ThPlugin => {
           type: "text"
         },
         [ThSettingsKeys.fontWeight]: {
-          Comp: StatefulFontWeight,
+          Comp: UnstableStatefulFontWeight,
           type: "text"
         },
         [ThSettingsKeys.hyphens]: {
@@ -93,6 +94,10 @@ export const createDefaultPlugin = (): ThPlugin => {
         [ThSettingsKeys.spacingGroup]: {
           Comp: StatefulSpacingGroup,
         },
+        [ThSettingsKeys.spacingPresets]: {
+          Comp: StatefulSpacingPresets,
+          type: "spacing"
+        },
         [ThSettingsKeys.textAlign]: {
           Comp: StatefulTextAlign,
           type: "text"
@@ -105,10 +110,7 @@ export const createDefaultPlugin = (): ThPlugin => {
           type: "text"
         },
         [ThSettingsKeys.theme]: {
-          Comp: StatefulTheme,
-          props: {
-            mapArrowNav: 2
-          }
+          Comp: StatefulTheme
         },
         [ThSettingsKeys.wordSpacing]: {
           Comp: StatefulWordSpacing,

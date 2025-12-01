@@ -189,7 +189,7 @@ export const StatefulDockingWrapper = ({
 }: { 
   children: ReactNode; 
 }) => {
-  const RSPrefs = usePreferences();
+  const { preferences } = usePreferences();
   const dockingStart = useAppSelector(state => state.actions.dock[ThDockingKeys.start]);
   const dockingEnd = useAppSelector(state => state.actions.dock[ThDockingKeys.end])
   const startPanel = useResizablePanel(dockingStart);
@@ -197,7 +197,7 @@ export const StatefulDockingWrapper = ({
 
   const breakpoint = useAppSelector(state => state.theming.breakpoint);
 
-  if (!RSPrefs.docking.dock) {
+  if (!preferences.docking.dock) {
     return(
       <>
       { children }
@@ -207,7 +207,7 @@ export const StatefulDockingWrapper = ({
     const dockingMap = makeBreakpointsMap<ThDockingTypes>({
       defaultValue: ThDockingTypes.both, 
       fromEnum: ThDockingTypes, 
-      pref: RSPrefs.docking.dock, 
+      pref: preferences.docking.dock, 
       disabledValue: ThDockingTypes.none
     });
 

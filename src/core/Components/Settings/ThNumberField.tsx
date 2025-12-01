@@ -1,28 +1,35 @@
 "use client";
 
-import { ComponentType, SVGProps } from "react";
+import { ComponentType, SVGProps, useCallback } from "react";
 
-import { WithRef } from "../customTypes";
+import { HTMLAttributesWithRef, WithRef } from "../customTypes";
+import { ThActionButtonProps } from "../Buttons";
 
 import AddIcon from "./assets/icons/add.svg";
 import RemoveIcon from "./assets/icons/remove.svg";
 
-import { 
-  Button, 
-  ButtonProps, 
-  Group, 
-  GroupProps, 
-  Input, 
-  InputProps, 
-  Label, 
-  LabelProps, 
-  NumberField, 
-  NumberFieldProps 
+import { ThSettingsResetButton } from "./ThSettingsResetButton";
+
+import {
+  Button,
+  ButtonProps,
+  Group,
+  GroupProps,
+  Input,
+  InputProps,
+  Label,
+  LabelProps,
+  NumberField,
+  NumberFieldProps
 } from "react-aria-components";
+
+import { useObjectRef } from "react-aria";
 
 export interface ThNumberFieldProps extends Omit<NumberFieldProps, "minValue" | "maxValue" | "decrementAriaLabel" | "incrementAriaLabel"> {
   ref?: React.ForwardedRef<HTMLInputElement>;
+  onReset?: () => void;
   label?: string;
+  placeholder?: string;
   range: number[];
   isVirtualKeyboardDisabled?: boolean;
   steppers?: {
@@ -33,13 +40,17 @@ export interface ThNumberFieldProps extends Omit<NumberFieldProps, "minValue" | 
   };
   compounds?: {
     /**
+     * Props for the wrapper component.
+     */
+    wrapper?: HTMLAttributesWithRef<HTMLDivElement>;
+    /**
      * Props for the Group component. See `GroupProps` for more information.
      */
     group?: WithRef<GroupProps, HTMLDivElement>;
     /**
      * Props for the Input component. See `InputProps` for more information.
      */
-    input?: WithRef<InputProps, HTMLInputElement>;
+    input?: Omit<WithRef<InputProps, HTMLInputElement>, "placeholder">;
     /**
      * Props for the Label component. See `LabelProps` for more information.
      */
@@ -48,61 +59,93 @@ export interface ThNumberFieldProps extends Omit<NumberFieldProps, "minValue" | 
      * Props for the Button component used for decrement/increment. See `ButtonProps` for more information.
      */
     stepper?: ButtonProps;
+    /**
+     * Props for the Button component used for resetting the value. See `ThActionButtonProps` for more information.
+     */
+    reset?: ThActionButtonProps;
   };
 }
 
 export const ThNumberField = ({
   ref,
+  onReset,
   label,
+  placeholder,
   range,
   isVirtualKeyboardDisabled,
   steppers,
   compounds,
+  value,
   ...props
 }: ThNumberFieldProps) => {
+  const resolvedRef = useObjectRef(ref);
+
+  // Callback that handles reset and focus restoration
+  const handleResetWithFocus = useCallback(() => {
+    onReset?.();
+    // Use requestAnimationFrame to defer focus until after current call stack
+    requestAnimationFrame(() => {
+      if (resolvedRef.current) {
+        const inputElement = resolvedRef.current.querySelector("input");
+        if (inputElement) {
+          (inputElement as HTMLElement).focus();
+        }
+      }
+    });
+  }, [onReset, resolvedRef]);
 
   return (
-    <NumberField 
-      ref={ ref }
-      minValue={ Math.min(...range) }
-      maxValue={ Math.max(...range) }
-      decrementAriaLabel={ steppers?.decrementLabel }
-      incrementAriaLabel={ steppers?.incrementLabel }
-      { ...props }
-    >
-      { label && <Label { ...compounds?.label }>
-          { label }
-        </Label>
-      }
-
-      <Group { ...compounds?.group }>
-        { steppers && 
-          <Button 
-          { ...compounds?.stepper }
-          slot="decrement" 
+    <>
+      <div { ...compounds?.wrapper }>
+        <NumberField
+          ref={ resolvedRef }
+          // This looks super weird but is the only way
+          // to unset the value in NumberField as undefined
+          // will not update the value
+          value={ value === undefined ? NaN : value }
+          minValue={ Math.min(...range) }
+          maxValue={ Math.max(...range) }
+          decrementAriaLabel={ steppers?.decrementLabel }
+          incrementAriaLabel={ steppers?.incrementLabel }
+          { ...props }
         >
-          { steppers.decrementIcon 
-            ? <steppers.decrementIcon aria-hidden="true" focusable="false" /> 
-            : <RemoveIcon aria-hidden="true" focusable="false" /> }
-          </Button> 
-        }
+          { label && <Label { ...compounds?.label }>
+            { label }
+          </Label>
+          }
 
-        <Input 
-          { ...compounds?.input } 
-          { ...(isVirtualKeyboardDisabled ? { inputMode: "none" } : {}) } 
-        />
+          <Group { ...compounds?.group }>
+            {steppers &&
+              <Button
+                { ...compounds?.stepper }
+                slot="decrement"
+              >
+                { steppers.decrementIcon
+                  ? <steppers.decrementIcon aria-hidden="true" focusable="false" />
+                  : <RemoveIcon aria-hidden="true" focusable="false" /> }
+              </Button>
+            }
 
-        { steppers && 
-          <Button 
-            { ...compounds?.stepper }
-            slot="increment" 
-          >
-            { steppers.incrementIcon 
-              ? <steppers.incrementIcon aria-hidden="true" focusable="false" /> 
-              : <AddIcon aria-hidden="true" focusable="false" /> }
-          </Button>
-        }
-      </Group>
-    </NumberField>
+            <Input
+              { ...compounds?.input }
+              { ...(isVirtualKeyboardDisabled ? { inputMode: "none" } : {}) }
+              placeholder={ placeholder }
+            />
+
+            { steppers &&
+              <Button
+                { ...compounds?.stepper }
+                slot="increment"
+              >
+                { steppers.incrementIcon
+                  ? <steppers.incrementIcon aria-hidden="true" focusable="false" />
+                  : <AddIcon aria-hidden="true" focusable="false" /> }
+              </Button>
+            }
+          </Group>
+        </NumberField>
+        { onReset && <ThSettingsResetButton { ...compounds?.reset } onClick={ handleResetWithFocus } /> }
+      </div>
+    </>
   );
 };

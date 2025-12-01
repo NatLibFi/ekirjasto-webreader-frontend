@@ -1,6 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ThLineHeightOptions, ThTextAlignOptions } from "@/preferences/models/enums";
+import { 
+  ThLineHeightOptions, 
+  ThSpacingPresetKeys, 
+  ThSpacingSettingsKeys, 
+  ThTextAlignOptions 
+} from "@/preferences/models/enums";
 import { defaultFontFamilyOptions } from "@/preferences/models/const";
 
 export interface LineLengthStateObject {
@@ -24,6 +29,30 @@ export interface SetLineLengthPayload {
   }
 }
 
+export interface SetSpacingSettingPayload<T = number | ThLineHeightOptions | null> {
+  type: string;
+  payload: {
+    value: T;
+    preset?: ThSpacingPresetKeys;
+  }
+}
+
+export interface SetSpacingPresetPayload {
+  type: string;
+  payload: {
+    preset: ThSpacingPresetKeys;
+    values: Partial<Record<SpacingStateKey, number | ThLineHeightOptions | null>>;
+  }
+}
+
+export type SpacingStateKey = Exclude<ThSpacingSettingsKeys, ThSpacingSettingsKeys.spacingPresets | ThSpacingSettingsKeys.publisherStyles>;
+
+export interface SpacingStateObject {
+  preset: ThSpacingPresetKeys;
+  custom: Partial<Record<SpacingStateKey, number | ThLineHeightOptions | null>>;
+  baseline: Partial<Record<SpacingStateKey, number | ThLineHeightOptions | null>>;
+}
+
 export interface SettingsReducerState {
   columnCount: string;
   fontFamily: keyof typeof defaultFontFamilyOptions;
@@ -37,6 +66,7 @@ export interface SettingsReducerState {
   paragraphSpacing: number | null;
   publisherStyles: boolean;
   scroll: boolean;
+  spacing: SpacingStateObject;
   textAlign: ThTextAlignOptions;
   textNormalization: boolean;
   wordSpacing: number | null;
@@ -55,10 +85,67 @@ const initialState: SettingsReducerState = {
   paragraphSpacing: null,
   publisherStyles: true,
   scroll: false,
+  spacing: {
+    preset: ThSpacingPresetKeys.publisher,
+    custom: {},
+    baseline: {}
+  },
   textAlign: ThTextAlignOptions.publisher,
   textNormalization: false,
   wordSpacing: null,
 }
+
+const checkRootSpacingSettingsAtInit = (state: SettingsReducerState) => {
+  return (
+    state.letterSpacing === null &&
+    state.lineHeight === ThLineHeightOptions.publisher &&
+    state.paragraphIndent === null &&
+    state.paragraphSpacing === null &&
+    state.wordSpacing === null
+  );
+}
+
+export const handleSpacingSetting = (state: any, action: SetSpacingSettingPayload, settingKey: ThSpacingSettingsKeys) => {
+  const { value, preset } = action.payload;
+
+  state.publisherStyles = false;
+
+  if (!preset) {
+    state[settingKey] = value;
+
+    if (checkRootSpacingSettingsAtInit(state)) {
+      state.publisherStyles = true;
+    }
+
+    return;
+  }
+
+  // Initialize spacing state if needed
+  if (!state.spacing) {
+    state.spacing = {
+      preset: ThSpacingPresetKeys.custom,
+      custom: {
+        [settingKey]: value
+      }
+    };
+  }
+
+  // Ensure custom exist for backward compatibility
+  if (!state.spacing.custom) {
+    state.spacing.custom = {};
+  }
+
+  if (state.spacing.preset !== ThSpacingPresetKeys.custom) {
+    state.spacing.preset = ThSpacingPresetKeys.custom;
+    state.spacing.custom = state.spacing.baseline;
+  } 
+
+  if (value === null) {
+    delete state.spacing.custom[settingKey];
+  } else {
+    state.spacing.custom[settingKey] = value;
+  }
+};
 
 export const settingsSlice = createSlice({
   name: "settings",
@@ -80,10 +167,10 @@ export const settingsSlice = createSlice({
       state.hyphens = action.payload
     },
     setLetterSpacing: (state, action) => {
-      state.letterSpacing = action.payload
+      handleSpacingSetting(state, action, ThSpacingSettingsKeys.letterSpacing);
     },
     setLineHeight: (state, action) => {
-      state.lineHeight = action.payload
+      handleSpacingSetting(state, action, ThSpacingSettingsKeys.lineHeight);
     },
     setLineLength: (state, action: SetLineLengthPayload) => {
       // For min and max, we need to spread and handle isDisabled
@@ -116,6 +203,7 @@ export const settingsSlice = createSlice({
             }
           };
           break;
+        
         case "max":
           state.lineLength = {
             ...state.lineLength,
@@ -133,16 +221,40 @@ export const settingsSlice = createSlice({
       }
     },
     setParagraphIndent: (state, action) => {
-      state.paragraphIndent = action.payload
+      handleSpacingSetting(state, action, ThSpacingSettingsKeys.paragraphIndent);
     },
     setParagraphSpacing: (state, action) => {
-      state.paragraphSpacing = action.payload
+      handleSpacingSetting(state, action, ThSpacingSettingsKeys.paragraphSpacing);
     },
     setPublisherStyles: (state, action) => {
       state.publisherStyles = action.payload
     },
     setScroll: (state, action) => {
       state.scroll = action.payload
+    },
+    setSpacingPreset: (state, action: SetSpacingPresetPayload) => {
+      const { preset, values } = action.payload;
+
+      // Initialize spacing state if needed
+      if (!state.spacing) {
+        state.spacing = {
+          preset: preset,
+          custom: {},
+          baseline: {}
+        };
+      }
+
+      state.spacing.preset = preset;
+
+      if (preset !== ThSpacingPresetKeys.custom) {
+        state.spacing.baseline = values;
+      }
+
+      if (preset === ThSpacingPresetKeys.publisher) {
+        state.publisherStyles = true;
+      } else {
+        state.publisherStyles = false;
+      }
     },
     setTextAlign: (state, action) => {
       state.textAlign = action.payload
@@ -151,10 +263,12 @@ export const settingsSlice = createSlice({
       state.textNormalization = action.payload
     },
     setWordSpacing: (state, action) => {
-      state.wordSpacing = action.payload
+      handleSpacingSetting(state, action, ThSpacingSettingsKeys.wordSpacing);
     }
   }
-})
+});
+
+export const initialSettingsState = initialState;
 
 // Action creators are generated for each case reducer function
 export const { 
@@ -170,6 +284,7 @@ export const {
   setParagraphSpacing,
   setPublisherStyles,
   setScroll,
+  setSpacingPreset,
   setTextAlign,
   setTextNormalization, 
   setWordSpacing

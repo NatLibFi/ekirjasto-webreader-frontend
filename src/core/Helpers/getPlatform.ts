@@ -1,23 +1,22 @@
 "use client";
 
-// Not caring about instance methods there, only properties
-// See https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData
-interface ExtNavigatorUAData {
-  brands: string[];
-  mobile: boolean;
-  platform: string;
-}
-
-interface ExtNavigator extends Navigator {
-  userAgentData: ExtNavigatorUAData;
+// Extend Navigator interface to include userAgentData
+declare global {
+  interface Navigator {
+    userAgentData?: {
+      brands: Array<{brand: string; version: string}>;
+      mobile: boolean;
+      platform: string;
+    };
+  }
 }
 
 // See https://developer.mozilla.org/en-US/docs/Web/API/Navigator/userAgentData
 export const getPlatform = () => {
   if (typeof window !== "undefined") {
-    const nav: ExtNavigator = window.navigator as ExtNavigator;
+    const nav = window.navigator;
 
-    if (typeof nav.userAgentData !== "undefined" && typeof nav.userAgentData != null) {
+    if (nav.userAgentData) {
       return nav.userAgentData.platform.toLowerCase();
     }
 
@@ -30,8 +29,9 @@ export const getPlatform = () => {
       return nav.platform.toLowerCase();
     }
   }
+
   return "unknown";
-}
+};
 
 export const isMacish = () => {
   const MacOSPattern = /mac|ipod|iphone|ipad/i;

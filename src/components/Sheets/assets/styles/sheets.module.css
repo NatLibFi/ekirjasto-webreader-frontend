@@ -100,9 +100,8 @@
 }
 
 .bottomSheetScroller {
-  /* Needed for RAC FocusScope keyboard focus scrolling */
   position: relative;
-  scroll-padding-bottom: calc(var(--layout-spacing) * 2);
+  scroll-padding-bottom: calc(var(--layout-spacing) * 4);
 }
 
 .dragIndicator {

@@ -41,6 +41,7 @@ export const StatefulPopoverSheet = ({
     children,
     resetFocus,
     focusWithinRef,
+    focusSelector,
     scrollTopOnFocus,
     dismissEscapeKeyClose
   }: StatefulPopoverSheetProps) => {
@@ -64,6 +65,7 @@ export const StatefulPopoverSheet = ({
           withinRef: focusWithinRef ?? popoverBodyRef,
           trackedState: isOpen,
           fallbackRef: popoverCloseRef,
+          withSelector: focusSelector,
           action: {
             type: "focus",
             options: {
