@@ -429,7 +429,10 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
       publication: publication,
       listeners: listeners,
       initialPosition: initialPosition ? new Locator(initialPosition) : undefined,
-      preferences: webPubPreferences
+      preferences: webPubPreferences,
+      defaults: {
+        experiments: preferences.experiments?.webPub || null
+      }
     }, () => {
       p.observe(window);
     });
@@ -441,7 +444,7 @@ const WebPubStatefulReaderInner = ({ rawManifest, selfHref }: { rawManifest: obj
         p.destroy();
       });
     };
-  }, [publication]);
+  }, [publication, preferences]);
 
   return (
     <>
