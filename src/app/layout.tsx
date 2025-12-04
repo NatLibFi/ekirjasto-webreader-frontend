@@ -7,6 +7,8 @@ import { ThStoreProvider } from "@/lib/ThStoreProvider";
 import { ThPreferencesProvider } from "@/preferences/ThPreferencesProvider";
 import { ThI18nProvider } from "@/i18n/ThI18nProvider";
 
+import { NoCopy } from "../components/NoCopy";
+
 export const runtime = "edge";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -27,6 +29,7 @@ export default function RootLayout({
         <ThStoreProvider>
           <ThPreferencesProvider initialPreferences={eKirjastoPreferences}>
             <ThI18nProvider>
+              <NoCopy/>
               { children }
             </ThI18nProvider>
           </ThPreferencesProvider>

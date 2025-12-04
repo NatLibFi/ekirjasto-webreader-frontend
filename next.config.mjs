@@ -48,7 +48,63 @@ const nextConfig = {
       ];
     }
     return [];
-  }
+  },
+  async headers() {
+    // Get allowed domains from environment variable or default to all in development
+    const allowedDomains = process.env.NEXT_PUBLIC_MANIFEST_ALLOWED_DOMAINS
+      ? process.env.NEXT_PUBLIC_MANIFEST_ALLOWED_DOMAINS.split(",")
+          .map(domain => domain.trim())
+          // Ensure domain has protocol
+          .map(domain => {
+            if (domain === "*") return domain;
+            if (!domain.match(/^https?:\/\//)) {
+              return `https://${ domain }`;
+            }
+            return domain;
+          })
+      : [];
+    
+    // In development, allow all origins for easier testing
+    const allowAllOrigins = process.env.NODE_ENV !== "production";
+    
+    // If no domains are specified and not in development, default to empty array (deny all)
+    const allowedOrigins = allowAllOrigins 
+      ? ["*"]
+      : allowedDomains.length > 0 
+        ? allowedDomains 
+        : [];
+
+    return [
+      {
+        // Match all requests
+        source: "/:path*",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: allowedOrigins.join(",") || "null",
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET,HEAD,OPTIONS",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type",
+          },
+          { 
+            key: "Cache-Control",
+            value: "no-store, no-cache, must-revalidate, private",
+          },
+          { 
+            key: "Pragma", 
+            value: "no-cache" },
+          { 
+            key: "Expires",
+            value: "0" },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
