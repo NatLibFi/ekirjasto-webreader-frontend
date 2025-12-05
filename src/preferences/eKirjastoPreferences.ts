@@ -21,6 +21,19 @@ import {
   ThArrowVariant,
 } from "./models/enums";
 import { createPreferences, ThPreferences, DefaultKeys } from "./preferences";
+import { ENV_CONFIG } from "@/config/env"; 
+
+const CustomLogo = 
+  `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 974 1200">
+    <style type="text/css">
+	    .st0{fill:#3FB8AF;}
+    </style>
+    <g> 
+      <path class="st0" d="M833.7,227.2c0-76.6-62.1-138.7-138.7-138.7c0,0-520.2,0-542.3,0C64.4,88.4,24.7,36.7,5.9,1H1l0.2,230.3 C3.4,306,64.5,365.9,139.7,365.9H695C771.6,365.9,833.7,303.8,833.7,227.2"/> 
+      <path class="st0" d="M972.8,1060.3c0-76.6-62.1-138.7-138.7-138.7c0,0-659.3,0-681.4,0c-88.3,0-128-51.7-146.8-87.4H1l0.2,230.3 c2.2,74.7,63.3,134.6,138.5,134.6h694.4C910.7,1199,972.8,1136.9,972.8,1060.3"/> 
+      <path class="st0" d="M695,643.5c0-76.6-62.1-138.7-138.7-138.7c0,0-381.5,0-403.6,0c-88.3,0-128-51.7-146.8-87.4H1l0.2,230.3 c2.2,74.7,63.3,134.6,138.5,134.6h416.6C632.9,782.2,695,720.1,695,643.5"/> 
+    </g>
+  </svg>`
 
 import ReadiumCSSColors from "@readium/css/css/vars/colors.json";
 import { 
@@ -51,10 +64,13 @@ export const eKirjastoPreferences: ThPreferences<DefaultKeys> = createPreference
   theming: {
     header: {
       backLink: {
-        variant: ThBackLinkVariant.arrow,
+        variant: ThBackLinkVariant.custom,
         visibility: "partially",
-        href: "/"
-      },
+        href: ENV_CONFIG.backLinkUrl,
+        content: { 
+          type: "svg",
+          content: CustomLogo
+        }      },
       runningHead: {
         format: {
           reflow: {
