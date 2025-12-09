@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useRef } from "react";
+import {copyProtection} from "@/helpers/copyProtection";
 
 import { 
   Layout, 
@@ -87,6 +88,10 @@ export const useEpubNavigator = () => {
 
       navigatorInstance.load().then(() => {
         cb();
+
+        if (navigatorInstance) {
+          copyProtection(navigatorInstance);
+        }
 
         if (navigatorInstance?.layout === Layout.fixed) {
           // @ts-ignore
