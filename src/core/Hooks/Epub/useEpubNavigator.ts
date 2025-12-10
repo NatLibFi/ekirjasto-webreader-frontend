@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useRef } from "react";
+import {copyProtection} from "@/helpers/copyProtection";
 
 import { 
   Layout, 
@@ -88,6 +89,10 @@ export const useEpubNavigator = () => {
       navigatorInstance.load().then(() => {
         cb();
 
+        if (navigatorInstance) {
+          copyProtection(navigatorInstance);
+        }
+
         if (navigatorInstance?.layout === Layout.fixed) {
           // @ts-ignore
           FXLPositionChanged.observe((navigatorInstance?.pool.spineElement as HTMLElement), {
@@ -109,27 +114,57 @@ export const useEpubNavigator = () => {
   }, [FXLPositionChanged]);
 
   const goRight = useCallback((animated: boolean, callback: cbb) => {
-    navigatorInstance?.goRight(animated, callback);
+  navigatorInstance?.goForward(animated, (ok) => {
+    navigatorInstance?._cframes?.forEach((cframe: any) => {
+      if (cframe.frame?.contentDocument && navigatorInstance) copyProtection(navigatorInstance);
+    });
+    callback(ok);
+  });
   }, []);
 
   const goLeft = useCallback((animated: boolean, callback: cbb) => {
-    navigatorInstance?.goLeft(animated, callback)
+    navigatorInstance?.goLeft(animated, (ok) => {
+    navigatorInstance?._cframes?.forEach((cframe: any) => {
+      if (cframe.frame?.contentDocument && navigatorInstance) copyProtection(navigatorInstance);
+    });
+    callback(ok);
+  });
   }, []);
 
   const goBackward = useCallback((animated: boolean, callback: cbb) => {
-    navigatorInstance?.goBackward(animated, callback);
+    navigatorInstance?.goBackward(animated, (ok) => {
+    navigatorInstance?._cframes?.forEach((cframe: any) => {
+      if (cframe.frame?.contentDocument && navigatorInstance) copyProtection(navigatorInstance);
+    });
+    callback(ok);
+  });
   }, []);
 
   const goForward = useCallback((animated: boolean, callback: cbb) => {
-    navigatorInstance?.goForward(animated, callback);
+    navigatorInstance?.goForward(animated, (ok) => {
+    navigatorInstance?._cframes?.forEach((cframe: any) => {
+      if (cframe.frame?.contentDocument && navigatorInstance) copyProtection(navigatorInstance);
+    });
+    callback(ok);
+  });
   }, []);
 
   const goLink = useCallback((link: Link, animated: boolean, callback: cbb) => {
-    navigatorInstance?.goLink(link, animated, callback);
+    navigatorInstance?.goLink(link, animated, (ok) => {
+    navigatorInstance?._cframes?.forEach((cframe: any) => {
+      if (cframe.frame?.contentDocument && navigatorInstance) copyProtection(navigatorInstance);
+    });
+    callback(ok);
+  });
   }, []);
 
   const go = useCallback((locator: Locator, animated: boolean, callback: cbb) => {
-    navigatorInstance?.go(locator, animated, callback);
+    navigatorInstance?.go(locator, animated, (ok) => {
+    navigatorInstance?._cframes?.forEach((cframe: any) => {
+      if (cframe.frame?.contentDocument && navigatorInstance) copyProtection(navigatorInstance);
+    });
+    callback(ok);
+  });
   }, []);
 
   const navLayout = useCallback(() => {
