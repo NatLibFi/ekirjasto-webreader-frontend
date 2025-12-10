@@ -163,6 +163,15 @@ export enum ThSpacingPresetKeys {
   custom = "custom"
 }
 
+export enum ThSpacingPresetKeys {
+  publisher = "publisher",
+  tight = "tight",
+  balanced = "balanced",
+  loose = "loose",
+  accessible = "accessible",
+  custom = "custom"
+}
+
 export enum ThLayoutDirection {
   rtl = "rtl",
   ltr = "ltr"
