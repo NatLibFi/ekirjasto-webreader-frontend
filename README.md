@@ -91,6 +91,15 @@ It’s running with defaults, which means a commit triggers a build and deploy f
 
 More details in [the @cloudflare/next-on-pages repo](https://github.com/cloudflare/next-on-pages).
 
+To run in dev mode:
+
+```
+docker run --rm -it -p 3000:3000 \
+  -v "$(pwd):/app" -v /app/node_modules \
+  web-frontend:latest \
+  pnpm dev -- -H 0.0.0.0 -p 3000
+```
+
 ## Known Issues
 
 - Fullscreen is not available on iOS and very limited on iPadOS. We encountered so many issues on iPadOS that it has been disabled for the time being.
