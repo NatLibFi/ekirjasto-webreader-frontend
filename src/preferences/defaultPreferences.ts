@@ -196,9 +196,9 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
         ThThemeKeys.sepia, 
         ThThemeKeys.paper, 
         ThThemeKeys.dark, 
-        ThThemeKeys.contrast1, 
-        ThThemeKeys.contrast2, 
-        ThThemeKeys.contrast3
+        ThThemeKeys.ekirjasto1,
+        ThThemeKeys.ekirjasto2,
+        ThThemeKeys.ekirjasto3
       ],
       fxlOrder: [
         "auto",
@@ -270,7 +270,7 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
           elevate: "0px 0px 2px #8c8c8c",
           immerse: "0.45"
         },
-        [ThThemeKeys.contrast1]: {
+        [ThThemeKeys.ekirjasto1]: {
           background: "#000000",
           text: "#ffff00",
           link: "#63caff",
@@ -285,7 +285,7 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
           elevate: "0px 0px 2px #808000",
           immerse: "0.4"
         },
-        [ThThemeKeys.contrast2]: {
+        [ThThemeKeys.ekirjasto2]: {
           background: "#181842",
           text: "#ffffff",
           link: "#adcfff",
@@ -300,7 +300,7 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
           elevate: "0px 0px 2px #808080",
           immerse: "0.4"
         },
-        [ThThemeKeys.contrast3]: {
+        [ThThemeKeys.ekirjasto3]: {
           background: "#c5e7cd",
           text: "#000000",
           link: "#0000EE",
