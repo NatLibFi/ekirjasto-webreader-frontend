@@ -97,7 +97,30 @@ To run in dev mode:
 docker run --rm -it -p 3000:3000 \
   -v "$(pwd):/app" -v /app/node_modules \
   web-frontend:latest \
-  pnpm dev -- -H 0.0.0.0 -p 3000
+  pnpm dev -- --hostname 0.0.0.0 --port 3000
+```
+
+Build Docker image for dev:
+
+```
+docker build -f Dockerfile.dev -t web-frontend-dev .
+
+# Run the dev image; Dockerfile.dev now sets HOST and PORT env vars to avoid CLI parsing issues
+docker run --rm -it -p 3000:3000 \
+  -v "$(pwd):/app" -v /app/node_modules \
+  web-frontend-dev
+
+# If you prefer to explicitly override the command, use a shell to avoid `pnpm`/`next` CLI parsing:
+docker run --rm -it -p 3000:3000 \
+  -v "$(pwd):/app" -v /app/node_modules \
+  web-frontend-dev \
+  sh -c "pnpm dev -- --hostname 0.0.0.0 --port 3000"
+
+# Or explicitly pass HOST/PORT env vars during `docker run`
+docker run --rm -it -p 3000:3000 \
+  -v "$(pwd):/app" -v /app/node_modules \
+  -e HOST=0.0.0.0 -e PORT=3000 \
+  web-frontend-dev
 ```
 
 ## Known Issues
