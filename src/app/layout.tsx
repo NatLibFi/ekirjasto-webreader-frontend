@@ -12,8 +12,8 @@ export const runtime = "edge";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Thorium Web",
-  description: "Play with the capabilities of the Readium Web Toolkit",
+  title: "Ekirjasto webreader",
+  description: "Read your boooks online with Ekirjasto webreader",
 };
 
 export default function RootLayout({
