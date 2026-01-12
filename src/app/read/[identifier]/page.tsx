@@ -38,8 +38,11 @@ export default function BookPage({ params }: Props) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${jwt2}`
           },
+          body: JSON.stringify({
+            token: jwt2,
+          }),
+
         });
 
         if (!validateResponse.ok) {
@@ -49,7 +52,7 @@ export default function BookPage({ params }: Props) {
         const payload = jwtDecode<{ loan_id: string }>(jwt2);
         const loanId = payload.loan_id;
 
-        const createJwt3 = await fetch(config.linkServerUrl +"/create.php", {
+        const createJwt3 = await fetch(config.linkServerUrl + "/create.php", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -72,6 +75,7 @@ export default function BookPage({ params }: Props) {
             setSession(true);
             setJwt3(token);
           } else {
+            setAuthError("No token returned from server");
             console.error("No token received");
             setJwt3(null);
           }
