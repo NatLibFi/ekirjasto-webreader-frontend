@@ -20,7 +20,8 @@ export const usePublication = ({
   // Basic URL validation and loading
   useEffect(() => {
     if (!url) {
-      setError("Manifest URL is required");
+      //setError("Manifest URL is required");
+      console.log("manifest URL is required (usePublication)");
       return;
     }
 
