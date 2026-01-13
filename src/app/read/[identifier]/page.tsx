@@ -45,7 +45,7 @@ export default function BookPage({ params }: Props) {
 
         });
 
-        if (!validateResponse.ok) {
+        if (!validateResponse || validateResponse.status !== 200) {
           throw new Error(`HTTP validate ${validateResponse.status}`);
         }
 
