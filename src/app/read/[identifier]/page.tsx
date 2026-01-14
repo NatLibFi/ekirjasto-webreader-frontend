@@ -100,7 +100,7 @@ export default function BookPage({ params }: Props) {
         setSession(false);
         return;
       }
-      setManifestUrl(`${config.readiumProtocol}://${config.readiumServerUrl}:${config.readiumServerPort}/${jwt3}/manifest.json`);
+      setManifestUrl(`${config.readiumProtocol}://${config.readiumServerUrl}:${config.readiumServerPort}/webpub/${jwt3}/manifest.json`);
     }
     routeManifest();
     return () => {
