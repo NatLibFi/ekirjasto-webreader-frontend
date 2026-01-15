@@ -111,7 +111,7 @@ export default function BookPage({ params }: Props) {
 
 
   const { error, manifest, selfLink } = usePublication({
-    url: encodeURIComponent(manifestUrl || ""),
+    url: (manifestUrl || ""),
     onError: (error) => {
       //I wonder what goes here
       setAuthError(error);

@@ -24,11 +24,8 @@ export const usePublication = ({
       console.log("manifest URL is required (usePublication)");
       return;
     }
-
-    // Decode URL if needed
-    const decodedUrl = decodeURIComponent(url);
     
-    const manifestLink = new Link({ href: decodedUrl });
+    const manifestLink = new Link({ href: url });
     const fetcher = new HttpFetcher(undefined);
 
     try {
@@ -36,19 +33,19 @@ export const usePublication = ({
       
       // Get self-link first
       fetched.link().then((link) => {
-        setSelfLink(link.toURL(decodedUrl));
+        setSelfLink(link.toURL(url));
       });
 
       // Then get manifest data
       fetched.readAsJSON().then((manifestData) => {
         setManifest(manifestData as object);
-      }).catch((error) => {
+      }).catch((error: unknown) => {
         console.error("Error loading manifest:", error);
-        setError(`Failed loading manifest ${ decodedUrl }: ${ error instanceof Error ? error.message : "Unknown error" }`);
+        setError(`Failed loading manifest ${ url }: ${ error instanceof Error ? error.message : "Unknown error" }`);
       });
     } catch (error: unknown) {
       console.error("Error loading manifest:", error);
-      setError(`Failed loading manifest ${ decodedUrl }: ${ error instanceof Error ? error.message : "Unknown error" }`);
+      setError(`Failed loading manifest ${ url }: ${ error instanceof Error ? error.message : "Unknown error" }`);
     }
   }, [url]);
 
