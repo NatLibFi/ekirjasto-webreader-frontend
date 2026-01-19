@@ -190,7 +190,7 @@ export default function BookPage({ params }: Props) {
         clearTimeout(refreshTimerRef.current);
       }
     };
-  }, [jwt2]);
+  }, [jwt2, config, createReadiumJwt, handleAuthError, validateToken]);
 
   useEffect(() => {
     const routeManifest = async () => {
