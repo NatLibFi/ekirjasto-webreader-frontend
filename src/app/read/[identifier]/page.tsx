@@ -10,6 +10,7 @@ import { jwtDecode } from "jwt-decode";
 import { loadToken, clearToken, saveToken } from "@/helpers/storageHelper";
 
 import "@/app/app.css";
+import { promises } from "dns";
 
 type Params = { identifier: string };
 
@@ -39,7 +40,7 @@ export default function BookPage({ params }: Props) {
   const isLoading = useAppSelector(state => state.reader.isLoading);
   const config = useRuntimeConfig();
 
-  const validateToken = async (jwt2: string) => {
+  const validateToken = async (jwt2: string): Promise<Boolean> => {
     if (!config) return false;
     const validateResponse = await fetch(config.linkServerUrl + "/validate.php", {
       method: "POST",
@@ -56,10 +57,11 @@ export default function BookPage({ params }: Props) {
     }
     const payload = jwtDecode<jwt2Payload>(jwt2);
     saveToken("session", { payload: "active", loanId: payload.loan_id });
+    return true;
   };
 
-  const createReadiumJwt = async (loanId: string) => {
-    if (!config) return "";
+  const createReadiumJwt = async (loanId: string): Promise<Boolean> => {
+    if (!config) return false;
     const createJwt3 = await fetch(config.linkServerUrl + "/create.php", {
       method: "POST",
       headers: {
@@ -89,6 +91,7 @@ export default function BookPage({ params }: Props) {
     });
     setJwt3(jwt3);
     scheduleTokenRefresh();
+    return true;
   };
 
   const checkSession = (): boolean => {
@@ -164,7 +167,8 @@ export default function BookPage({ params }: Props) {
         return;
       }
       try {
-        await validateToken(jwt2);
+        const validateResult = await validateToken(jwt2);
+        if (!validateResult) return;
       } catch (err) {
         handleAuthError(err);
       }
@@ -174,7 +178,8 @@ export default function BookPage({ params }: Props) {
         return;
       }
       try {
-        await createReadiumJwt(loanId);
+        const createResult = await createReadiumJwt(loanId);
+        if (!createResult) return;
       } catch (err) {
         handleAuthError(err);
       }
