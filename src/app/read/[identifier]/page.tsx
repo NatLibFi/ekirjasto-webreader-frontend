@@ -35,7 +35,6 @@ type jwt3Payload = {
 
 export default function BookPage({ params }: Props) {
   const [jwt3, setJwt3] = useState<string | null>(null);
-  const [session, setSession] = useState<boolean | null>(null);
   const [manifestUrl, setManifestUrl] = useState<string | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
   const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -106,7 +105,6 @@ export default function BookPage({ params }: Props) {
       return false;
   }
 
-
   const refreshToken = async () => {
     const loanId = loadToken("jwt3")?.loanId;
 
@@ -150,7 +148,6 @@ export default function BookPage({ params }: Props) {
 
   const logout = () => {
     //do only when refresh fails
-    setSession(false);
     clearToken("session");
     clearToken("jwt3");
     if (refreshTimerRef.current) {
@@ -167,16 +164,14 @@ export default function BookPage({ params }: Props) {
 
   useEffect(() => {
     const auth = async (jwt2: string) => {
-      if (checkSession()) {
-        setSession(true);
-        return;
-      }
-      try {
-        const validateResult = await validateToken(jwt2);
-        if (!validateResult) return;
-      } catch (err) {
-        handleAuthError(err);
-        return;
+      if (!checkSession()) {      
+        try {
+          const validateResult = await validateToken(jwt2);
+          if (!validateResult) return;
+        } catch (err) {
+          handleAuthError(err);
+          return;
+        }
       }
       const loanId = loadToken("session")?.loanId;
       if (!loanId) {
@@ -201,7 +196,7 @@ export default function BookPage({ params }: Props) {
 
   useEffect(() => {
     const routeManifest = async () => {
-      if (!config || !session || !jwt3) {
+      if (!config || !checkSession() || !jwt3) {
         return;
       }
       setManifestUrl(`${config.readiumProtocol}://${config.readiumServerUrl}:${config.readiumServerPort}/webpub/${jwt3}/manifest.json`);
@@ -233,7 +228,7 @@ export default function BookPage({ params }: Props) {
           <h1>Error</h1>
           <p>{error}</p>
         </div>
-      ) : session ? (
+      ) : checkSession() ? (
         <StatefulLoader isLoading={isLoading}>
           {manifest && selfLink && <StatefulReader rawManifest={manifest} selfHref={selfLink} />}
         </StatefulLoader>
