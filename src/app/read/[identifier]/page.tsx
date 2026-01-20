@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useState, useRef } from "react";
+import { use, useEffect, useState, useRef, useCallback} from "react";
 import { StatefulReader } from "@/components/Epub";
 import { StatefulLoader } from "@/components/StatefulLoader";
 import { usePublication } from "@/hooks/usePublication";
@@ -10,7 +10,6 @@ import { jwtDecode } from "jwt-decode";
 import { loadToken, clearToken, saveToken } from "@/helpers/storageHelper";
 
 import "@/app/app.css";
-import { promises } from "dns";
 
 type Params = { identifier: string };
 
@@ -38,12 +37,20 @@ export default function BookPage({ params }: Props) {
   const [manifestUrl, setManifestUrl] = useState<string | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
   const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scheduleTokenRefreshRef = useRef<(() => void) | null>(null);
 
   const jwt2 = use(params).identifier;
   const isLoading = useAppSelector(state => state.reader.isLoading);
   const config = useRuntimeConfig();
 
-  const validateToken = async (jwt2: string): Promise<Boolean> => {
+  const renderCount = useRef(0);
+
+  useEffect(() => {
+    renderCount.current += 1;
+    console.log(`Config effect run #${renderCount.current}:`, config);
+  }, [config]);
+
+  const validateToken = useCallback(async (jwt2: string): Promise<Boolean> => {
     if (!config) return false;
     const validateResponse = await fetch(config.linkServerUrl + "/validate.php", {
       method: "POST",
@@ -61,9 +68,27 @@ export default function BookPage({ params }: Props) {
     const payload = jwtDecode<jwt2Payload>(jwt2);
     saveToken("session", { payload: "active", loanId: payload.loan_id, expiresAt: payload.expires * 1000});
     return true;
-  };
+  }, [config]);
 
-  const createReadiumJwt = async (loanId: string): Promise<Boolean> => {
+  const handleAuthError = useCallback((err: unknown) => {
+    console.error("JWT verification failed:", err);
+    setAuthError(err instanceof Error ? err.message : "Invalid or expired token");
+    logout();
+
+    if (refreshTimerRef.current) {
+      clearTimeout(refreshTimerRef.current);
+    }
+  }, []);
+
+  const checkSession = (): boolean => {
+    const storageTokenSession = loadToken("session");
+    if (storageTokenSession?.loanId && storageTokenSession?.payload === 'active') {
+      return true;
+    }
+      return false;
+  }
+
+const createReadiumJwt = useCallback(async (loanId: string): Promise<Boolean> => {
     if (!config) return false;
     const createJwt3 = await fetch(config.linkServerUrl + "/create.php", {
       method: "POST",
@@ -93,28 +118,18 @@ export default function BookPage({ params }: Props) {
       expiresAt: payload.exp * 1000,
     });
     setJwt3(jwt3);
-    scheduleTokenRefresh();
+    scheduleTokenRefreshRef.current?.();
     return true;
-  };
+  }, [config]);
 
-  const checkSession = (): boolean => {
-    const storageTokenSession = loadToken("session");
-    if (storageTokenSession?.loanId && storageTokenSession?.payload === 'active') {
-      return true;
-    }
-      return false;
-  }
-
-  const refreshToken = async () => {
+  const refreshToken = useCallback(async () => {
     const loanId = loadToken("jwt3")?.loanId;
-
-
     if (!loanId || !(await createReadiumJwt(loanId))) {
       logout();
     }
-  };
+  }, [createReadiumJwt]);
 
-  const scheduleTokenRefresh = () => {
+  const scheduleTokenRefresh = useCallback(() => {
     if (refreshTimerRef.current) {
       clearTimeout(refreshTimerRef.current);
     }
@@ -127,24 +142,14 @@ export default function BookPage({ params }: Props) {
       expiresAtTime - Date.now() - 5000,
       0
     );
-    // Refresh immediately if expiring soon
+    
     if (timeUntilRefresh <= 2000) {
       refreshToken();
       return;
     }
 
     refreshTimerRef.current = setTimeout(refreshToken, timeUntilRefresh);
-  };
-
-  const handleAuthError = (err: unknown) => {
-    console.error("JWT verification failed:", err);
-    setAuthError(err instanceof Error ? err.message : "Invalid or expired token");
-    logout();
-
-    if (refreshTimerRef.current) {
-      clearTimeout(refreshTimerRef.current);
-    }
-  };
+  }, [refreshToken]);
 
   const logout = () => {
     //do only when refresh fails
@@ -155,6 +160,9 @@ export default function BookPage({ params }: Props) {
     }
     console.log("logged out");
   };
+  useEffect(() => {
+    scheduleTokenRefreshRef.current = scheduleTokenRefresh;
+  }, [scheduleTokenRefresh]);
 
   useEffect(() => {
     return () => {
