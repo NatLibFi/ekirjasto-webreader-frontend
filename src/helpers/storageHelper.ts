@@ -7,7 +7,7 @@ export interface StorageToken {
 export function loadToken(storageKey: string): StorageToken | null {
   const data = localStorage.getItem(storageKey);
   if (!data) return null;
-
+  
   try {
     const token: StorageToken = JSON.parse(data);
     if ((token?.expiresAt ?? 0) < Date.now()) {

@@ -20,6 +20,10 @@ type Props = {
 
 type jwt2Payload = {
   loan_id: string;
+  isbn: string;
+  nonce: string;
+  expiration: number;
+
 }
 type jwt3Payload = {
   loan_id: string;
@@ -56,7 +60,7 @@ export default function BookPage({ params }: Props) {
       throw new Error(`HTTP validate ${validateResponse.status}`);
     }
     const payload = jwtDecode<jwt2Payload>(jwt2);
-    saveToken("session", { payload: "active", loanId: payload.loan_id });
+    saveToken("session", { payload: "active", loanId: payload.loan_id, expiresAt: payload.expiration * 1000 });
     return true;
   };
 
@@ -171,6 +175,7 @@ export default function BookPage({ params }: Props) {
         if (!validateResult) return;
       } catch (err) {
         handleAuthError(err);
+        return;
       }
       const loanId = loadToken("session")?.loanId;
       if (!loanId) {
@@ -182,6 +187,7 @@ export default function BookPage({ params }: Props) {
         if (!createResult) return;
       } catch (err) {
         handleAuthError(err);
+        return;
       }
     };
     auth(jwt2);
