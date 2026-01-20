@@ -22,7 +22,7 @@ type jwt2Payload = {
   loan_id: string;
   isbn: string;
   nonce: string;
-  expiration: number;
+  expires: number;
 }
 
 type jwt3Payload = {
@@ -60,7 +60,7 @@ export default function BookPage({ params }: Props) {
       throw new Error(`HTTP validate ${validateResponse.status}`);
     }
     const payload = jwtDecode<jwt2Payload>(jwt2);
-    saveToken("session", { payload: "active", loanId: payload.loan_id});
+    saveToken("session", { payload: "active", loanId: payload.loan_id, expiresAt: payload.expires * 1000});
     return true;
   };
 
@@ -109,6 +109,7 @@ export default function BookPage({ params }: Props) {
 
   const refreshToken = async () => {
     const loanId = loadToken("jwt3")?.loanId;
+
 
     if (!loanId || !(await createReadiumJwt(loanId))) {
       logout();
