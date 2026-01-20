@@ -11,11 +11,6 @@ export function loadToken(storageKey: string): StorageToken | null {
   
   try {
     const token: StorageToken = JSON.parse(data);
-    console.log(token);
-    if ((token?.expiresAt ?? 0) < Date.now()) {
-      clearToken(storageKey); // token expired
-      return null;
-    }
     return token;
   } catch {
     clearToken(storageKey); // corrupted or malformed

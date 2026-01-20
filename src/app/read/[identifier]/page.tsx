@@ -60,7 +60,7 @@ export default function BookPage({ params }: Props) {
       throw new Error(`HTTP validate ${validateResponse.status}`);
     }
     const payload = jwtDecode<jwt2Payload>(jwt2);
-    saveToken("session", { payload: "active", loanId: payload.loan_id, expiresAt: payload.expiration * 1000 });
+    saveToken("session", { payload: "active", loanId: payload.loan_id});
     return true;
   };
 
@@ -178,7 +178,6 @@ export default function BookPage({ params }: Props) {
         return;
       }
       const loanId = loadToken("session")?.loanId;
-      console.log(loadToken("session"));
       if (!loanId) {
         handleAuthError(new Error("No loan ID found in session token"));
         return;
