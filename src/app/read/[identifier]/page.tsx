@@ -66,7 +66,7 @@ export default function BookPage({ params }: Props) {
       throw new Error(`HTTP validate ${validateResponse.status}`);
     }
     const payload = jwtDecode<jwt2Payload>(jwt2);
-    saveToken("session", { payload: "active", loanId: payload.loan_id, expiresAt: payload.expires * 1000});
+    saveToken(jwt2, { payload: "active", loanId: payload.loan_id, expiresAt: payload.expires * 1000});
     return true;
   }, [config]);
 
@@ -81,7 +81,7 @@ export default function BookPage({ params }: Props) {
   }, []);
 
   const checkSession = (): boolean => {
-    const storageTokenSession = loadToken("session");
+    const storageTokenSession = loadToken(jwt2);
     if (storageTokenSession?.loanId && storageTokenSession?.payload === 'active') {
       return true;
     }
@@ -112,7 +112,7 @@ const createReadiumJwt = useCallback(async (loanId: string): Promise<Boolean> =>
     }
     const payload = jwtDecode<jwt3Payload>(jwt3);
 
-    saveToken("jwt3", {
+    saveToken("jwt3"+jwt2, {
       payload: jwt3,
       loanId: loanId,
       expiresAt: payload.exp * 1000,
@@ -123,7 +123,7 @@ const createReadiumJwt = useCallback(async (loanId: string): Promise<Boolean> =>
   }, [config]);
 
   const refreshToken = useCallback(async () => {
-    const loanId = loadToken("jwt3")?.loanId;
+    const loanId = loadToken("jwt3"+jwt2)?.loanId;
     if (!loanId || !(await createReadiumJwt(loanId))) {
       logout();
     }
@@ -133,7 +133,7 @@ const createReadiumJwt = useCallback(async (loanId: string): Promise<Boolean> =>
     if (refreshTimerRef.current) {
       clearTimeout(refreshTimerRef.current);
     }
-    let expiresAtTime = loadToken("jwt3")?.expiresAt;
+    let expiresAtTime = loadToken("jwt3"+jwt2)?.expiresAt;
 
     if (!expiresAtTime) {
       return;
@@ -152,9 +152,8 @@ const createReadiumJwt = useCallback(async (loanId: string): Promise<Boolean> =>
   }, [refreshToken]);
 
   const logout = () => {
-    //do only when refresh fails
-    clearToken("session");
-    clearToken("jwt3");
+    clearToken(jwt2);
+    clearToken("jwt3"+jwt2);
     if (refreshTimerRef.current) {
       clearTimeout(refreshTimerRef.current);
     }
@@ -181,7 +180,7 @@ const createReadiumJwt = useCallback(async (loanId: string): Promise<Boolean> =>
           return;
         }
       }
-      const loanId = loadToken("session")?.loanId;
+      const loanId = loadToken(jwt2)?.loanId;
       if (!loanId) {
         handleAuthError(new Error("No loan ID found in session token"));
         return;
