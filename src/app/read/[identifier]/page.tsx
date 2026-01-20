@@ -23,8 +23,8 @@ type jwt2Payload = {
   isbn: string;
   nonce: string;
   expiration: number;
-
 }
+
 type jwt3Payload = {
   loan_id: string;
   exp: number;
@@ -178,6 +178,7 @@ export default function BookPage({ params }: Props) {
         return;
       }
       const loanId = loadToken("session")?.loanId;
+      console.log(loadToken("session"));
       if (!loanId) {
         handleAuthError(new Error("No loan ID found in session token"));
         return;

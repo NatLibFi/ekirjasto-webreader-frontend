@@ -6,10 +6,12 @@ export interface StorageToken {
 
 export function loadToken(storageKey: string): StorageToken | null {
   const data = localStorage.getItem(storageKey);
+  console.log(data);
   if (!data) return null;
   
   try {
     const token: StorageToken = JSON.parse(data);
+    console.log(token);
     if ((token?.expiresAt ?? 0) < Date.now()) {
       clearToken(storageKey); // token expired
       return null;
