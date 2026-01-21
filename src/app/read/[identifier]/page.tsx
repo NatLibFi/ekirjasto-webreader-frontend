@@ -115,7 +115,7 @@ const createReadiumJwt = useCallback(async (loanId: string): Promise<Boolean> =>
     saveToken("jwt3"+jwt2, {
       payload: jwt3,
       loanId: loanId,
-      expiresAt: payload.exp * 1000,
+      expiresAt: (Date.now() + 10) * 1000//payload.exp * 1000,
     });
     setJwt3(jwt3);
     scheduleTokenRefreshRef.current?.();
