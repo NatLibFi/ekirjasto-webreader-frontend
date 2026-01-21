@@ -34,8 +34,8 @@ export function copyProtection(navigatorInstance: EpubNavigator) {
   };
 
   cframes.forEach((cframe: any) => {
-    const iframe = cframe.frame;
+    const iframe = cframe?.frame;
     if (!iframe) return;
-      attachBlocker(cframe.iframe);
+    attachBlocker(cframe.iframe);
   });
 }

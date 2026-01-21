@@ -158,6 +158,8 @@ const createReadiumJwt = useCallback(async (loanId: string): Promise<Boolean> =>
       clearTimeout(refreshTimerRef.current);
     }
     console.log("logged out");
+    setAuthError("Session expired");
+    //window.location.href = config?.backLinkUrl || '/error';
   };
   useEffect(() => {
     scheduleTokenRefreshRef.current = scheduleTokenRefresh;
@@ -235,11 +237,11 @@ const createReadiumJwt = useCallback(async (loanId: string): Promise<Boolean> =>
           <h1>Error</h1>
           <p>{error}</p>
         </div>
-      ) : checkSession() ? (
+      ) : (
         <StatefulLoader isLoading={isLoading}>
           {manifest && selfLink && <StatefulReader rawManifest={manifest} selfHref={selfLink} />}
         </StatefulLoader>
-      ) : null}
+      )}
     </>
   );
 }
