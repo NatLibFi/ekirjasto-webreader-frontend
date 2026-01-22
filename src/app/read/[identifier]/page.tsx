@@ -118,7 +118,7 @@ const createReadiumJwt = useCallback(async (loanId: string): Promise<Boolean> =>
   const refreshToken = useCallback(async () => {
     const loanId = loadToken("jwt3"+jwt2)?.loanId;
     if (!loanId || !(await createReadiumJwt(loanId))) {
-      logout();
+      handleAuthError(new Error("Failed to refresh jwt"));
     }
   }, [createReadiumJwt]);
 
@@ -129,6 +129,7 @@ const createReadiumJwt = useCallback(async (loanId: string): Promise<Boolean> =>
     let expiresAtTime = loadToken("jwt3"+jwt2)?.expiresAt;
 
     if (!expiresAtTime) {
+      handleAuthError(new Error("No expiration time found for session token"));
       return;
     }
     const timeUntilRefresh = Math.max(
@@ -158,15 +159,6 @@ const createReadiumJwt = useCallback(async (loanId: string): Promise<Boolean> =>
     console.log('Schedule token refresh effect triggered');
     scheduleTokenRefreshRef.current = scheduleTokenRefresh;
   }, [scheduleTokenRefresh]);
-
-  useEffect(() => {
-    console.log('Component unmounting triggered');
-    return () => {
-      if (refreshTimerRef.current) {
-        clearTimeout(refreshTimerRef.current);
-      }
-    };
-  }, []);
 
   useEffect(() => {
     console.log('Auth effect triggered');
