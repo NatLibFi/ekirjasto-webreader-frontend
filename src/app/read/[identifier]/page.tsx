@@ -171,12 +171,21 @@ const createReadiumJwt = useCallback(async (loanId: string): Promise<Boolean> =>
   useEffect(() => {
     console.log('Auth effect triggered');
     const auth = async (jwt2: string) => {
-      if (!checkSession()) {      
+      let session = checkSession();
+      if (!session) {
         try {
           const validateResult = await validateToken(jwt2);
           if (!validateResult) return;
         } catch (err) {
           handleAuthError(err);
+          return;
+        }
+      }
+      if (session) {
+        const storedJwt3 = loadToken("jwt3"+jwt2);
+        if (storedJwt3) {
+          setJwt3(storedJwt3.payload as string);
+          scheduleTokenRefreshRef.current?.();
           return;
         }
       }
