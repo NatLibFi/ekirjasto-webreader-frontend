@@ -1,7 +1,7 @@
 "use client";
 
 import { RuntimeConfig } from "@/app/api/runtime-config/route";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 export const useRuntimeConfig = () => {
   const [config, setConfig] = useState<RuntimeConfig | null>(null);
@@ -13,6 +13,5 @@ export const useRuntimeConfig = () => {
       .catch(console.error);
   }, []);
 
-  return config;
+  return useMemo(() => config, [config]);
 };
-
