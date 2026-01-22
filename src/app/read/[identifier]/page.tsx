@@ -59,7 +59,7 @@ export default function BookPage({ params }: Props) {
       throw new Error(`HTTP validate ${validateResponse.status}`);
     }
     const payload = jwtDecode<jwt2Payload>(jwt2);
-    saveToken(jwt2, { payload: "active", loanId: payload.loan_id, expiresAt: Date.now() + payload.expires * 1000 });
+    saveToken(jwt2, { payload: "active", loanId: payload.loan_id, expiresAt: payload.expires * 1000 });
     return true;
   }, [config]);
 
@@ -108,7 +108,7 @@ const createReadiumJwt = useCallback(async (loanId: string): Promise<Boolean> =>
     saveToken("jwt3"+jwt2, {
       payload: jwt3,
       loanId: loanId,
-      expiresAt: Date.now() + payload.exp * 1000,
+      expiresAt: payload.exp * 1000,
     });
     setJwt3(jwt3);
     scheduleTokenRefreshRef.current?.();
@@ -155,16 +155,21 @@ const createReadiumJwt = useCallback(async (loanId: string): Promise<Boolean> =>
     //window.location.href = config?.backLinkUrl || '/error';
   };
   useEffect(() => {
+    console.log('Schedule token refresh effect triggered');
     scheduleTokenRefreshRef.current = scheduleTokenRefresh;
   }, [scheduleTokenRefresh]);
 
   useEffect(() => {
+    console.log('Component unmounting triggered');
     return () => {
-      logout();
+      if (refreshTimerRef.current) {
+        clearTimeout(refreshTimerRef.current);
+      }
     };
   }, []);
 
   useEffect(() => {
+    console.log('Auth effect triggered');
     const auth = async (jwt2: string) => {
       if (!checkSession()) {      
         try {
@@ -197,6 +202,7 @@ const createReadiumJwt = useCallback(async (loanId: string): Promise<Boolean> =>
   }, [jwt2, config, createReadiumJwt, handleAuthError, validateToken]);
 
   useEffect(() => {
+    console.log('Manifest routing effect triggered');
     const routeManifest = async () => {
       if (!config || !checkSession() || !jwt3) {
         return;
