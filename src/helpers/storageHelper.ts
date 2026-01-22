@@ -10,7 +10,7 @@ export function loadToken(storageKey: string): StorageToken | null {
   
   try {
     const token: StorageToken = JSON.parse(data);
-    if ((token?.expiresAt ?? 0) < Date.now()) {
+    if ((token?.expiresAt ?? 0) < Date.now() && token.payload !== "active") {
       clearToken(storageKey);
       return null;
     }
