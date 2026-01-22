@@ -43,13 +43,6 @@ export default function BookPage({ params }: Props) {
   const isLoading = useAppSelector(state => state.reader.isLoading);
   const config = useRuntimeConfig();
 
-  const renderCount = useRef(0);
-
-  useEffect(() => {
-    renderCount.current += 1;
-    console.log(`Config effect run #${renderCount.current}:`, config);
-  }, [config]);
-
   const validateToken = useCallback(async (jwt2: string): Promise<Boolean> => {
     if (!config) return false;
     const validateResponse = await fetch(config.linkServerUrl + "/validate.php", {
@@ -66,8 +59,7 @@ export default function BookPage({ params }: Props) {
       throw new Error(`HTTP validate ${validateResponse.status}`);
     }
     const payload = jwtDecode<jwt2Payload>(jwt2);
-    saveToken(jwt2, { payload: "active", loanId: payload.loan_id, expiresAt: Date.now() + 12 * 1000//payload.expires * 1000,
-});
+    saveToken(jwt2, { payload: "active", loanId: payload.loan_id, expiresAt: Date.now() + payload.expires * 1000 });
     return true;
   }, [config]);
 
@@ -116,7 +108,7 @@ const createReadiumJwt = useCallback(async (loanId: string): Promise<Boolean> =>
     saveToken("jwt3"+jwt2, {
       payload: jwt3,
       loanId: loanId,
-      expiresAt: Date.now() + 12 * 1000//payload.exp * 1000,
+      expiresAt: Date.now() + payload.exp * 1000,
     });
     setJwt3(jwt3);
     scheduleTokenRefreshRef.current?.();
