@@ -21,7 +21,6 @@ import {
   ThArrowVariant,
 } from "./models/enums";
 import { createPreferences, ThPreferences, DefaultKeys } from "./preferences";
-import { ENV_CONFIG } from "@/config/env"; 
 
 const CustomLogo = 
   `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 974 1200">
@@ -66,7 +65,7 @@ export const eKirjastoPreferences: ThPreferences<DefaultKeys> = createPreference
       backLink: {
         variant: ThBackLinkVariant.custom,
         visibility: "partially",
-        href: ENV_CONFIG.backLinkUrl,
+        href: "",
         content: { 
           type: "svg",
           content: CustomLogo

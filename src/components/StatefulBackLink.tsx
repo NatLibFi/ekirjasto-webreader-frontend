@@ -16,6 +16,7 @@ import { useI18n } from "@/i18n";
 import { usePreferences } from "@/preferences/hooks/usePreferences";
 
 import { useAppSelector } from "@/lib/hooks";
+import { useRuntimeConfig } from "@/hooks/useRuntimeConfig";
 
 import classNames from "classnames";
 
@@ -27,14 +28,14 @@ export const StatefulBackLink = ({
   const { t } = useI18n();
   const { preferences } = usePreferences();
   const direction = useAppSelector(state => state.reader.direction);
+  const config = useRuntimeConfig();
   const isRTL = direction === ThLayoutDirection.rtl;
-  
   const variant = preferences.theming.header?.backLink?.variant || ThBackLinkVariant.arrow;
-  const href = preferences.theming.header?.backLink?.href;
+  const href = config?.backLinkUrl;
+
   const content = preferences.theming.header?.backLink?.content;
   const visibility = preferences.theming.header?.backLink?.visibility || "partially";
   const backLinkClassName = classNames(backLinkStyles.backLink, visibility === "always" ? readerSharedUI.alwaysVisible : readerSharedUI.partiallyVisible);
-
   const compounds = {
     tooltipTrigger: {
       delay: preferences.theming.arrow.tooltipDelay,
