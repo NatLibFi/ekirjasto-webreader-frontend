@@ -5,9 +5,9 @@ export enum ThThemeKeys {
   sepia = "sepia",
   dark = "dark",
   paper = "paper",
-  contrast1 = "contrast1",
-  contrast2 = "contrast2",
-  contrast3 = "contrast3"
+  ekirjasto1 = "ekirjasto1",
+  ekirjasto2 = "ekirjasto2",
+  ekirjasto3 = "ekirjasto3"
 }
 
 export const lightTheme = {
@@ -107,6 +107,54 @@ export const contrast2Theme = {
 }
 
 export const contrast3Theme = {
+  background: "#c5e7cd",
+  text: "#000000",
+  link: "#0000EE",
+  visited: "#551A8B",
+  subdue: "#8c8c8c",
+  disable: "#8c8c8c",
+  hover: "#6fc383",
+  onHover: "#000000",
+  select: "#b4d8fe",
+  onSelect: "inherit",
+  focus: "#004099",
+  elevate: "0px 0px 2px #8c8c8c",
+  immerse: "0.45"
+}
+
+export const ekirjasto1Theme = {
+  background: "#000000",
+  text: "#ffff00",
+  link: "#63caff",
+  visited: "#0099E5",
+  subdue: "#808000",
+  disable: "#808000",
+  hover: "#404040",
+  onHover: "#ffff00",
+  select: "#b4d8fe",
+  onSelect: "inherit",
+  focus: "#0067f4",
+  elevate: "0px 0px 2px #808000",
+  immerse: "0.4"
+}
+
+export const ekirjasto2Theme = {
+  background: "#181842",
+  text: "#ffffff",
+  link: "#adcfff",
+  visited: "#7ab2ff",
+  subdue: "#808080",
+  disable: "#808080",
+  hover: "#4444bb",
+  onHover: "#ffffff",
+  select: "#b4d8fe",
+  onSelect: "inherit",
+  focus: "#6BA9FF",
+  elevate: "0px 0px 2px #808080",
+  immerse: "0.4"
+}
+
+export const ekirjasto3Theme = {
   background: "#c5e7cd",
   text: "#000000",
   link: "#0000EE",
