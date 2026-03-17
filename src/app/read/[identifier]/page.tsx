@@ -9,8 +9,6 @@ import { useRuntimeConfig } from "@/hooks/useRuntimeConfig";
 import { jwtDecode } from "jwt-decode";
 import { loadToken, clearToken, saveToken } from "@/helpers/storageHelper";
 
-import "@/app/app.css";
-
 type Params = { identifier: string };
 
 type Props = {
