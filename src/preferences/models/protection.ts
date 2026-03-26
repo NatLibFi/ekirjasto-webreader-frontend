@@ -1,5 +1,6 @@
 import { IContentProtectionConfig } from "@readium/navigator";
 import { I18nValue } from "./i18n";
+import { useRuntimeConfig } from "@/hooks/useRuntimeConfig";
 
 export interface CopyProtectionConfig {
   /** Maximum percentage of content that can be selected (0-1) */
@@ -127,4 +128,19 @@ export const devContentProtectionConfig: ContentProtectionConfig = {
   disableSelectAll: false,
   disableSave: false,
   monitorDevTools: false
+};
+
+/**
+ * Strict content protection configuration - enables all protections with strict settings
+ */
+export const strictContentProtectionConfig: ContentProtectionConfig = {
+  protectCopy: true,
+  disableContextMenu: true,
+  disableDragAndDrop: true,
+  protectPrinting: {
+    disable: true
+  },
+  disableSelectAll: true,
+  disableSave: true,
+  monitorDevTools: true
 };

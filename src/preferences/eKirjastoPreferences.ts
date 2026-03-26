@@ -30,7 +30,7 @@
    defaultFullscreenAction,
    defaultTocAction,
    defaultJumpToPositionAction,
-   defaultContentProtectionConfig,
+   strictContentProtectionConfig,
    defaultFontCollection,
    defaultLetterSpacing, 
    defaultLineHeights, 
@@ -250,7 +250,7 @@
        }
      },
    },
-   contentProtection: defaultContentProtectionConfig,
+   contentProtection: strictContentProtectionConfig,
    affordances: { 
      scroll: {
        hintInImmersive: true,
