@@ -10,6 +10,8 @@ import { ThPreferencesAdapter } from "./adapters/ThPreferencesAdapter";
 import { ThMemoryPreferencesAdapter } from "./adapters/ThMemoryPreferencesAdapter";
 import { ThDirectionSetter } from "./ThDirectionSetter";
 
+import { useRuntimeConfig } from "@/hooks/useRuntimeConfig";
+
 type Props<K extends CustomizableKeys = DefaultKeys> = {
   adapter?: ThPreferencesAdapter<K>;
   initialPreferences?: ThPreferences<K>;
@@ -23,6 +25,7 @@ export function ThPreferencesProvider<K extends CustomizableKeys = DefaultKeys>(
   devMode,
   children, 
 }: Props<K>) {
+  const config = useRuntimeConfig();
   // Create a default in-memory adapter if none is provided
   const effectiveAdapter = useMemo(() => {
     let fallbackPreferences = defaultPreferencesContextValue.preferences as ThPreferences<K>;
@@ -35,10 +38,17 @@ export function ThPreferencesProvider<K extends CustomizableKeys = DefaultKeys>(
       };
     }
 
+    const runtimePreferences = {
+      ...initialPreferences,
+      ...(config?.contentProtectionConfig && { 
+        contentProtection: config.contentProtectionConfig 
+      })
+    } as ThPreferences<K>;
+
     return adapter || new ThMemoryPreferencesAdapter<K>(
-      (initialPreferences as ThPreferences<K>) || fallbackPreferences
+      (runtimePreferences as ThPreferences<K>) || fallbackPreferences
     );
-  }, [adapter, initialPreferences, devMode]);
+  }, [adapter, initialPreferences, devMode, config]);
 
   const [preferences, setPreferences] = useState<ThPreferences<K>>(
     (() => {
@@ -51,7 +61,14 @@ export function ThPreferencesProvider<K extends CustomizableKeys = DefaultKeys>(
         };
       }
       
-      return (initialPreferences as ThPreferences<K>) || fallbackPreferences;
+      const runtimePreferences = {
+        ...initialPreferences,
+        ...(config?.contentProtectionConfig && { 
+          contentProtection: config.contentProtectionConfig 
+        })
+      } as ThPreferences<K>;
+
+      return (runtimePreferences as ThPreferences<K>) || fallbackPreferences;
     })()
   );
 

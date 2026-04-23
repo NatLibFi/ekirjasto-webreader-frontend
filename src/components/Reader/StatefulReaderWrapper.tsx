@@ -8,6 +8,7 @@ import { useAudioPreferences } from "@/preferences/hooks/useAudioPreferences";
 import { ThAudioPreferencesProvider } from "@/preferences/ThAudioPreferencesProvider";
 import { ThPreferencesProvider } from "@/preferences/ThPreferencesProvider";
 import { ThI18nProvider } from "@/i18n/ThI18nProvider";
+import { eKirjastoPreferences } from "@/preferences/eKirjastoPreferences";
 
 import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 import {
@@ -115,7 +116,7 @@ export const StatefulReaderWrapper = ({ profile, plugins, isLoading, preferences
   return (
     <ThPreferencesProvider
       devMode={ process.env.NODE_ENV !== "production" }
-      initialPreferences={ preferences?.initialPreferences as ThPreferences<any> | undefined }
+      initialPreferences={ eKirjastoPreferences as ThPreferences<any> | undefined }
       adapter={ preferences?.adapter as ThPreferencesAdapter<any> | undefined }
     >
       <ThI18nProvider { ...i18nOptions }>

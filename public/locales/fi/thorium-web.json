@@ -91,6 +91,13 @@
                     "trigger": "Lisää välistysasetuksia"
                 }
             }
-        }
+        },
+        "preferences": {
+            "themes": {
+                "E-kirjasto 1": "E-kirjasto 1",
+                "E-kirjasto 2": "E-kirjasto 2",
+                "E-kirjasto 3": "E-kirjasto 3"
+            }
+    }
     }
 }

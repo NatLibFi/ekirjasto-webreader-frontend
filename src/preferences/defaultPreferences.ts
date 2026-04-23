@@ -21,9 +21,9 @@ import {
   darkTheme,
   paperTheme,
   sepiaTheme,
-  contrast1Theme,
-  contrast2Theme,
-  contrast3Theme,
+  ekirjasto1Theme,
+  ekirjasto2Theme,
+  ekirjasto3Theme,
   defaultSettingsAction,
   defaultFullscreenAction,
   defaultTocAction,
@@ -210,9 +210,9 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
         ThThemeKeys.paper,
         ThThemeKeys.sepia, 
         ThThemeKeys.dark, 
-        ThThemeKeys.contrast1, 
-        ThThemeKeys.contrast2, 
-        ThThemeKeys.contrast3
+        ThThemeKeys.ekirjasto1,
+        ThThemeKeys.ekirjasto2,
+        ThThemeKeys.ekirjasto3
       ],
       fxlOrder: [
         "auto",
@@ -228,9 +228,9 @@ export const defaultPreferences: ThPreferences<DefaultKeys> = createPreferences<
         [ThThemeKeys.dark]: darkTheme,
         [ThThemeKeys.paper]: paperTheme,
         [ThThemeKeys.sepia]: sepiaTheme,
-        [ThThemeKeys.contrast1]: contrast1Theme,
-        [ThThemeKeys.contrast2]: contrast2Theme,
-        [ThThemeKeys.contrast3]: contrast3Theme
+        [ThThemeKeys.ekirjasto1]: ekirjasto1Theme,
+        [ThThemeKeys.ekirjasto2]: ekirjasto2Theme,
+        [ThThemeKeys.ekirjasto3]: ekirjasto3Theme
       }
     },
   },

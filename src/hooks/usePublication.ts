@@ -26,7 +26,9 @@ import { deserializePositions } from "@/helpers/deserializePositions";
 import { ErrorHandler, ProcessedError } from "@/helpers/errorHandler";
 
 export interface UsePublicationOptions {
-  url: string;
+  isbn?: string | null;
+  loan_id?: string | null;
+  url: string | null;
   onError?: (error: ProcessedError) => void;
   fetcher?: Fetcher;
 }
@@ -81,6 +83,8 @@ const detectProfile = (manifest: Manifest): ReaderProfile => {
 };
 
 export const usePublication = ({
+  isbn,
+  loan_id,
   url,
   onError = () => {},
   fetcher: customFetcher
@@ -113,9 +117,10 @@ export const usePublication = ({
   // Basic URL validation and loading
   useEffect(() => {
     if (!url) {
-      const validationError = ErrorHandler.process(new Error('Manifest URL is required'), 'Validation');
-      setError(validationError);
-      setIsLoading(false);
+      // const validationError = ErrorHandler.process(new Error('Manifest URL is required'), 'Validation');
+      // setError(validationError);
+      // setIsLoading(false);
+      console.log("manifest URL is required (usePublication)");
       return;
     }
 
@@ -136,10 +141,11 @@ export const usePublication = ({
         try {
           const selfHref = link.toURL(decodedUrl);
           setSelfLink(selfHref || null);
-          if (selfHref) {
-            setLocalDataKey(`${ selfHref }-current-location`);
-            
+          if (isbn) {
+            setLocalDataKey(`${ isbn }-current-location`);
             // Create fetcher with selfHref for proper URL resolution
+          }
+          if (selfHref) {
             const manifestFetcher = customFetcher || new HttpFetcher(undefined, selfHref);
             
             // Fetch manifest with proper fetcher

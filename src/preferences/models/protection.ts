@@ -196,3 +196,18 @@ export const devContentProtectionConfig = {
   monitorDevTools: false,
   disableRemotePlayback: false,
 };
+
+/**
+ * Strict content protection configuration - enables all protections with strict settings
+ */
+export const strictContentProtectionConfig: ContentProtectionConfig = {
+  protectCopy: true,
+  disableContextMenu: true,
+  disableDragAndDrop: true,
+  protectPrinting: {
+    disable: true
+  },
+  disableSelectAll: true,
+  disableSave: true,
+  monitorDevTools: true
+};

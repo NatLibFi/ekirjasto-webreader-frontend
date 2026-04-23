@@ -91,6 +91,13 @@
                     "trigger": "Fler avståndsalternativ"
                 }
             }
+        },
+        "preferences": {
+            "themes": {
+                "E-kirjasto 1": "E-biblioteket 1",
+                "E-kirjasto 2": "E-biblioteket 2",
+                "E-kirjasto 3": "E-biblioteket 3"
+            }
         }
     }
 }

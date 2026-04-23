@@ -14,6 +14,7 @@ import { ThLink } from "@/core/Components/Links";
 
 import { useI18n } from "@/i18n";
 import { useSharedPreferences } from "@/preferences/hooks/useSharedPreferences";
+import { useRuntimeConfig } from "@/hooks/useRuntimeConfig";
 
 import classNames from "classnames";
 
@@ -24,12 +25,13 @@ export const StatefulBackLink = ({
 }) => {
   const { t } = useI18n();
   const { direction, theming } = useSharedPreferences();
+  const config = useRuntimeConfig();
   const backLinkPref = theming.header?.backLink;
   const tooltipDelay = theming.icon.tooltipDelay;
   const isRTL = direction === ThLayoutDirection.rtl;
 
   const variant = backLinkPref?.variant || ThBackLinkVariant.arrow;
-  const href = backLinkPref?.href;
+  const configHref = config?.backLinkUrl;
   const content = backLinkPref?.content;
   const visibility = backLinkPref?.visibility || "partially";
   const backLinkClassName = classNames(backLinkStyles.link, visibility === "always" ? readerSharedUI.alwaysVisible : readerSharedUI.partiallyVisible);
@@ -45,7 +47,7 @@ export const StatefulBackLink = ({
     label: t("reader.app.header.backLink.tooltip")
   };
 
-  if (!href) return null;
+  const href = configHref || "";
 
   switch (variant) {
     case ThBackLinkVariant.arrow:

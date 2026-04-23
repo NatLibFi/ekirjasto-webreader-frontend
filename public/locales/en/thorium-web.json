@@ -103,6 +103,13 @@
           "trigger": "More spacing options"
         }
       }
+    },
+    "preferences": {
+      "themes": {
+        "E-kirjasto 1": "E-library 1",
+        "E-kirjasto 2": "E-library 2",
+        "E-kirjasto 3": "E-library 3"
+      }
     }
   },
   "audio": {

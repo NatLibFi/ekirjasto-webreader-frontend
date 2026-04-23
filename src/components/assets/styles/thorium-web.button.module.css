@@ -37,6 +37,15 @@
 .backButton[data-hovered] {
   background-color: var(--th-theme-hover);
   color: var(--th-theme-onHover);
+  fill: var(--th-theme-onHover);
+}
+
+.icon[data-hovered] svg,
+.dockerButton[data-hovered] svg,
+.closeButton[data-hovered] svg,
+.backButton[data-hovered] svg {
+  fill: var(--th-theme-onHover);
+  color: var(--th-theme-onHover);
 }
 
 .icon[data-focus-visible],
